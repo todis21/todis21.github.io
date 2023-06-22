@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>网络渗透实验四 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="网络渗透实验四 ：CTF实践实验目的：通过对目标靶机的渗透过程，了解CTF竞赛模式，理解CTF涵盖的知识范围，如MISC、PPC、WEB等，通过实践，加强团队协作能力，掌握初步CTF实战能力及信息收集能力。熟悉网络扫描、探测HTTP web服务、目录枚举、提权、图像信息提取、密码破解等相关工具的使用。 系统环境：Kali Linux 2、WebDeveloper靶机来源：https:&#x2F;&#x2F;www.v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络渗透实验四">
+<meta property="og:url" content="http://example.com/2021/12/06/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E5%9B%9B/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="网络渗透实验四 ：CTF实践实验目的：通过对目标靶机的渗透过程，了解CTF竞赛模式，理解CTF涵盖的知识范围，如MISC、PPC、WEB等，通过实践，加强团队协作能力，掌握初步CTF实战能力及信息收集能力。熟悉网络扫描、探测HTTP web服务、目录枚举、提权、图像信息提取、密码破解等相关工具的使用。 系统环境：Kali Linux 2、WebDeveloper靶机来源：https:&#x2F;&#x2F;www.v">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-c1ceda78e22db618e06b9ffa5bbeb7bf_r.jpg">
+<meta property="article:published_time" content="2021-12-06T13:53:33.000Z">
+<meta property="article:modified_time" content="2021-12-07T11:32:50.000Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="网络渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic4.zhimg.com/v2-c1ceda78e22db618e06b9ffa5bbeb7bf_r.jpg"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2021/12/06/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E5%9B%9B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '网络渗透实验四',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-07 19:32:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic4.zhimg.com/v2-c1ceda78e22db618e06b9ffa5bbeb7bf_r.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">网络渗透实验四</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-06T13:53:33.000Z" title="发表于 2021-12-06 21:53:33">2021-12-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-07T11:32:50.000Z" title="更新于 2021-12-07 19:32:50">2021-12-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="网络渗透实验四"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="网络渗透实验四-：CTF实践"><a href="#网络渗透实验四-：CTF实践" class="headerlink" title="网络渗透实验四 ：CTF实践"></a>网络渗透实验四 ：CTF实践</h1><h2 id="实验目的："><a href="#实验目的：" class="headerlink" title="实验目的："></a>实验目的：</h2><p>通过对目标靶机的渗透过程，了解CTF竞赛模式，理解CTF涵盖的知识范围，如MISC、PPC、WEB等，通过实践，加强团队协作能力，掌握初步CTF实战能力及信息收集能力。熟悉网络扫描、探测HTTP web服务、目录枚举、提权、图像信息提取、密码破解等相关工具的使用。</p>
+<h2 id="系统环境："><a href="#系统环境：" class="headerlink" title="系统环境："></a>系统环境：</h2><p>Kali Linux 2、WebDeveloper靶机来源：<a target="_blank" rel="noopener" href="https://www.vulnhub.com/">https://www.vulnhub.com/</a> </p>
+<h2 id="实验步骤和内容："><a href="#实验步骤和内容：" class="headerlink" title="实验步骤和内容："></a>实验步骤和内容：</h2><h3 id="目的："><a href="#目的：" class="headerlink" title="目的："></a>目的：</h3><p>获取靶机Web Developer 文件&#x2F;root&#x2F;flag.txt中flag。</p>
+<h3 id="基本思路："><a href="#基本思路：" class="headerlink" title="基本思路："></a>基本思路：</h3><p>本网段IP地址存活扫描(netdiscover)；网络扫描(Nmap)；浏览HTTP 服务；网站目录枚举(Dirb)；发现数据包文件 “cap”；分析 “cap” 文件，找到网站管理后台账号密码；插件利用（有漏洞）；利用漏洞获得服务器账号密码；SSH 远程登录服务器；tcpdump另类应用。</p>
+<h3 id="实施细节："><a href="#实施细节：" class="headerlink" title="实施细节："></a>实施细节：</h3><p>首先用Nmap发现靶机：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207084329047.png"></p>
+<p>发现靶机开了80端口和22端口</p>
+<p>用浏览器打开<code>http://192/168/118.135</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207084613488.png"></p>
+<p>用whatweb来得到网站的cms为WordPress</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207090856645.png"></p>
+<p>爆破一下目录：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207085538623.png"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207085632724.png"></p>
+<p>扫出了几个敏感目录，如文件上传目录<code>/wp-content/uploads/</code>,后台登录目录<code>/wp-admin/admin.php</code>,还有个奇怪的目录<code>/ipdata/</code></p>
+<p>打开&#x2F;ipdata&#x2F;，发现有个cap文件，把它下载下来</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207090154498.png"></p>
+<p>用Wireshark打开，看看有没有登录的数据包</p>
+<p>因为登录的是用POST方法传递参数，所以用<code>http.request.method==POST</code>过滤一下</p>
+<p>打开第一个数据包就能得到账号密码</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207092105863.png"></p>
+<p>拿这个账号密码去后台登录一下</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207100939737.png" alt="image-20211207100939737"></p>
+<p>点击安装插件Plugins-&gt;Add New-&gt;Upload Plugin</p>
+<p>在这里可以上传个php木马，因为它没过滤</p>
+<p>php马：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207101248403.png" alt="image-20211207101248403"></p>
+<p>上传后访问<code>/wp-content/uploads/2021/12/</code> </p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207101409524.png" alt="image-20211207101409524"></p>
+<p>找到刚刚上传的文件，打开</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207101512849.png" alt="image-20211207101512849"></p>
+<p>用蚁剑连接一下</p>
+<p>url: <a target="_blank" rel="noopener" href="http://192.168.52.70/wp-content/uploads/2021/12/ma.php">http://192.168.52.70/wp-content/uploads/2021/12/ma.php</a></p>
+<p>密码:cmd</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207101910818.png" alt="image-20211207101910818"></p>
+<p>webshell的权限比较低，没法打开root目录，寻找其他信息</p>
+<p>在&#x2F;html&#x2F;找到wp-config.php，里面有有关数据库的配置</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207102913608.png" alt="image-20211207102913608"></p>
+<p>盲猜这个也是服务器的账号密码，这个服务器还开着个ssh服务，尝试用ssh连接</p>
+<pre><code>ssh webdeveloper@ip
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207103506765.png" alt="image-20211207103506765"></p>
+<p>连接成功</p>
+<p>但是权限不够</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207103716977.png" alt="image-20211207103716977"></p>
+<p>接下来就是提权</p>
+<p>使用tcpdump执行任意命令（当tcpdump捕获到数据包后会执行指定的命令。）</p>
+<p>查看当前身份可执行的命令。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207104909692.png" alt="image-20211207104909692"></p>
+<p>创建攻击文件</p>
+<pre><code>touch /tmp/exploit
+</code></pre>
+<p>写入shellcode</p>
+<pre><code>echo &#39;cat /root/flag.txt&#39; &gt; /tmp/exploit
+</code></pre>
+<p>赋予可执行权限</p>
+<pre><code>chmod +x /tmp/exploit
+</code></pre>
+<p>利用tcpdump执行任意命令</p>
+<pre><code>sudo tcpdump -i eth0 -w /dev/null -W 1 -G 1 -z /tmp/exploit -Z root
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207105849773.png" alt="image-20211207105849773"></p>
+<p>拿到flag</p>
+<h2 id="另一种姿势"><a href="#另一种姿势" class="headerlink" title="另一种姿势"></a>另一种姿势</h2><p>利用MeterSploit插件+reflex gallery插件漏洞实现</p>
+<p>在上传插件处安装reflex gallery这个插件</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207190911989.png" alt="image-20211207190911989"></p>
+<p>打开msfconsole</p>
+<pre><code>use exploit/unix/webapp/wp_reflexgallery_file_upload
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207191141157.png" alt="image-20211207191141157"></p>
+<p>然后就是修改配置</p>
+<pre><code>set rhost 目标ip
+</code></pre>
+<p>执行<code>exploit</code>,开始攻击</p>
+<p>成功拿shell</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211207191629125.png" alt="image-20211207191629125"></p>
+<p>权限不高，还需要提权，提权方式同上</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/12/06/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E5%9B%9B/">http://example.com/2021/12/06/网络渗透实验四/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F/">网络渗透</a></div><div class="post_share"><div class="social-share" data-image="https://pic4.zhimg.com/v2-c1ceda78e22db618e06b9ffa5bbeb7bf_r.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/12/13/joomla-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-CVE-2015-8562/" title="joomla 反序列化漏洞(CVE-2015-8562)"><img class="cover" src="https://w.wallhaven.cc/full/q2/wallhaven-q2pe2l.jpg" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">joomla 反序列化漏洞(CVE-2015-8562)</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/01/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E4%B8%89/" title="网络渗透实验三"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-1k2zj3_1920x1080.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">网络渗透实验三</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/12/01/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E4%B8%89/" title="网络渗透实验三"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-1k2zj3_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-01</div><div class="title">网络渗透实验三</div></div></a></div><div><a href="/2021/11/16/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E4%B8%80/" title="网络渗透实验一"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-dgey9g_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-16</div><div class="title">网络渗透实验一</div></div></a></div><div><a href="/2021/11/23/%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E4%BA%8C/" title="网络渗透实验二"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6qlq1x_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-23</div><div class="title">网络渗透实验二</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C%E5%9B%9B-%EF%BC%9ACTF%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.</span> <span class="toc-text">网络渗透实验四 ：CTF实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">实验目的：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">系统环境：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">实验步骤和内容：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="toc-number">1.3.1.</span> <span class="toc-text">目的：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="toc-number">1.3.2.</span> <span class="toc-text">基本思路：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%96%BD%E7%BB%86%E8%8A%82%EF%BC%9A"><span class="toc-number">1.3.3.</span> <span class="toc-text">实施细节：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%A7%BF%E5%8A%BF"><span class="toc-number">1.4.</span> <span class="toc-text">另一种姿势</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

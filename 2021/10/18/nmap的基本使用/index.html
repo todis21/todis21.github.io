@@ -1,0 +1,286 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>NMAP的基本使用 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="NMAP的基本使用简介​	nmap是一个网络探测和安全扫描程序，系统管理者和个人可以使用这个软件扫描大型的网络，获取那台主机正在运行以及提供什么服务等信息。nmap支持很多扫描技术 初次使用（这里使用kali自带的作为演示） 首先我们要知道这工具该怎么用， 在kali打开终端，输入如下命令，可以知道有哪些命令 nmap -h   最基本的命令nmap ip（域名）&#x2F;&#x2F;可以扫描出其对外开放的服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMAP的基本使用">
+<meta property="og:url" content="http://example.com/2021/10/18/nmap%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="NMAP的基本使用简介​	nmap是一个网络探测和安全扫描程序，系统管理者和个人可以使用这个软件扫描大型的网络，获取那台主机正在运行以及提供什么服务等信息。nmap支持很多扫描技术 初次使用（这里使用kali自带的作为演示） 首先我们要知道这工具该怎么用， 在kali打开终端，输入如下命令，可以知道有哪些命令 nmap -h   最基本的命令nmap ip（域名）&#x2F;&#x2F;可以扫描出其对外开放的服务">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-vmxr2l_1920x1080.png">
+<meta property="article:published_time" content="2021-10-18T09:00:47.000Z">
+<meta property="article:modified_time" content="2021-12-17T04:24:28.000Z">
+<meta property="article:author" content="Tree">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-vmxr2l_1920x1080.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2021/10/18/nmap%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'NMAP的基本使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-17 12:24:28'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-vmxr2l_1920x1080.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">NMAP的基本使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-18T09:00:47.000Z" title="发表于 2021-10-18 17:00:47">2021-10-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-17T04:24:28.000Z" title="更新于 2021-12-17 12:24:28">2021-12-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="NMAP的基本使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="NMAP的基本使用"><a href="#NMAP的基本使用" class="headerlink" title="NMAP的基本使用"></a>NMAP的基本使用</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>​	nmap是一个网络探测和安全扫描程序，系统管理者和个人可以使用这个软件扫描大型的网络，获取那台主机正在运行以及提供什么服务等信息。nmap支持很多扫描技术</p>
+<h2 id="初次使用"><a href="#初次使用" class="headerlink" title="初次使用"></a>初次使用</h2><p>（这里使用kali自带的作为演示）</p>
+<p>首先我们要知道这工具该怎么用，</p>
+<p>在kali打开终端，输入如下命令，可以知道有哪些命令</p>
+<pre><code>nmap -h
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202021-10-18%20171852.png"></p>
+<h2 id="最基本的命令"><a href="#最基本的命令" class="headerlink" title="最基本的命令"></a>最基本的命令</h2><pre><code>nmap ip（域名）//可以扫描出其对外开放的服务
+</code></pre>
+<p>如</p>
+<pre><code>nmap www.baidu.com
+
+nmap xxx.xxx.xxx.xxx
+</code></pre>
+<h2 id="端口扫描常用参数"><a href="#端口扫描常用参数" class="headerlink" title="端口扫描常用参数"></a>端口扫描常用参数</h2><ol>
+<li>-sT<br> TCP connect()扫描：这是最基本的TCP扫描方式。connect()是一种系统调用，由操作系统提供，用来打开一个连接。如果目标端口有程序监听，connect()就会成功返回，否则这个端口是不可达的。</li>
+<li>-sS<br>　TCP同步扫描(TCP  SYN)：因为不必全部打开一个TCP连接，所以这项技术通常称为半开扫描(half-open)。你可以发出一个TCP同步包(SYN)，然后等待回应。如果对方返回SYN|ACK(响应)包就表示目标端口正在监听；如果返回RST数据包，就表示目标端口没有监听程序；如果收到一个SYN|ACK包，源主机就会马上发出一个RST(复位)数据包断开和目标主机的连接，这实际上有我们的操作系统内核自动完成的。这项技术最大的好处是，很少有系统能够把这记入系统日志。不过，你需要root权限来定制SYN数据包。</li>
+<li>-sP<br> ping扫描：有时你只是想知道此时网络上哪些主机正在运行。通过向你指定的网络内的每个IP地址发送ICMP echo请求数据包，nmap就可以完成这项任务。如果主机正在运行就会作出响应。</li>
+<li>-sU<br> UDP扫描：如果你想知道在某台主机上提供哪些UDP(用户数据报协议,RFC768)服务，可以使用这种扫描方法。nmap首先向目标主机的每个端口发出一个0字节的UDP包，如果我们收到端口不可达的ICMP消息，端口就是关闭的，否则我们就假设它是打开的。</li>
+<li>-R<br>  RPC扫描。这种方法和nmap的其它不同的端口扫描方法结合使用。选择所有处于打开状态的端口向它们发出SunRPC程序的NULL命令，以确定它们是否是RPC端口，如果是，就确定是哪种软件及其版本号。因此你能够获得防火墙的一些信息。诱饵扫描现在还不能和RPC扫描结合使用。</li>
+<li>-v<br> 冗余模式。强烈推荐使用这个选项，它会给出扫描过程中的详细信息。使用这个选项，你可以得到事半功倍的效果。使用-d选项可以得到更加详细的信息。</li>
+<li>-O<br>  这个选项激活对TCP&#x2F;IP指纹特征(fingerprinting)的扫描，获得远程主机的标志。换句话说，nmap使用一些技术检测目标主机操作系统网络协议栈的特征。nmap使用这些信息建立远程主机的指纹特征，把它和已知的操作系统指纹特征数据库做比较，就可以知道目标主机操作系统的类型。</li>
+<li>-p 指定扫描端口  nmap -p 80,445 192.168.21.1    nmap -p 1-1000 192.168.21.1</li>
+<li>-F 快速扫描常用端口  nmap -F 192.168.21.1</li>
+<li>-r 使用该选项不会对端口进行随机的顺序扫描</li>
+<li>–top-ports  扫描开发概率最高的1000个TCP端口  nmap –top-ports 1000 192.168.21.1  nmap –top-ports 100 192.168.21.1</li>
+</ol>
+<h2 id="端口状态"><a href="#端口状态" class="headerlink" title="端口状态"></a>端口状态</h2><p>1.Open，端口开启，有程序监听此端口</p>
+<p>2.Closed，端口关闭，数据能到达主机，但是没有程序监听此端口。<br>3.Filtered，数据未能到达主机。<br>4.Unfiltered，数据能到达主机，但是Nmap无法判断端口开启还是关闭。<br>5.Open|filtered，端口没有返回值，主要出现在UDP，IP，FIN，NULL和Xmas扫描<br>6.Closed|filtered，只出现在IP ID idle 扫描。</p>
+<h4 id="时序选项"><a href="#时序选项" class="headerlink" title="时序选项:"></a>时序选项:</h4><p>在Nmap中使用-T (0-5)可以启用时序选项，对于时序选项这里有0~5不同的选项。</p>
+<p>IDS:入侵检测系统</p>
+<p>-T0 (偏执的):非常慢的扫描，用于IDS逃避。<br>-T1 (鬼祟的):缓慢的扫描，用于IDS逃避。<br>-T2 (文雅的):降低速度以降低对带宽的消耗，此选项- -般不常用。<br>-T3 (普通的):默认，根据目标的反应自动调整时间。<br>-T4 (野蛮的):快速扫描，常用扫描方式，需要在很好的网络环境下进行扫描，请求可能会淹没目标。<br>-T5 (疯狂的):极速扫描，这种扫描方式以牺牲准确度来提升扫描速度。</p>
+<p>(现在一般用-T4)</p>
+<pre><code>nmap -T4 192.168.21.1
+</code></pre>
+<h2 id="主机发现常用命令"><a href="#主机发现常用命令" class="headerlink" title="主机发现常用命令"></a>主机发现常用命令</h2><p>nmap -A baidu.com:全面扫描</p>
+<p>nmap 127.0.0.1-200:扫描一个C段</p>
+<p>nmap baidu.com :进行一个快速的扫描</p>
+<p>Ping扫描:</p>
+<pre><code>只进行ping,然后显示出在线的主机
+主机发现:
+nmap -sP 192.168.126.131/24
+</code></pre>
+<p>无Ping扫描:</p>
+<pre><code>常用于防火墙禁止ping的情况下
+
+nmap -P0 192.168.121.32
+
+可以手动设置扫描的协议：
+    TCP:对应协议编号为6。
+    ICMP:对应协议编号为1
+    IGMP:对应协议编号为2
+    UDP:对应协议编号为17
+用TCP,UDP,IGMP协议向目标主机发包判断是否存活;
+    nmap -p06,17,2 192.168.121.1/24   (默认用的为1,2,4)
+</code></pre>
+<p>TCP SYN扫描</p>
+<pre><code>nmap -PS -v 192.168.21.1
+通常情况下Nmap 默认ping扫描是使用TCP ACK和ICMP Echo请求对目标进行扫描.目标主机的防火墙阻止这些请求时,可以用TCP SYN Ping扫描进行对目标主机存活的判断
+指定端口范围进行的扫描nmap -PS80,100-200 -v 192.168.21.1
+TCP ACK Ping扫描
+
+    使用-PA选项可以进行TCP ACK Ping扫描，它与TCP SYN Ping扫描是非常类似的，唯一的区别是设置TCP的标志位是ACK而不是SYN,使用这种方式扫描可以探测阻止:SYN包或ICMP Echo请求的主机。很多防火墙会封锁SYN报文,所以Nmap提供了TCP SYN Ping扫描与TCP ACK Ping扫描两种探测方式，这两种方式可以极大地提高通过防火墙的概率，我们还可以同时使用-PS与-PA来既发送SYN又发送ACK。在使用TCP ACK Ping扫描时，Nmap 会发送一一个ACK标志的TCP包给目标主机，如果目标主机不是存活状态则不响应该请求，如果目标主机在线则会返回一个RST包。
+
+    nmap -PA 192.168.21.1
+    nmap -PA -PS -v 192.168.21.1两种一起用
+
+UDP Ping 扫描
+    nmap -PU 192.168.21.1
+
+ARP Ping 扫描
+    通常在扫描局域网时使用,内网使用ARP Ping扫描方式是最有效的
+    nmap 默认情况下扫描局域网内的主机会使用ARP扫描,即使指定了-PS等
+    nmap -PR 192.168.21.1-200
+
+列表扫描 -sL 不知道有啥用
+
+禁止反向域名解析 -n
+
+    该选项很少使用，如果是对–台有域名绑定的服务器通常不会使用该选项;
+    如果是单纯扫描一-段IP， 使用该选项可以大幅度减少目标主机的相应时间，从而更快地得到结果。
+
+反向域名解析
+    -R选项意为反向解析城名，使用该选项时Nmap永远对目标IP地址作反向域名解析。
+
+    该选项多用于绑定域名的服务器主机上,该选项的使用便于我们了解目标的详细信息。例如，在扫描一个C段的时候，我们更加清楚在哪- - 段IP上存在哪些网站。
+
+扫描IPV6
+    nmap -6 fe80::1c98:68e:303d:496a
+
+IPv6将会逐渐替换IPv4,但在一段相当长的时间内，IPv4 还会大量地存在。后面章节演示的IP则都是IPv4地址，如果需要扫描IPv6地址，则需要在每个语句的IPv6目标地址前面加上-6选项。
+
+–traceroute 路由跟踪
+    nmap --traceroute -v baidu.com
+</code></pre>
+<h2 id="防火墙-x2F-IDS-入侵检测-逃逸"><a href="#防火墙-x2F-IDS-入侵检测-逃逸" class="headerlink" title="防火墙&#x2F;IDS(入侵检测)逃逸"></a>防火墙&#x2F;IDS(入侵检测)逃逸</h2><p>报文分段</p>
+<pre><code>nmap -sV -F 192.168.1.100
+</code></pre>
+<p>IP欺骗 -D</p>
+<pre><code>RND 随机生成:
+
+nmap -D RND:11 192.168.21.1
+
+指定IP:
+
+nmap -D 192.168.1.1,192.168.1.2,192.168.1.3 192.168.21.1
+</code></pre>
+<p>源地址欺骗-sI</p>
+<pre><code>nmap -sI www. 0day.co:80 192.168.126.131
+</code></pre>
+<p>源端口欺骗</p>
+<pre><code>nmap --source-port 53 182.168.21.1
+</code></pre>
+<p>MAC地址欺骗</p>
+<pre><code>spoof-mac 0会随机生成一个
+
+nmap -sT -PN --spoof-mac 0 192.168.126.131
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/10/18/nmap%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">http://example.com/2021/10/18/nmap的基本使用/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-vmxr2l_1920x1080.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/10/25/zoomeye%E6%8A%93%E5%8F%96%E6%91%84%E5%83%8F%E5%A4%B4/" title="zoomeye抓取摄像头"><img class="cover" src="https://w.wallhaven.cc/full/x8/wallhaven-x88o53.jpg" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">zoomeye抓取摄像头</div></div></a></div><div class="next-post pull-right"><a href="/2021/10/16/linux%E5%8F%8D%E5%BC%B9shell/" title="linux反弹shell"><img class="cover" src="https://w.wallhaven.cc/full/z8/wallhaven-z8dg9y.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">linux反弹shell</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NMAP%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">NMAP的基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AC%A1%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">初次使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">最基本的命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.</span> <span class="toc-text">端口扫描常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E7%8A%B6%E6%80%81"><span class="toc-number">1.5.</span> <span class="toc-text">端口状态</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E5%BA%8F%E9%80%89%E9%A1%B9"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">时序选项:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E5%8F%91%E7%8E%B0%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.6.</span> <span class="toc-text">主机发现常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99-x2F-IDS-%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B-%E9%80%83%E9%80%B8"><span class="toc-number">1.7.</span> <span class="toc-text">防火墙&#x2F;IDS(入侵检测)逃逸</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

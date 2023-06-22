@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java代理与动态代理 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java代理与动态代理代理代理是一种设计模式，提供了对目标对象额外的访问方式，即通过代理对象访问目标对象，这样可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。 简言之，代理模式就是设置一个中间代理来控制访问原目标对象，以达到增强原对象的功能和简化访问方式。  静态代理静态代理是一种代理模式，它在程序运行之前就已经存在代理类的字节码文件，所以又称为编译时代理或者普通代理。在使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java代理与动态代理">
+<meta property="og:url" content="http://example.com/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="Java代理与动态代理代理代理是一种设计模式，提供了对目标对象额外的访问方式，即通过代理对象访问目标对象，这样可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。 简言之，代理模式就是设置一个中间代理来控制访问原目标对象，以达到增强原对象的功能和简化访问方式。  静态代理静态代理是一种代理模式，它在程序运行之前就已经存在代理类的字节码文件，所以又称为编译时代理或者普通代理。在使">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png">
+<meta property="article:published_time" content="2023-04-02T13:48:49.000Z">
+<meta property="article:modified_time" content="2023-04-03T08:30:31.804Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java代理与动态代理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-03 16:30:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/202304031628382.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java代理与动态代理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-02T13:48:49.000Z" title="发表于 2023-04-02 21:48:49">2023-04-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-03T08:30:31.804Z" title="更新于 2023-04-03 16:30:31">2023-04-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java代理与动态代理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Java代理与动态代理"><a href="#Java代理与动态代理" class="headerlink" title="Java代理与动态代理"></a>Java代理与动态代理</h1><h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><p>代理是一种设计模式，提供了对目标对象额外的访问方式，即通过代理对象访问目标对象，这样可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。</p>
+<p>简言之，代理模式就是设置一个中间代理来控制访问原目标对象，以达到增强原对象的功能和简化访问方式。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304031625114.png" alt="代理模式UML类图"></p>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>静态代理是一种代理模式，它在程序运行之前就已经存在代理类的字节码文件，所以又称为编译时代理或者普通代理。在使用静态代理模式时，需要手动编写代理类，并在其中实现目标对象的方法调用。</p>
+<p>下面举个例子： 黄*杰学长给学弟Tree买饭，买饭回来的路上还去买了奶茶</p>
+<p>getrice.java 定义一个接口“买饭”</p>
+<pre><code class="java">//抽象对象：买饭
+public interface getrice &#123;
+    public void Getrice();
+&#125;
+</code></pre>
+<p>Person.java 真实角色, 实现getrice接口</p>
+<pre><code class="java">public  class Person implements getrice &#123;
+    public void Getrice() &#123;
+        System.out.println(&quot;买饭&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>StaticProxy.java 静态代理, </p>
+<pre><code class="java">public class StaticProxy implements getrice&#123;
+    private Person person;
+    public StaticProxy(Person person)
+    &#123;
+        this.person = person;
+    &#125;
+
+    public void Getrice()
+    &#123;
+        person.Getrice();
+        System.out.println(&quot;路上买杯奶茶&quot;);
+        System.out.println(&quot;把饭拿给学弟&quot;);
+    &#125;
+
+&#125;
+</code></pre>
+<p>Client.java</p>
+<pre><code class="java">public class Client &#123;
+    public static void main(String[] args) &#123;
+        //Tree要吃饭
+        Person Tree = new Person();
+        //找到在食堂吃饭的黄*杰学长帮忙带个饭
+        StaticProxy jie = new StaticProxy(Tree);
+        //学长买饭
+        jie.Getrice();
+    &#125;
+&#125;
+</code></pre>
+<p>结果：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304031625967.png" alt="image-20230403134900494"></p>
+<p>在这个买饭的过程中，客户端Tree接触的是黄*杰（代理），看不到“饭”，当任然能买到饭。</p>
+<h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><p>相对于静态代理而言，动态代理是一种更为灵活的代理模式。在使用动态代理时，代理类并不是在程序运行之前就已经存在，而是在运行时通过反射等机制动态生成。Java中实现动态代理需要借助java.lang.reflect包中的Proxy类和InvocationHandler接口。</p>
+<p>动态代理的出现就是为了解决传统静态代理模式的中的缺点。</p>
+<p>具备代理模式的优点的同时，巧妙的解决了静态代理代码冗余，难以维护的缺点。</p>
+<p>在Java中常用的有如下几种方式：</p>
+<h3 id="JDK-原生动态代理"><a href="#JDK-原生动态代理" class="headerlink" title="JDK 原生动态代理"></a>JDK 原生动态代理</h3><p>getrice.java和Person.java代码不变</p>
+<ol>
+<li>首先实现一个InvocationHandler，方法调用会被转发到该类的invoke()方法。</li>
+<li>然后在需要使用getrice的时候，通过JDK动态代理获取getrice的代理对象。</li>
+</ol>
+<p>DynamicProxy.java:</p>
+<pre><code class="java">import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+public class DynamicProxy implements InvocationHandler &#123;
+    private Object target;
+    public  DynamicProxy(Object target) &#123;
+        this.target = target;
+    &#125;
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;
+        Object result = method.invoke(target, args);
+        System.out.println(&quot;路上买杯奶茶&quot;);
+        System.out.println(&quot;把饭拿给学弟&quot;);
+        return result;
+    &#125;
+&#125;
+</code></pre>
+<p>客户使用动态代理调用</p>
+<p>Client.java</p>
+<pre><code class="java">import java.lang.reflect.Proxy;
+public class Client &#123;
+    public static void main(String[] args) &#123;
+        getrice Tree = new Person();
+
+        DynamicProxy jie = new DynamicProxy(Tree);
+
+        getrice proxy = (getrice) Proxy.newProxyInstance(
+                Tree.getClass().getClassLoader(),
+                Tree.getClass().getInterfaces(),
+                jie);
+
+        proxy.Getrice();
+    &#125;
+&#125;
+</code></pre>
+<p>运行结果是和上面的一样的</p>
+<p>上述代码的核心关键是<code>Proxy.newProxyInstance</code>方法，该方法会根据指定的参数动态创建代理对象。</p>
+<p>它三个参数的意义如下：</p>
+<ol>
+<li><code>loader</code>，指定代理对象的类加载器</li>
+<li><code>interfaces</code>，代理对象需要实现的接口，可以同时指定多个接口</li>
+<li><code>handler</code>，方法调用的实际处理者，代理对象的方法调用都会转发到这里</li>
+</ol>
+<p><code>Proxy.newProxyInstance</code>会返回一个实现了指定接口的代理对象，对该对象的所有方法调用都会转发给<code>InvocationHandler.invoke()</code>方法。</p>
+<p>因此，在<code>invoke()</code>方法里我们可以加入任何逻辑，比如修改方法参数，加入日志功能、安全检查功能等等……</p>
+<p>getClass().getClassLoader()：</p>
+<p>getClass() 方法是 Java Object 类中的一个方法，它的作用是返回当前对象所属类的 Class 对象。而 getClassLoader() 则是 Class 类中的一个方法，它可以用来获取该类的类加载器。在这段代码中，getClass().getClassLoader() 表示获取当前对象所属类的类加载器。具体来说，getClass() 方法会返回 DynamicProxy 类的 Class 对象，而 getClassLoader() 方法则会获取该类的类加载器。</p>
+<h3 id="cglib-动态代理"><a href="#cglib-动态代理" class="headerlink" title="cglib 动态代理"></a>cglib 动态代理</h3><p>JDK动态代理是基于接口的,如果没有接口，就用cglib 动态代理</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/cglib/cglib">CGLIB</a>(<em>Code Generation Library</em>)是一个基于<a target="_blank" rel="noopener" href="http://www.baeldung.com/java-asm">ASM</a>的字节码生成库，它允许我们在运行时对字节码进行修改和动态生成。CGLIB通过继承方式实现代理。</p>
+<p>首先，我们需要引入CGLIB库，例如Maven项目中的依赖：</p>
+<pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;cglib&lt;/groupId&gt;
+    &lt;artifactId&gt;cglib&lt;/artifactId&gt;
+    &lt;version&gt;3.3.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>然后，我们定义一个类<code>HelloService</code>，不需要实现任何接口：</p>
+<pre><code class="java">public class HelloService &#123;
+    public void sayHello() &#123;
+        System.out.println(&quot;Hello World!&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>接着，定义一个实现<code>MethodInterceptor</code>接口的代理处理器<code>HelloServiceProxy</code>：</p>
+<pre><code class="java">import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+
+import java.lang.reflect.Method;
+
+public class HelloServiceProxy implements MethodInterceptor &#123;
+    @Override
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable &#123;
+        System.out.println(&quot;Before sayHello&quot;);
+        Object result = proxy.invokeSuper(obj, args);
+        System.out.println(&quot;After sayHello&quot;);
+        return result;
+    &#125;
+&#125;
+</code></pre>
+<p>最后，在<code>main</code>方法中使用代理对象调用原始对象方法：</p>
+<pre><code class="java">import net.sf.cglib.proxy.Enhancer;
+
+public class Main &#123;
+    public static void main(String[] args) &#123;
+        HelloService helloService = new HelloService();
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(HelloService.class);
+        enhancer.setCallback(new HelloServiceProxy());
+
+        HelloService proxy = (HelloService) enhancer.create();
+
+        proxy.sayHello();
+    &#125;
+&#125;
+</code></pre>
+<p>输出结果：</p>
+<pre><code class="html">Before sayHello
+Hello World!
+After sayHello
+</code></pre>
+<p>其实CGLIB和JDK代理的思路大致相同</p>
+<p>上述代码中，通过CGLIB的<code>Enhancer</code>来指定要代理的目标对象、实际处理代理逻辑的对象。</p>
+<p>最终通过调用<code>create()</code>方法得到代理对象，对这个对象所有非final方法的调用都会转发给<code>MethodInterceptor.intercept()</code>方法。</p>
+<p>在<code>intercept()</code>方法里我们可以加入任何逻辑，同JDK代理中的<code>invoke()</code>方法</p>
+<p>通过调用<code>MethodProxy.invokeSuper()</code>方法，我们将调用转发给原始对象，具体到本例，就是<code>Landlord</code>的具体方法。CGLIG中<code>MethodInterceptor</code>的作用跟JDK代理中的<code>InvocationHandler</code>很类似，都是方法调用的中转站。</p>
+<h3 id="javasist-动态代理"><a href="#javasist-动态代理" class="headerlink" title="javasist 动态代理"></a>javasist 动态代理</h3><p>偷懒</p>
+<p>pass</p>
+<h2 id="静态代理和动态代理的区别"><a href="#静态代理和动态代理的区别" class="headerlink" title="静态代理和动态代理的区别"></a>静态代理和动态代理的区别</h2><p>静态代理：由程序员创建或者是由特定工具创建，在代码编译时就确定了被代理的类是一个静态代理。静态代理通常只代理一个类；<br>动态代理：在代码运行期间，运用反射机制动态创建生成。动态代理代理的是一个接口下的多个实现类。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">http://example.com/2023/04/02/Java代理与动态代理/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CommonCollections1</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/01/URLDNS%E5%88%A9%E7%94%A8%E9%93%BE/" title="URLDNS利用链"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304021635959.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">URLDNS利用链</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-04</div><div class="title">CommonCollections1</div></div></a></div><div><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">CommonsCollections6</div></div></a></div><div><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-08</div><div class="title">Fastjson漏洞分析</div></div></a></div><div><a href="/2023/03/19/JNDI%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0/" title="JNDI注入学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303212056761.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-19</div><div class="title">JNDI注入学习</div></div></a></div><div><a href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img class="cover" src="https://su18.org/post-images/memory-shell.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-18</div><div class="title">Java内存马</div></div></a></div><div><a href="/2023/03/16/Java%E5%8F%8D%E5%B0%84/" title="Java反射"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303162204108.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-16</div><div class="title">Java反射</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">Java代理与动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">静态代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK-%E5%8E%9F%E7%94%9F%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">JDK 原生动态代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cglib-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.2.</span> <span class="toc-text">cglib 动态代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#javasist-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.3.</span> <span class="toc-text">javasist 动态代理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%92%8C%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.</span> <span class="toc-text">静态代理和动态代理的区别</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

