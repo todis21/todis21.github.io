@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>Struts2漏洞系列</title>
+      <link href="/2024/02/18/Struts%E6%BC%8F%E6%B4%9E%E7%B3%BB%E5%88%97/"/>
+      <url>/2024/02/18/Struts%E6%BC%8F%E6%B4%9E%E7%B3%BB%E5%88%97/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Struts2漏洞系列"><a href="#Struts2漏洞系列" class="headerlink" title="Struts2漏洞系列"></a>Struts2漏洞系列</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>春节假期结束，回来不知道该干些什么，就找点事情做。之前没有怎么接触和了解过Struts2这个框架，只知道它好多洞，于是就趁现在学习一下。下面调试的是几个可以rce的漏洞。</p><p>各个漏洞详情查看：<a href="https://cwiki.apache.org/confluence/display/WW/Security+Bulletins">https://cwiki.apache.org/confluence/display/WW/Security+Bulletins</a></p><h2 id="Struts-2-概述"><a href="#Struts-2-概述" class="headerlink" title="Struts 2 概述"></a>Struts 2 概述</h2><p>Struts2是一个基于MVC(Models、View、Controller)设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。Struts 2是Struts的下一代产品，是在 Struts 1和WebWork的技术基础上进行了合并的全新的Struts 2框架。其全新的Struts 2的体系结构与Struts 1的体系结构差别巨大。Struts 2以WebWork为核心，采用拦截器的机制来处理用户的请求，这样的设计也使得业务逻辑控制器能够与Servlet API完全脱离开，所以Struts 2可以理解为WebWork的更新产品。虽然从Struts 1到Struts 2有着太大的变化，但是相对于WebWork，Struts 2的变化很小。</p><h2 id="S2-001"><a href="#S2-001" class="headerlink" title="S2-001"></a>S2-001</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>环境没有使用现成的而是自己搭建一遍</p><p>这里参考了<a href="https://mengsec.com/2019/10/29/Java-Web-Struts2-Env-Build/">https://mengsec.com/2019/10/29/Java-Web-Struts2-Env-Build/</a></p><h3 id="漏洞简介"><a href="#漏洞简介" class="headerlink" title="漏洞简介"></a>漏洞简介</h3><p>WebWork 2.1+ 和 Struts 2 的“altSyntax”功能允许将 OGNL 表达式插入到文本字符串中并进行递归处理。这允许恶意用户通常通过 HTML 文本字段提交一个字符串，其中包含 OGNL 表达式，如果表单验证失败，服务器将执行该表达式。例如，假设我们有一个表单，要求“phoneNumber”字段不能为空：</p><pre><code class="html">&lt;s:form action=&quot;editUser&quot;&gt;  &lt;s:textfield name=&quot;name&quot; /&gt;  &lt;s:textfield name=&quot;phoneNumber&quot; /&gt;&lt;/s:form&gt;</code></pre><p>用户可以将“phoneNumber”字段留空以触发验证错误，然后使用 %{1+1} 填充“name”字段。当表单重新显示给用户时，“名称”字段的值将为“2”。原因是默认情况下，值字段被处理为 %{name}，并且由于 OGNL 表达式是递归求值的，因此它的求值就像表达式是 %</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 代码审计 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CodeQL挖掘fastjson漏洞</title>
       <link href="/2024/01/25/CodeQL%E6%8C%96%E6%8E%98fastjson%E6%BC%8F%E6%B4%9E/"/>
       <url>/2024/01/25/CodeQL%E6%8C%96%E6%8E%98fastjson%E6%BC%8F%E6%B4%9E/</url>
