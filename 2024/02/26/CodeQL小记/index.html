@@ -1,0 +1,323 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CodeQL小记 | Tree's Blog</title><meta name="author" content="Tree"><meta name="copyright" content="Tree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="CodeQL小记前言这个文章是用来记录学习CodeQL过程中遇到的问题和一些常用的东西 创建数据库按照自己的理解，codeql创建java类的数据库是通过编译过程中获取AST 开源对于有开源的系统直接使用官方的就行 codeql database create &lt;database&gt; --language&#x3D;&lt;language-identifier&gt;  指定build命令 co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CodeQL小记">
+<meta property="og:url" content="http://example.com/2024/02/26/CodeQL%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Tree&#39;s Blog">
+<meta property="og:description" content="CodeQL小记前言这个文章是用来记录学习CodeQL过程中遇到的问题和一些常用的东西 创建数据库按照自己的理解，codeql创建java类的数据库是通过编译过程中获取AST 开源对于有开源的系统直接使用官方的就行 codeql database create &lt;database&gt; --language&#x3D;&lt;language-identifier&gt;  指定build命令 co">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-1pwmpg_2560x1440.png">
+<meta property="article:published_time" content="2024-02-26T06:53:58.000Z">
+<meta property="article:modified_time" content="2024-02-27T06:27:57.196Z">
+<meta property="article:author" content="Tree">
+<meta property="article:tag" content="CodeQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-1pwmpg_2560x1440.png"><link rel="shortcut icon" href="/img/favicon.jfif"><link rel="canonical" href="http://example.com/2024/02/26/CodeQL%E5%B0%8F%E8%AE%B0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CodeQL小记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-27 14:27:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jfif" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">60</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-1pwmpg_2560x1440.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Tree's Blog"><span class="site-name">Tree's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CodeQL小记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-26T06:53:58.000Z" title="发表于 2024-02-26 14:53:58">2024-02-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-27T06:27:57.196Z" title="更新于 2024-02-27 14:27:57">2024-02-27</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CodeQL小记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="CodeQL小记"><a href="#CodeQL小记" class="headerlink" title="CodeQL小记"></a>CodeQL小记</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这个文章是用来记录学习CodeQL过程中遇到的问题和一些常用的东西</p>
+<h2 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h2><p>按照自己的理解，codeql创建java类的数据库是通过<code>编译过程</code>中获取AST</p>
+<h3 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h3><p>对于有开源的系统直接使用官方的就行</p>
+<pre><code class="bash">codeql database create &lt;database&gt; --language=&lt;language-identifier&gt;
+</code></pre>
+<p>指定build命令</p>
+<pre><code class="bash">codeql database create java-database --language=java --command=&quot;mvn clean install&quot;
+</code></pre>
+<h3 id="闭源"><a href="#闭源" class="headerlink" title="闭源"></a>闭源</h3><p>对于闭源项目，首先考虑是否存在已知数据库，任何再自己构建</p>
+<p>构建闭源项目的数据库，直接使用Gitbub上的开源项目，有时候需要自己修改一些东西，遇到问题解决问题</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/webraybtl/CodeQLpy">https://github.com/webraybtl/CodeQLpy</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/waderwu/extractor-java">https://github.com/waderwu/extractor-java</a></li>
+</ol>
+<h4 id="单jar-x2F-war文件"><a href="#单jar-x2F-war文件" class="headerlink" title="单jar&#x2F;war文件"></a>单jar&#x2F;war文件</h4><p>这种情况下，目前我只使用过<code>CodeQLpy</code>,</p>
+<pre><code class="bash">python3 main.py -t xxx.jar -c
+</code></pre>
+<p>然后</p>
+<pre><code class="bash">codeql database create qldbname --language=java --command=&quot;run.cmd&quot; --overwrite
+</code></pre>
+<p>如果报错了可能是因为依赖的问题，自己根据依赖适当修改</p>
+<h4 id="多jar文件"><a href="#多jar文件" class="headerlink" title="多jar文件"></a>多jar文件</h4><p>这种情况使用的是<code>extractor-java</code>这个项目</p>
+<p>第一次使用可能会因为找不到codeql路径然后报错，修改一些代码即可</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2024/image-20240226152443538.png" alt="image-20240226152443538"></p>
+<p>以创建weblogic的数据库为例子</p>
+<p>首先用脚本把jar包都复制出来</p>
+<pre><code class="python">import os
+import shutil
+
+# 源目录路径
+source_dir = &#39;E:\\Oracle_Home\\wlserver&#39;
+# 目标目录路径
+target_dir = &#39;E:\\wb&#39;
+# 确保目标目录存在，如果不存在则创建
+if not os.path.exists(target_dir):
+    os.makedirs(target_dir)
+# 递归遍历源目录下的所有文件和子目录
+for root, dirs, files in os.walk(source_dir):
+    for file in files:
+        if file.endswith(&#39;.jar&#39;):
+            source_path = os.path.join(root, file)
+            target_path = os.path.join(target_dir, file)
+            shutil.copy(source_path, target_path)
+            print(f&#39;Copied &#123;file&#125; to &#123;target_path&#125;&#39;)
+print(&#39;All .jar files have been copied to the target directory.&#39;)
+</code></pre>
+<p>然后用下面命令将源码包和依赖包分别拷贝到不同目录（这里我默认将以com.oracle.weblogic.开头的视为weblogic本身，其他jar包视为依赖）：</p>
+<pre><code class="bash">mkdir -p weblogic/lib_/
+find ./wb -type f -name &quot;*.jar&quot; | grep &quot;com.oracle.weblogic.&quot;| xargs -I &#123;&#125; cp &#123;&#125; ./weblogic/
+find ./wb -type f -name &quot;*.jar&quot; | grep -v &quot;com.oracle.weblogic.&quot;| xargs -I &#123;&#125; cp &#123;&#125; ./weblogic/lib_
+</code></pre>
+<p>将源码包解压:</p>
+<pre><code class="bash">cd weblogic/
+ls |grep &quot;.jar&quot; | xargs -I &#123;&#125; unzip -q -n &#123;&#125;
+</code></pre>
+<p>反编译class（只处理包名为weblogic.application的类）：</p>
+<pre><code class="bash">python3 ~/extractor-java/class2java.py xxx/weblogic/application/
+</code></pre>
+<p>然后就是编译CodeQL数据库:</p>
+<pre><code class="bash">python3 ~/extractor-java/run.py weblogic_qldb xxx/weblogic/application/ -ld weblogic/lib_/
+</code></pre>
+<h2 id="CodeQL项目创建"><a href="#CodeQL项目创建" class="headerlink" title="CodeQL项目创建"></a>CodeQL项目创建</h2><p>新建一个文件夹，例如test</p>
+<p>然后在test文件夹下创建一个文件qlpack.yml,注意：名字必须为qlpack.yml</p>
+<p>内容如下：</p>
+<pre><code class="yml">name: xxx
+version: 0.0.0
+libraryPathDependencies: codeql-java
+</code></pre>
+<p>官方：编辑 <code>name</code> 属性，使其与格式 <code>&lt;scope&gt;/&lt;name&gt;</code> 匹配，其中 <code>&lt;scope&gt;</code> 是要发布到的 GitHub 组织或用户帐户的名称</p>
+<p>说实话，日常使用<code>name</code> 我是随便写的</p>
+<h2 id="全局污点分析"><a href="#全局污点分析" class="headerlink" title="全局污点分析"></a>全局污点分析</h2><p>想要能够看到每个节点的位置就要按照格式写</p>
+<p><img src="https://raw.githubusercontent.com/todis21/image/main/2023/image-20240125103830296.png" alt="image-20240125103830296"></p>
+<p>参考下面代码格式</p>
+<pre><code class="python">/**
+ * @kind path-problem
+*/
+import java
+import DataFlow2::PathGraph
+import semmle.code.java.dataflow.FlowSources
+import semmle.code.java.dataflow.TaintTracking2
+
+
+
+class MyTaintTrackingConfiguration extends TaintTracking2::Configuration &#123;
+    MyTaintTrackingConfiguration() &#123; 
+        this = &quot;MyTaintTrackingConfiguration&quot; 
+    &#125;
+    override predicate isSource(DataFlow::Node source) &#123;
+        ......
+    &#125;
+    override predicate isSink(DataFlow::Node sink) &#123;
+        ......
+    &#125;
+&#125;
+
+from MyTaintTrackingConfiguration config, DataFlow2::PathNode source,DataFlow2::PathNode sink
+where config.hasFlowPath(source, sink)
+select source.getNode(), source, sink, &quot;fastJsonInject!&quot;
+</code></pre>
+<p>主要是开头的<code>@kind path-problem</code> 、<code>import </code>的内容、</p>
+<p>结果输出格式：</p>
+<pre><code class="python">from MyTaintTrackingConfiguration config, DataFlow2::PathNode source,DataFlow2::PathNode sink
+where config.hasFlowPath(source, sink)
+select source.getNode(), source, sink, &quot;xxxxx&quot;
+</code></pre>
+<h2 id="Sink收集"><a href="#Sink收集" class="headerlink" title="Sink收集"></a>Sink收集</h2><p>JNDI注入：</p>
+<pre><code class="python">override predicate isSink(DataFlow::Node sink) &#123;
+        exists(MethodCall call |
+            call.getMethod().getQualifiedName()=&quot;javax.naming.InitialContext.lookup&quot; and
+            sink.asExpr() = call.getAnArgument()
+        )
+    &#125;
+</code></pre>
+<p>MyBatis框架SQL注入</p>
+<p><a target="_blank" rel="noopener" href="https://todis21.github.io/2024/01/24/CodeQL%E6%8C%96%E6%8E%98MyBatis%E6%A1%86%E6%9E%B6%E7%9A%84SQL%E6%B3%A8%E5%85%A5/">https://todis21.github.io/2024/01/24/CodeQL%E6%8C%96%E6%8E%98MyBatis%E6%A1%86%E6%9E%B6%E7%9A%84SQL%E6%B3%A8%E5%85%A5/</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Tree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/02/26/CodeQL%E5%B0%8F%E8%AE%B0/">http://example.com/2024/02/26/CodeQL小记/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Tree's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CodeQL/">CodeQL</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-1pwmpg_2560x1440.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/02/21/%E4%BB%8ECVE-2023-21839%E5%88%B0CVE-2024-20931/" title="从CVE-2023-21839到CVE-2024-20931"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-x6wjkv_2560x1440.png" onerror="onerror=null;src='/img/404.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">从CVE-2023-21839到CVE-2024-20931</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/01/25/CodeQL%E6%8C%96%E6%8E%98fastjson%E6%BC%8F%E6%B4%9E/" title="CodeQL挖掘fastjson漏洞"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-4oo7q5_2560x1440.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-25</div><div class="title">CodeQL挖掘fastjson漏洞</div></div></a></div><div><a href="/2024/01/24/CodeQL%E6%8C%96%E6%8E%98MyBatis%E6%A1%86%E6%9E%B6%E7%9A%84SQL%E6%B3%A8%E5%85%A5/" title="CodeQL挖掘MyBatis框架的SQL注入"><img class="cover" src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-l8r8dr_2560x1440.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-24</div><div class="title">CodeQL挖掘MyBatis框架的SQL注入</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jfif" onerror="this.onerror=null;this.src='/img/404.png'" alt="avatar"/></div><div class="author-info__name">Tree</div><div class="author-info__description">随便都行都可以</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">60</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/todis21"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/todis21" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3440848736@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CodeQL%E5%B0%8F%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">CodeQL小记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">创建数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E6%BA%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">开源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AD%E6%BA%90"><span class="toc-number">1.2.2.</span> <span class="toc-text">闭源</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95jar-x2F-war%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">单jar&#x2F;war文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9Ajar%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">多jar文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CodeQL%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA"><span class="toc-number">1.3.</span> <span class="toc-text">CodeQL项目创建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E6%B1%A1%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">全局污点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sink%E6%94%B6%E9%9B%86"><span class="toc-number">1.5.</span> <span class="toc-text">Sink收集</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/02/26/CodeQL%E5%B0%8F%E8%AE%B0/" title="CodeQL小记"><img src="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-1pwmpg_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CodeQL小记"/></a><div class="content"><a class="title" href="/2024/02/26/CodeQL%E5%B0%8F%E8%AE%B0/" title="CodeQL小记">CodeQL小记</a><time datetime="2024-02-26T06:53:58.000Z" title="发表于 2024-02-26 14:53:58">2024-02-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/21/%E4%BB%8ECVE-2023-21839%E5%88%B0CVE-2024-20931/" title="从CVE-2023-21839到CVE-2024-20931"><img src="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-x6wjkv_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="从CVE-2023-21839到CVE-2024-20931"/></a><div class="content"><a class="title" href="/2024/02/21/%E4%BB%8ECVE-2023-21839%E5%88%B0CVE-2024-20931/" title="从CVE-2023-21839到CVE-2024-20931">从CVE-2023-21839到CVE-2024-20931</a><time datetime="2024-02-21T08:29:16.000Z" title="发表于 2024-02-21 16:29:16">2024-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/18/Struts%E6%BC%8F%E6%B4%9E%E7%B3%BB%E5%88%97/" title="Struts2漏洞系列"><img src="https://raw.githubusercontent.com/todis21/image/main/2024/wallhaven-6d7xmx_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="Struts2漏洞系列"/></a><div class="content"><a class="title" href="/2024/02/18/Struts%E6%BC%8F%E6%B4%9E%E7%B3%BB%E5%88%97/" title="Struts2漏洞系列">Struts2漏洞系列</a><time datetime="2024-02-18T08:46:43.000Z" title="发表于 2024-02-18 16:46:43">2024-02-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/01/25/CodeQL%E6%8C%96%E6%8E%98fastjson%E6%BC%8F%E6%B4%9E/" title="CodeQL挖掘fastjson漏洞"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-4oo7q5_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CodeQL挖掘fastjson漏洞"/></a><div class="content"><a class="title" href="/2024/01/25/CodeQL%E6%8C%96%E6%8E%98fastjson%E6%BC%8F%E6%B4%9E/" title="CodeQL挖掘fastjson漏洞">CodeQL挖掘fastjson漏洞</a><time datetime="2024-01-25T01:29:25.000Z" title="发表于 2024-01-25 09:29:25">2024-01-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/01/24/CodeQL%E6%8C%96%E6%8E%98MyBatis%E6%A1%86%E6%9E%B6%E7%9A%84SQL%E6%B3%A8%E5%85%A5/" title="CodeQL挖掘MyBatis框架的SQL注入"><img src="https://raw.githubusercontent.com/todis21/image/main/2023/wallhaven-l8r8dr_2560x1440.png" onerror="this.onerror=null;this.src='/img/404.png'" alt="CodeQL挖掘MyBatis框架的SQL注入"/></a><div class="content"><a class="title" href="/2024/01/24/CodeQL%E6%8C%96%E6%8E%98MyBatis%E6%A1%86%E6%9E%B6%E7%9A%84SQL%E6%B3%A8%E5%85%A5/" title="CodeQL挖掘MyBatis框架的SQL注入">CodeQL挖掘MyBatis框架的SQL注入</a><time datetime="2024-01-24T03:55:01.000Z" title="发表于 2024-01-24 11:55:01">2024-01-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Tree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><script type="text/javascript" id="maid-script" src="https://unpkg.com/mermaid@undefined/dist/mermaid.min.js?v=undefined"></script><script>if (window.mermaid) {
+  var options = JSON.parse(document.getElementById('maid-script').getAttribute('mermaidoptioins'));
+  mermaid.initialize(options);
+}</script></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="喵" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
